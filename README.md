@@ -38,7 +38,7 @@ The model files (`.pte`) and the built NPU runtime are **not in the repo** (5+ G
 described in **[docs/models.md](docs/models.md)** and drop them into `npu/`. `setup.ps1` lists
 exactly what is missing; without them the games still run with simulated racers.
 
-Pick a game in the hub (click, or press **1** / **2** / **3**). The hub starts that game's server,
+Pick a game in the hub (click, or press **1**–**4**). The hub starts that game's server,
 loads the models on the NPU and opens it. In the racing games press **Enter** to race; in Alibi
 Breaker, open a case and start asking questions.
 
@@ -126,7 +126,8 @@ reload the models. More diagrams (a decision's round trip, the rogue's cheat flo
 ├── games/
 │   ├── inference-rally/    hedge-maze game (port 8001) — its own README, tests, history
 │   ├── san-francisco/      real-streets game (port 8002) — from OpenStreetMap
-│   └── alibi-breaker/      detective game (port 8003, Node.js) — its own README and history
+│   ├── alibi-breaker/      detective game (port 8003, Node.js) — its own README and history
+│   └── nightwatch/         NightWatch, memory-care night supervision (port 8004) — as is, its own README
 ├── npu/                    the ExecuTorch side
 │   ├── host/               qnn_llm_host.exe + backend DLL (built, git-ignored) · src/ sources
 │   ├── models/             Gemma / Qwen3 .pte + tokenizers (git-ignored)
@@ -141,7 +142,7 @@ reload the models. More diagrams (a decision's round trip, the rogue's cheat flo
 - **[docs/architecture.md](docs/architecture.md)** — system, processes, a decision's round trip, the rogue
 - **[docs/models.md](docs/models.md)** — every model and file, where it goes, how to get it
 - **[docs/npu-setup.md](docs/npu-setup.md)** — QAIRT SDK, building the NPU hosts, running a model by hand, troubleshooting
-- Games: [Inference Rally](games/inference-rally/README.md) · [San Francisco](games/san-francisco/README.md) · [Alibi Breaker](games/alibi-breaker/README.md) · [Hub](hub/README.md)
+- Games: [Inference Rally](games/inference-rally/README.md) · [San Francisco](games/san-francisco/README.md) · [Alibi Breaker](games/alibi-breaker/README.md) · [NightWatch](games/nightwatch/README.md) · [Hub](hub/README.md)
 
 ## Checks
 
@@ -154,6 +155,7 @@ cd games\san-francisco;   ..\..\.venv\Scripts\python -m pytest; cd ..\..
 
 San Francisco streets by Ashwini S
 ([PR #1](https://github.com/divyachandana/Inference-Rally/pull/1)) · Alibi Breaker by Ashwini S
-([alibi-breaker](https://github.com/AshwiniSettu/alibi-breaker)) · Gemma (Gemma Terms of Use) ·
+([alibi-breaker](https://github.com/AshwiniSettu/alibi-breaker)) · NightWatch from
+[lucasmasen/ExecuTorch](https://github.com/lucasmasen/ExecuTorch) · Gemma (Gemma Terms of Use) ·
 Qwen3 (Apache-2.0) · [Laya](https://huggingface.co/convaiinnovations/laya) by Convai Innovations
 (Apache-2.0) · Map data © OpenStreetMap contributors (ODbL) · Press Start 2P font (SIL OFL).

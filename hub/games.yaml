@@ -1,4 +1,4 @@
-# The game hub: three separate games, started on demand. Picking a game stops the running one
+# The game hub: four separate apps, started on demand. Picking a game stops the running one
 # first, because each game uses the NPU models (Gemma-4-E2B, Qwen3-1.7B, and Laya in the racing
 # games). All games use the same NPU model hosts (named pipes rally_gemma / rally_qwen), so after a
 # switch the models are still loaded and the next game starts in seconds.
@@ -37,6 +37,18 @@ games:
     port: 8003
     cwd: ../games/alibi-breaker
     command: [node, --env-file-if-exists=.env, server.js, --npu, --port, "8003"]
+
+  nightwatch:
+    title: NightWatch
+    tagline: On-device night supervision for memory care
+    detail: Nurse station · staff phones · escalation until a human responds
+    image: nightwatch.jpg
+    accent: "#8b7cf6"
+    port: 8004
+    cwd: ../games/nightwatch
+    # Its demo.ps1 server flags on port 8004. No --model / --camera-model: their Python runtime
+    # (torch + executorch) has no Windows-on-ARM wheel, so the server runs its rule fallback.
+    command: [python, nightwatch/server.py, --port, "8004", --lan, --l1-timeout, "20", --ack-timeout, "15"]
 
 # NPU model hosts the games share; the hub shuts them down when it exits.
 npu_pipes: [rally_gemma, rally_qwen]
