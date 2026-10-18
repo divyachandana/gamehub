@@ -1,0 +1,94 @@
+/* NightWatch display modes. Load after theme.css. Classes are set on <html> by a11y.js:
+   .nw-hc  High contrast   (overrides the theme tokens; every text pair here is >= 7:1, AA needs 4.5:1)
+   .nw-lg  Larger text     (the whole page scales 120 %, layouts reflow; no horizontal scroll)
+   .nw-rm  Reduce motion   (no animation or transitions, same as the OS setting)
+   Plus the "Display" menu that a11y.js mounts into any [data-nw-display] element, and the shared
+   screen nav it fills into any <nav data-nw-nav> (same links, same order on every page). */
+
+/* ---------------------------------------------------------------- high contrast */
+html.nw-hc {
+  --nw-bg: #000;
+  --nw-bg-2: #000;
+  --nw-surface: #0b0b0b;
+  --nw-surface-2: #141414;
+  --nw-raised: #1f1f1f;
+  --nw-line: #9a9a9a;
+  --nw-line-strong: #e6e6e6;
+  --nw-ink: #fff;
+  --nw-ink-2: #fff;
+  --nw-muted: #e8e8e8;
+  --nw-faint: #d6d6d6;
+  --nw-accent: #a9c9ff;
+  --nw-accent-ink: #000;
+  --nw-moon: #e4ebff;
+  --nw-sun: #ffe08a;
+  --nw-ok: #5ff2b2;
+  --nw-ok-ink: #000;
+  --nw-l1: #ffe066;
+  --nw-l2: #ffb27a;
+  --nw-l3: #ff8f99;
+  --nw-l1-bg: #2a2200;
+  --nw-l2-bg: #2e1606;
+  --nw-l3-bg: #33070d;
+  --nw-room: #5ff0de;
+  --nw-hall: #ffc24d;
+  --nw-shadow: none;
+}
+html.nw-hc body.nw { background: #000; }
+html.nw-hc .nw-panel,
+html.nw-hc .nw-topbar { background: var(--nw-surface); border-color: var(--nw-line-strong); }
+html.nw-hc .nw-chip { background: #000; border-color: var(--nw-line); color: var(--nw-ink); }
+html.nw-hc .nw-btn { border-width: 2px; }
+html.nw-hc .nw-btn--ghost { border-color: var(--nw-line-strong); }
+html.nw-hc .nw-btn--primary:hover { background: #d0e1ff; border-color: #d0e1ff; }
+html.nw-hc .nw-btn--safe:hover { background: #9af7cf; border-color: #9af7cf; }
+html.nw-hc .nw-l3 .nw-badge, html.nw-hc .nw-badge.nw-l3 { color: #000; }
+html.nw-hc .nw-badge { border-width: 2px; }
+html.nw-hc .nw-tip { background: #001a0e; border: 2px solid var(--nw-ok); }
+html.nw-hc .nw-mode.is-night { background: #000; border-color: var(--nw-moon); color: var(--nw-moon); }
+html.nw-hc .nw-mode.is-day { background: #000; border-color: var(--nw-sun); color: var(--nw-sun); }
+html.nw-hc a:not([class]), html.nw-hc .nw-link { text-decoration: underline; text-underline-offset: 2px; }
+html.nw-hc :focus-visible { outline: 4px solid #ffe066 !important; outline-offset: 2px; }
+html.nw-hc input, html.nw-hc select, html.nw-hc textarea { background: #000; border-color: var(--nw-line-strong); color: #fff; }
+html.nw-hc ::placeholder { color: #bdbdbd; opacity: 1; }
+
+/* ---------------------------------------------------------------- larger text */
+html.nw-lg body.nw { zoom: 1.2; }
+
+/* ---------------------------------------------------------------- reduce motion */
+html.nw-rm *, html.nw-rm *::before, html.nw-rm *::after {
+  animation: none !important; transition: none !important; scroll-behavior: auto !important;
+}
+
+/* ---------------------------------------------------------------- the Display menu */
+.nwd { position: relative; display: inline-flex; }
+.nwd-btn { min-height: 36px; font-size: 13.5px; }
+.nwd-btn[aria-expanded="true"] { background: var(--nw-raised); border-color: var(--nw-accent); }
+.nwd-panel {
+  position: fixed; z-index: 10000; width: min(330px, calc(100vw - 32px)); padding: 8px;
+  background: var(--nw-surface); border: 1px solid var(--nw-line-strong); border-radius: 14px;
+  box-shadow: 0 18px 50px rgba(0, 0, 0, .55); color: var(--nw-ink); font: 14px/1.4 var(--nw-font);
+}
+.nwd-panel[hidden] { display: none; }
+.nwd-head { padding: 6px 8px 8px; font-size: 12px; font-weight: 700; letter-spacing: .1em; text-transform: uppercase; color: var(--nw-muted); }
+.nwd-opt { display: grid; grid-template-columns: auto 1fr; gap: 2px 12px; align-items: start; padding: 10px 8px; border-radius: 10px; cursor: pointer; }
+.nwd-opt:hover { background: var(--nw-surface-2); }
+.nwd-opt input { width: 20px; height: 20px; margin: 2px 0 0; accent-color: var(--nw-accent); cursor: pointer; }
+.nwd-opt b { font-weight: 650; }
+.nwd-opt small { grid-column: 2; display: block; color: var(--nw-muted); font-size: 12.5px; }
+.nwd-opt.is-locked { cursor: default; }
+.nwd-foot { display: flex; justify-content: space-between; align-items: center; gap: 8px; padding: 8px 8px 4px; border-top: 1px solid var(--nw-line); margin-top: 4px; }
+.nwd-foot small { color: var(--nw-faint); font-size: 12px; }
+.nwd-reset { font: 600 13px/1 var(--nw-font); color: var(--nw-accent); background: none; border: 0; padding: 8px 4px; cursor: pointer; text-decoration: underline; }
+
+/* ---------------------------------------------------------------- shared screen nav (a11y.js fills <nav data-nw-nav>) */
+.nw-nav { display: flex; flex-wrap: wrap; gap: 6px; align-items: center; }
+.nw-nav a {
+  display: inline-flex; align-items: center; min-height: 34px; padding: 0 11px; border-radius: 9px;
+  font: 600 13px/1 var(--nw-font); color: var(--nw-ink-2); text-decoration: none; border: 1px solid transparent; white-space: nowrap;
+}
+.nw-nav a:hover { background: var(--nw-surface-2); border-color: var(--nw-line); color: var(--nw-ink); }
+.nw-nav a[aria-current="page"] { color: var(--nw-ink); background: var(--nw-raised); border-color: var(--nw-line-strong);
+  text-decoration: underline; text-decoration-color: var(--nw-accent); text-decoration-thickness: 2px; text-underline-offset: 5px; }
+html.nw-hc .nw-nav a { border-color: var(--nw-line); }
+@media (max-width: 520px) { .nw-nav a { min-height: 32px; padding: 0 9px; font-size: 12.5px; } }

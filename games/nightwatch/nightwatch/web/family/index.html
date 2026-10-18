@@ -1,0 +1,327 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex">
+<title>NightWatch · How was their night?</title>
+<script src="/assets/auth.js"></script>
+<link rel="stylesheet" href="/assets/theme.css">
+<style>
+  /* A warm, calm palette for families: the shared tokens re-pointed, so the shared buttons and icons still fit. */
+  body.nw.family {
+    --nw-bg: #f6efe4; --nw-bg-2: #efe5d6; --nw-surface: #fffaf2; --nw-surface-2: #fbf3e7; --nw-raised: #f3e8d8;
+    --nw-line: #e4d6c2; --nw-line-strong: #cdb99e;
+    --nw-ink: #2c2520; --nw-ink-2: #4a3f36; --nw-muted: #6e6156; --nw-faint: #8a7b6d;
+    --nw-accent: #2f6b64; --nw-accent-ink: #ffffff; --nw-ok: #2f7a55; --nw-sun: #b7791f;
+    --fam-soft: #e7f0ea; --fam-soft-line: #bcd6c5; --fam-warm: #fbecd6; --fam-warm-line: #ecc999;
+    --fam-serif: "Iowan Old Style", "Palatino Linotype", Palatino, Georgia, "Times New Roman", serif;
+    background: var(--nw-bg);
+    font-size: 18px; line-height: 1.55;
+  }
+  @media (prefers-color-scheme: dark) {
+    body.nw.family {
+      --nw-bg: #16120f; --nw-bg-2: #1c1713; --nw-surface: #211b16; --nw-surface-2: #29221c; --nw-raised: #322921;
+      --nw-line: #3a3028; --nw-line-strong: #54463a;
+      --nw-ink: #f4ece1; --nw-ink-2: #e0d4c5; --nw-muted: #b9aa98; --nw-faint: #a09180;
+      --nw-accent: #e6b778; --nw-accent-ink: #261804; --nw-ok: #8fd3a8; --nw-sun: #f0c27a;
+      --fam-soft: #1d2a23; --fam-soft-line: #34503f; --fam-warm: #2c2216; --fam-warm-line: #5a4426;
+    }
+  }
+  .fam-top { display: flex; align-items: center; justify-content: space-between; gap: 12px; max-width: 760px; margin: 0 auto; padding: 20px 20px 4px; }
+  .fam-brand { display: flex; align-items: center; gap: 10px; color: var(--nw-muted); font-size: 15px; min-width: 0; }
+  .fam-brand svg { width: 26px; height: 26px; color: var(--nw-accent); flex: none; }
+  .fam-brand b { color: var(--nw-ink); font-weight: 700; }
+  main { max-width: 760px; margin: 0 auto; padding: 8px 20px 48px; display: grid; gap: 18px; }
+  .card { background: var(--nw-surface); border: 1px solid var(--nw-line); border-radius: 20px; padding: 22px 24px; }
+  .kicker { color: var(--nw-muted); font-size: 15px; letter-spacing: .02em; margin: 0 0 6px; }
+  h1 { font: 600 clamp(32px, 6.4vw, 46px)/1.12 var(--fam-serif); letter-spacing: -.01em; margin: 0 0 10px; text-wrap: balance; }
+  .lede { font-size: 20px; color: var(--nw-ink-2); margin: 0; }
+  h2 { display: flex; align-items: center; gap: 10px; font: 600 23px/1.25 var(--fam-serif); margin: 0 0 12px; }
+  h2 svg { width: 24px; height: 24px; color: var(--nw-accent); }
+  p { margin: 0 0 10px; } p:last-child { margin-bottom: 0; }
+  .now { display: flex; align-items: center; gap: 12px; margin-top: 18px; padding-top: 16px; border-top: 1px solid var(--nw-line); color: var(--nw-ink-2); }
+  .now svg { width: 26px; height: 26px; color: var(--nw-accent); }
+  .moment { border-top: 1px solid var(--nw-line); padding: 16px 0 4px; break-inside: avoid; }
+  .moment:first-of-type { border-top: 0; padding-top: 4px; }
+  .moment h3 { font: 650 19px/1.3 var(--nw-font); margin: 0 0 10px; }
+  .steps { list-style: none; margin: 0; padding: 0; display: grid; gap: 10px; }
+  .steps li { display: grid; grid-template-columns: 76px 1fr; gap: 12px; align-items: baseline; }
+  .steps time { color: var(--nw-muted); font-variant-numeric: tabular-nums; font-size: 16px; white-space: nowrap; }
+  .live { display: inline-flex; align-items: center; gap: 8px; font-size: 15px; font-weight: 650; color: var(--nw-accent); margin-bottom: 8px; }
+  .live::before { content: ""; width: 10px; height: 10px; border-radius: 50%; background: currentColor; }
+  .helps { background: var(--fam-soft); border-color: var(--fam-soft-line); }
+  .helps .main { font: 500 21px/1.45 var(--fam-serif); margin-bottom: 8px; }
+  .muted { color: var(--nw-muted); font-size: 16px; }
+  .privacy { background: var(--fam-warm); border-color: var(--fam-warm-line); }
+  .privacy ul { list-style: none; margin: 0; padding: 0; display: grid; gap: 10px; }
+  .privacy li { display: grid; grid-template-columns: 26px 1fr; gap: 10px; align-items: start; }
+  .privacy li svg { width: 22px; height: 22px; margin-top: 3px; color: var(--nw-accent); }
+  .actions { display: flex; flex-wrap: wrap; gap: 12px; align-items: center; justify-content: space-between; }
+  .actions .nw-btn { min-height: 52px; font-size: 17px; padding: 0 20px; border-radius: 14px; }
+  .pick { list-style: none; margin: 12px 0 0; padding: 0; display: grid; gap: 10px; }
+  .pick a { display: flex; align-items: center; justify-content: space-between; gap: 10px; padding: 16px 18px; border-radius: 14px;
+            border: 1px solid var(--nw-line-strong); background: var(--nw-surface-2); color: var(--nw-ink); text-decoration: none; font-weight: 650; }
+  .pick a:hover { background: var(--nw-raised); }
+  .skel { height: 1em; border-radius: 8px; background: var(--nw-line); opacity: .6; margin: 10px 0; }
+  .foot { text-align: center; color: var(--nw-muted); font-size: 15px; }
+  @media (max-width: 520px) {
+    body.nw.family { font-size: 17px; }
+    .fam-top { padding: 16px 16px 2px; } main { padding: 6px 16px 36px; gap: 14px; }
+    .card { padding: 18px 18px; border-radius: 18px; }
+    .lede { font-size: 18.5px; }
+    .steps li { grid-template-columns: 1fr; gap: 0; }
+    .actions .nw-btn { width: 100%; }
+  }
+  @media print {
+    body.nw.family { background: #fff !important; color: #000; font-size: 12pt;
+      --nw-ink: #000; --nw-ink-2: #222; --nw-muted: #555; --nw-line: #bbb; --nw-accent: #2f6b64;
+      --fam-soft: #fff; --fam-warm: #fff; --fam-soft-line: #999; --fam-warm-line: #999; }
+    .no-print, .nw-offline { display: none !important; }
+    .fam-top, main { max-width: none; padding-left: 0; padding-right: 0; }
+    .card { border-radius: 8px; padding: 12pt 14pt; background: #fff !important; break-inside: avoid; }
+    h1 { font-size: 26pt; } .lede { font-size: 14pt; }
+    a { color: inherit; text-decoration: none; }
+    @page { margin: 16mm; }
+  }
+</style>
+</head>
+<body class="nw family">
+<header class="fam-top">
+  <div class="fam-brand"><span id="logo"></span><span><b>NightWatch</b> · <span id="facility">family update</span></span></div>
+</header>
+<main id="main" aria-live="polite">
+  <section class="card" aria-busy="true"><div class="skel" style="width:40%"></div><div class="skel" style="height:2em;width:80%"></div><div class="skel" style="width:90%"></div></section>
+</main>
+<script src="/assets/nw.js"></script>
+<script>
+const { esc, icon } = NW;
+document.getElementById('logo').innerHTML = icon('logo');
+const $main = document.getElementById('main');
+const rid = (new URLSearchParams(location.search).get('id') || '').trim();
+
+// ---- plain-language translation (nothing internal is shown as-is) ----
+const secs = (t) => { const [h, m, s] = String(t || '').split(':').map(Number); return h * 3600 + m * 60 + (s || 0); };
+const gap = (a, b) => { let d = secs(b) - secs(a); if (d < -43200) d += 86400; return Math.max(0, d); };   // across midnight
+const clock = (t) => {   // "02:08:23" -> "2:08 am"
+  const m = /^(\d{1,2}):(\d{2})/.exec(String(t || '')); if (!m) return '';
+  const h = +m[1]; return `${h % 12 || 12}:${m[2]} ${h < 12 ? 'am' : 'pm'}`;
+};
+const short = (t) => clock(t).replace(/ (am|pm)$/, '');
+const within = (s) => s < 60 ? `${s} second${s === 1 ? '' : 's'}` : `${Math.round(s / 60)} minute${Math.round(s / 60) === 1 ? '' : 's'}`;
+const times = (n) => n === 1 ? 'once' : n === 2 ? 'twice' : `${n} times`;
+const DOORS = { front: 'the front entrance', garden: 'the garden door', side: 'a side door', back: 'the back door' };
+const HELPS = {   // the care team's names for what helps -> how a family would say it
+  'movement (walk with staff)': 'a short walk with a member of staff', 'movement': 'a short walk',
+  'reassurance / presence': 'someone sitting with them for a while', 'reassurance': 'a few calm, reassuring words',
+  'presence / 1-to-1': 'someone sitting with them for a while', 'family involvement (call)': 'hearing from family',
+  'family involvement': 'hearing from family', 'reorientation': 'a gentle reminder of where they are and what time it is',
+  'music / sensory': 'familiar music', 'music/sensory': 'familiar music', 'music': 'familiar music', 'sensory': 'something soothing to hold or feel',
+  'diet / hydration': 'a drink or a light snack', 'diet/hydration': 'a drink or a light snack', 'repositioning': 'being helped to get comfortable',
+  'direct care provided': 'help from staff with their care', 'cognitive': 'a quiet activity', 'clinical review': 'a check by the nurse',
+};
+const helpPhrase = (name) => HELPS[String(name).trim().toLowerCase()] || String(name).trim().toLowerCase();
+const MOOD = { 'calm': 'calm', 'unsettled-agitated': 'a little unsettled', 'distressed-tearful': 'upset', 'drowsy': 'sleepy',
+               'withdrawn': 'quiet', 'confused-disoriented': 'a little confused', 'content-engaged': 'content' };
+
+// One alert -> a short story: when they got up, how staff knew, how fast someone answered, how it ended.
+function story(a) {
+  const h = a.history || [];
+  const start = (h[0] || [])[0];
+  const find = (re) => h.find(([, x]) => re.test(x));
+  const ack = find(/^Acknowledged/), done = find(/^Resolved/), backup = find(/^Backup requested/);
+  const called = find(/^All staff phones/), supervisor = find(/supervisor/i);
+  const rec = a.record || {};
+  const outside = /^Exterior/.test(rec.location_type || '');
+  const door = a.exit ? (DOORS[a.exit] || 'an outside door') : null;
+  const own = !!a.resolved && (rec.intervention === 'Monitoring' || /on their own|\(camera\)/i.test(a.resolved));
+  const steps = [];
+  steps.push([start, door ? `Got up and walked towards ${door}.` : 'Woke and got up.']);
+  if (!own || !a.resolved) {
+    steps.push([start, a.max_level >= 2 ? 'NightWatch let the night staff know straight away, on their phones.'
+                                        : 'NightWatch gave the night staff a gentle heads-up on their phones.']);
+  }
+  if (called) steps.push([called[0], supervisor ? 'Extra staff and the on-call supervisor were called to help, as planned.' : 'All staff on shift were called to help, as planned.']);
+  if (ack) {
+    const m = /\((\d+) s after/.exec(ack[1]);
+    steps.push([ack[0], m ? `A member of staff answered within ${within(+m[1])} and went to them.` : 'A member of staff answered and went to them.']);
+  }
+  if (backup) steps.push([backup[0], 'A second member of staff came to help.']);
+  if (outside) steps.push([null, 'They stepped outside for a short while before staff were with them.']);
+  if (a.resolved) {
+    const t = done ? done[0] : null;
+    if (own) steps.push([t, /\(camera\)/.test(a.resolved) ? 'Went back to their room on their own. Staff did not need to step in.'
+                                                          : 'Settled back into bed on their own. Staff did not need to step in.']);
+    else steps.push([t, 'Staff made sure they were safe and walked back with them to their room.']);
+  } else {
+    steps.push([null, a.acked_by ? 'A member of staff is with them now.' : 'Staff have been told and are on their way.']);
+  }
+  if (rec.status === 'filed') {
+    const helped = [rec.intervention, rec.nondrug_alt].filter((x) => x && x !== 'Monitoring').map(helpPhrase);
+    const mood = MOOD[String(rec.affect || '').toLowerCase()];
+    const bits = [];
+    if (mood) bits.push(`they seemed ${mood}`);
+    if (helped.length) bits.push(`what helped was ${helped.join(' and ')}`);
+    if (bits.length) steps.push([null, `Staff noted ${bits.join(', and ')}.`]);
+  }
+  const end = done ? done[0] : null;
+  return { a, start, end, own, open: !a.resolved, outside, ackS: ack ? Number((/\((\d+) s after/.exec(ack[1]) || [])[1]) : NaN, steps };
+}
+
+function headline(name, stories, now) {
+  if (!stories.length) {
+    return { h: 'A quiet night', p: `${name} stayed settled. NightWatch didn't need to call anyone, so staff could let them sleep.` };
+  }
+  const open = stories.find((s) => s.open);
+  if (open) {
+    return { h: 'Staff are looking after them right now', p: `${name} got up at ${clock(open.start)}. ${open.a.acked_by ? 'A member of staff is with them.' : 'The night staff have been told and are on their way.'} This page updates by itself.` };
+  }
+  const n = stories.length;
+  if (stories.every((s) => s.own)) {
+    const s = stories[0];
+    return { h: n === 1 ? 'A quiet night' : 'A fairly quiet night',
+             p: n === 1 ? `Up briefly at ${clock(s.start)}, and settled back on their own by ${clock(s.end || s.start)}.`
+                        : `Up ${times(n)} for a short while, and settled back on their own each time.` };
+  }
+  if (n === 1) {
+    const s = stories[0], took = s.end ? gap(s.start, s.end) : 0;
+    const staff = Number.isFinite(s.ackS) ? `A member of staff was on the way within ${within(s.ackS)} and walked back with them` : 'A member of staff went to them and walked back with them';
+    const back = s.end ? (took < 180 ? 'they were back in their room soon after' : `they were back in their room by ${clock(s.end)}`) : 'they were soon back in their room';
+    return { h: 'Up once, and safely settled', p: `${name} got up at ${clock(s.start)}. ${staff}, and ${back}.` };
+  }
+  const last = stories[stories.length - 1];
+  return { h: `Up ${times(n)}, and safely settled`,
+           p: `First up at ${clock(stories[0].start)}. A member of staff went to them each time, and ${name} was back in their room by ${clock(last.end || last.start)}.` };
+}
+
+function nowLine(r) {
+  const n = r.now || {};
+  if (n.in_bed) return ['bed', 'Right now: in bed and resting.'];
+  if (n.zone === 'room') return ['moon', 'Right now: in their room.'];
+  if ((r.alerts || []).some((a) => !a.resolved)) return ['heart', 'Right now: up, with staff looking after them.'];
+  return ['walk', 'Right now: up and about. Staff know their usual routine.'];
+}
+
+function helpsCard(r) {
+  const list = (r.suggestions || []).map((s) => {
+    const m = /^(.*?):\s*settled them (\d+) of (\d+) times/.exec(s);
+    return m ? { name: m[1], helped: +m[2], tried: +m[3] } : { name: String(s).split(':')[0], helped: 0, tried: 0 };
+  }).filter((x) => x.name);
+  if (!list.length) return '';
+  const [top, ...rest] = list;
+  const usually = top.tried && top.helped / top.tried >= 0.6 ? 'usually' : 'often';
+  const fam = list.find((x) => /family/i.test(x.name));
+  return `<section class="card helps" aria-labelledby="h-helps">
+    <h2 id="h-helps">${icon('heart')}What helps them</h2>
+    <p class="main">Staff know ${esc(helpPhrase(top.name))} ${usually} settles them${top.tried ? ` <span class="muted">(it helped ${top.helped} of the last ${top.tried} times)</span>` : ''}.</p>
+    ${rest.length ? `<p>Also helpful: ${esc(rest.map((x) => helpPhrase(x.name)).join('; '))}.</p>` : ''}
+    ${fam ? `<p class="muted">Hearing from family has helped before. If you'd like the team to call you on an unsettled night, let them know.</p>` : ''}
+    <p class="muted">The care team keeps this list up to date from what they see works, night by night.</p>
+  </section>`;
+}
+
+const privacyCard = () => `<section class="card privacy" aria-labelledby="h-priv">
+  <h2 id="h-priv">${icon('shield')}What NightWatch does, and doesn't do</h2>
+  <ul>
+    <li>${icon('camera')}<span><b>No video is recorded or shared.</b> Hallway cameras are looked at by the computer for a moment to notice someone walking towards a door, then the picture is thrown away.</span></li>
+    <li>${icon('user')}<span><b>Only this person's summary.</b> This page shows nobody else, and no camera pictures at all.</span></li>
+    <li>${icon('wifiOff')}<span><b>Everything stays in the building.</b> It runs on one computer at the care home, with no internet and no cloud.</span></li>
+    <li>${icon('moon')}<span><b>Cameras can be switched off</b>, or set to watch at night only. Bed and door sensors still work either way.</span></li>
+    <li>${icon('phone')}<span><b>People, not machines, look after them.</b> NightWatch only tells the night staff when someone may need them.</span></li>
+  </ul>
+</section>`;
+
+const actions = () => `<section class="actions no-print">
+  <span class="muted">Questions? The care team is happy to talk any time.</span>
+  <button class="nw-btn nw-btn--primary" type="button" id="print">${icon('print')}Print / save as PDF</button>
+</section>`;
+
+function render(r) {
+  const name = r.name || 'Your relative';
+  const stories = [...(r.alerts || [])].sort((x, y) => x.id - y.id).map(story);
+  const hl = headline(name, stories);
+  const [nIco, nTxt] = nowLine(r);
+  // The care home's clock (the demo can run a virtual night), from the newest sample of this resident.
+  const last = (r.history || []).slice(-1)[0];
+  const homeTime = last ? last.t : null;
+  const hour = homeTime ? +homeTime.slice(0, 2) : new Date().getHours();
+  const night = new Date(); if (hour < 12) night.setDate(night.getDate() - 1);
+  const dateStr = night.toLocaleDateString(undefined, { weekday: 'long', day: 'numeric', month: 'long' });
+  document.title = `${name} · How was their night? · NightWatch`;
+  $main.innerHTML = `
+    <section class="card" aria-labelledby="h-main">
+      <p class="kicker">How was ${esc(name)}'s night? · Night of ${esc(dateStr)}</p>
+      <h1 id="h-main">${esc(hl.h)}</h1>
+      <p class="lede">${esc(hl.p)}</p>
+      <div class="now">${icon(nIco)}<span>${esc(nTxt)}</span></div>
+    </section>
+    ${stories.length ? `<section class="card" aria-labelledby="h-night">
+      <h2 id="h-night">${icon('clock')}${stories.length === 1 ? 'The one time they were up' : 'The times they were up'}</h2>
+      ${stories.map((s) => `<article class="moment">
+        ${s.open ? '<div class="live">Happening now</div>' : ''}
+        <h3>${s.end && short(s.end) !== short(s.start) ? `${esc(clock(s.start))} to ${esc(clock(s.end))}` : `Around ${esc(clock(s.start))}`}</h3>
+        <ol class="steps">${stepItems(s.steps)}</ol>
+      </article>`).join('')}
+    </section>` : ''}
+    ${helpsCard(r)}
+    ${privacyCard()}
+    ${actions()}
+    <p class="foot">Updated ${esc(homeTime ? clock(homeTime) : new Date().toLocaleTimeString([], { hour: 'numeric', minute: '2-digit' }))} · from NightWatch at the care home</p>`;
+  bindPrint();
+}
+
+// Show a time only where it changes, so a quick event doesn't read as a column of identical times.
+function stepItems(steps) {
+  let prev = '';
+  return steps.map(([t, x]) => { const v = t ? short(t) : ''; const show = v && v !== prev; if (v) prev = v;
+    return `<li><time>${show ? esc(v) : ''}</time><span>${esc(x)}</span></li>`; }).join('');
+}
+
+function bindPrint() { const b = document.getElementById('print'); if (b) b.onclick = () => window.print(); }
+
+function message(title, body, extra = '', privacy = true) {
+  $main.innerHTML = `<section class="card"><h1>${esc(title)}</h1><p class="lede">${esc(body)}</p>${extra}</section>${privacy ? privacyCard() : ''}`;
+}
+
+async function getJSON(url) {
+  const res = await fetch(url);
+  if (res.status === 401) { const e = new Error('pair'); e.pair = true; throw e; }
+  return res.json();
+}
+
+async function picker() {
+  // Only the nurse-station laptop gets a list of residents (the server tells us: phone pairing details go to the laptop only).
+  let local = false, health = {};
+  try { health = await getJSON('/api/health'); local = !!health.phones; } catch {}
+  if (health.facility) document.getElementById('facility').textContent = health.facility;
+  if (!local) {
+    return message("We couldn't find that update", 'This link may be out of date. Please ask the care team for a fresh link to your relative\'s nightly update.');
+  }
+  let residents = [];
+  try { residents = (await getJSON('/api/state')).residents || []; } catch {}
+  message(rid ? "We couldn't find that person" : 'Whose night would you like to see?',
+    'Choose a resident to open their family update. On a family member\'s phone, this page shows only their own relative.',
+    `<ul class="pick">${residents.map((r) => `<li><a href="?id=${encodeURIComponent(r.id)}">${esc(r.name)}${icon('next')}</a></li>`).join('')}</ul>`, false);
+}
+
+let timer = null;
+async function load() {
+  if (!rid) return picker();
+  try {
+    const r = await getJSON(`/api/resident?id=${encodeURIComponent(rid)}`);
+    if (r.error) return picker();
+    render(r);
+  } catch (e) {
+    if (e.pair) return message('This page opens on paired devices', 'For privacy, the nightly update only opens on devices the care home has set up. Please ask the care team to pair this phone.');
+    message("We can't reach the care home right now", 'The update comes from a computer inside the care home. Please try again in a little while.');
+  }
+}
+(async () => {
+  try { const h = await getJSON('/api/health'); if (h.facility) document.getElementById('facility').textContent = h.facility; } catch {}
+  await load();
+  // Keep it current while someone is reading, but never while they're printing.
+  timer = setInterval(() => { if (rid && document.visibilityState === 'visible') load(); }, 30000);
+})();
+</script>
+</body>
+</html>

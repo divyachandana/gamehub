@@ -1,0 +1,524 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>NightWatch · Story mode</title>
+<script src="/assets/auth.js"></script>
+<link rel="stylesheet" href="/assets/theme.css">
+<style>
+  html, body { overflow-x: hidden; }
+  .nw-topbar { justify-content: space-between; }
+  .nav { display: flex; gap: 8px; flex-wrap: wrap; }
+  .nav .nw-btn { min-height: 36px; font-size: 13.5px; }
+
+  .stage { display: grid; grid-template-columns: minmax(0, 1.05fr) minmax(0, 1fr); gap: 22px; padding: 22px 28px 26px;
+           max-width: 1600px; margin: 0 auto; min-height: calc(100vh - 70px); }
+  .stage > * { min-width: 0; }
+  @media (max-width: 960px) { .stage { grid-template-columns: minmax(0, 1fr); padding: 14px 16px 24px; gap: 16px; min-height: 0; } .nw-topbar { padding: 12px 16px; } }
+
+  /* ---------------------------------------------------------------- captions (left) */
+  .cap { display: flex; flex-direction: column; gap: 18px; }
+  .kicker { display: flex; flex-wrap: wrap; align-items: center; gap: 8px 12px; color: var(--nw-muted); font-weight: 750; font-size: 14px;
+            letter-spacing: .12em; text-transform: uppercase; }
+  .kicker .n { color: var(--nw-accent); font-variant-numeric: tabular-nums; }
+  .sim-tag { display: inline-flex; align-items: center; gap: 6px; padding: 4px 10px; border-radius: 6px; font-size: 12.5px; letter-spacing: .1em;
+             background: repeating-linear-gradient(135deg, #3a2a07 0 8px, #2a1f06 8px 16px); color: var(--nw-l1); border: 1px solid #6b5216; }
+  h1.head { margin: 0; font: 780 clamp(30px, 4.1vw, 60px)/1.06 var(--nw-font-display); letter-spacing: -.025em; text-wrap: balance; }
+  .body { margin: 0; color: var(--nw-ink-2); font-size: clamp(17px, 1.55vw, 23px); line-height: 1.45; display: grid; gap: 10px; max-width: 46ch; }
+  .body p { margin: 0; }
+  .body b { color: var(--nw-ink); }
+  .note { color: var(--nw-faint); font-size: 13.5px; max-width: 70ch; }
+  .note a, .body a:not(.nw-btn) { color: var(--nw-accent); }
+
+  /* live narration: what the real system just did */
+  .live { display: grid; gap: 8px; margin: 0; padding: 0; list-style: none; }
+  .live li { display: flex; gap: 12px; align-items: flex-start; font-size: clamp(16px, 1.35vw, 20px); line-height: 1.35; color: var(--nw-ink);
+             padding: 10px 14px; border-radius: 12px; background: var(--nw-surface); border: 1px solid var(--nw-line);
+             animation: rise .45s var(--nw-ease) both; }
+  .live li .nw-ico { width: 24px; height: 24px; margin-top: 1px; color: var(--lvl, var(--nw-ok)); }
+  .live li time { color: var(--nw-faint); font-family: var(--nw-mono); font-size: 13px; margin-left: auto; padding-left: 10px; white-space: nowrap; padding-top: 4px; }
+  .live li.nw-l1, .live li.nw-l2, .live li.nw-l3 { border-color: var(--lvl); background: var(--lvl-bg); }
+  .live li.wait { color: var(--nw-muted); border-style: dashed; animation: none; }
+  .live li.wait .nw-ico { color: var(--nw-muted); }
+  @keyframes rise { from { transform: translateY(10px); } to { transform: none; } }
+
+  /* progress + controls */
+  .foot { margin-top: auto; display: grid; gap: 14px; padding-top: 6px; }
+  .prog { display: grid; grid-template-columns: repeat(8, minmax(0, 1fr)); gap: 6px; }
+  .prog button { all: unset; cursor: pointer; display: grid; gap: 6px; padding: 4px 0; min-height: 30px; }
+  .prog button:focus-visible { outline: 3px solid var(--nw-accent); outline-offset: 2px; border-radius: 6px; }
+  .prog .bar { height: 6px; border-radius: 3px; background: var(--nw-line); overflow: hidden; }
+  .prog .bar i { display: block; height: 100%; width: 0; background: var(--nw-accent); transition: width .5s linear; }
+  .prog .done .bar i { width: 100%; background: var(--nw-ink-2); }
+  .prog .lbl { font-size: 11.5px; color: var(--nw-faint); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .prog [aria-current="step"] .lbl { color: var(--nw-ink); font-weight: 700; }
+  .ctl { display: flex; flex-wrap: wrap; gap: 10px; align-items: center; }
+  .ctl .nw-btn { min-height: 52px; font-size: 16px; }
+  .ctl .hint { color: var(--nw-faint); font-size: 13px; margin-left: auto; }
+  @media (max-width: 600px) { .ctl .hint { display: none; } .ctl .nw-btn { flex: 1 1 40%; } .prog .lbl { display: none; } }
+
+  /* ---------------------------------------------------------------- mini view (right) */
+  .view { display: flex; flex-direction: column; gap: 14px; }
+  .view .nw-panel { padding: 16px 18px; }
+  .vhead { display: flex; flex-wrap: wrap; align-items: center; gap: 10px 16px; }
+  .vhead .nw-clock { font-size: clamp(36px, 3.8vw, 56px); }
+  .vhead .fac { color: var(--nw-muted); font-size: 14px; margin-left: auto; text-align: right; min-width: 0; overflow-wrap: anywhere; }
+  .conn { font-size: 13px; color: var(--nw-l1); }
+  .view.is-stale > :not(:first-child) { opacity: .45; filter: grayscale(.6); }
+
+  .focus { border-width: 2px; }
+  .focus.nw-l1, .focus.nw-l2, .focus.nw-l3 { border-color: var(--lvl); background: linear-gradient(180deg, var(--lvl-bg), var(--nw-bg-2)); }
+  .focus .row { display: flex; align-items: center; gap: 14px; flex-wrap: wrap; }
+  .focus .ttl { font: 720 clamp(19px, 1.7vw, 26px)/1.25 var(--nw-font-display); margin: 10px 0 4px; overflow-wrap: anywhere; }
+  .focus .who { color: var(--nw-ink-2); font-size: 15px; }
+  .focus .state { margin-left: auto; display: flex; align-items: center; gap: 12px; }
+  .focus .nw-badge { font-size: 15px; padding: 6px 12px; }
+  .quiet { display: flex; align-items: center; gap: 16px; }
+  .quiet .nw-ico { width: 46px; height: 46px; color: var(--nw-ok); }
+  .quiet b { display: block; font: 750 clamp(24px, 2.2vw, 32px)/1.1 var(--nw-font-display); }
+  .quiet span { color: var(--nw-muted); }
+
+  /* escalation ladder, big */
+  .steps3 { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 10px; }
+  .steps3 div { border: 2px solid var(--nw-line); border-radius: 14px; padding: 12px; text-align: center; color: var(--nw-faint); transition: all .4s var(--nw-ease); }
+  .steps3 div .nw-ico { width: 30px; height: 30px; display: block; margin: 0 auto 6px; }
+  .steps3 div b { display: block; font-size: clamp(14px, 1.3vw, 18px); letter-spacing: .06em; }
+  .steps3 div small { font-size: 12.5px; }
+  .steps3 div.on { color: var(--nw-ink); border-color: var(--lvl); background: var(--lvl-bg); }
+  .steps3 div.on .nw-ico { color: var(--lvl); }
+  .steps3 div.now { box-shadow: 0 0 0 4px var(--lvl-bg); }
+
+  .grid2 { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(200px, 100%), 1fr)); gap: 10px; }
+  .tile { background: var(--nw-bg-2); border: 1px solid var(--nw-line); border-radius: 14px; padding: 12px 14px; min-width: 0; }
+  .tile .k { color: var(--nw-muted); font-size: 12px; letter-spacing: .08em; text-transform: uppercase; font-weight: 700; display: flex; align-items: center; gap: 6px; }
+  .tile .v { font: 750 clamp(22px, 2vw, 30px)/1.15 var(--nw-font-display); margin-top: 6px; font-variant-numeric: tabular-nums; overflow-wrap: anywhere; }
+  .tile .s { color: var(--nw-ink-2); font-size: 13.5px; margin-top: 3px; overflow-wrap: anywhere; }
+  .tile.is-open { border-color: var(--nw-l1); background: var(--nw-l1-bg); }
+  .tile.is-good .v { color: var(--nw-ok); }
+  .tile.big .v { font-size: clamp(30px, 3vw, 46px); }
+
+  .feed { list-style: none; margin: 0; padding: 0; display: grid; gap: 6px; font-size: 14px; }
+  .feed li { display: grid; grid-template-columns: 66px minmax(0, 1fr); gap: 10px; color: var(--nw-ink-2); }
+  .feed time { color: var(--nw-faint); font-family: var(--nw-mono); font-size: 12.5px; padding-top: 1px; }
+  .feed li span { overflow-wrap: anywhere; }
+  .feed .L1 b { color: var(--nw-l1); } .feed .L2 b { color: var(--nw-l2); } .feed .L3 b, .feed .contact b { color: var(--nw-l3); }
+
+  /* camera radar (positions only) */
+  .radar { position: relative; }
+  .radar > svg { width: 100%; height: auto; display: block; border-radius: 12px; background: #050913; border: 1px solid var(--nw-line); }
+  .radar .sim-tag { position: absolute; top: 10px; left: 10px; }
+  .legend { display: flex; flex-wrap: wrap; gap: 6px 14px; font-size: 13px; color: var(--nw-muted); margin-top: 8px; }
+  .legend i { display: inline-block; width: 10px; height: 10px; border-radius: 3px; margin-right: 6px; vertical-align: -1px; }
+
+  /* problem card */
+  .case { border-left: 4px solid var(--nw-l3); }
+  .case .t { font: 800 clamp(40px, 4.6vw, 72px)/1 var(--nw-font-display); letter-spacing: -.03em; font-variant-numeric: tabular-nums; }
+  .case .t small { font-size: .4em; color: var(--nw-muted); font-weight: 650; letter-spacing: 0; margin-left: 6px; }
+  .case p { margin: 10px 0 0; color: var(--nw-ink-2); font-size: clamp(15px, 1.25vw, 18px); }
+  .ratio { display: flex; align-items: center; gap: 18px; flex-wrap: wrap; }
+  .ratio .dots { display: grid; grid-template-columns: repeat(10, 12px); gap: 5px; }
+  .ratio .dots i { width: 12px; height: 12px; border-radius: 50%; background: var(--nw-line-strong); }
+  .ratio .one { display: grid; place-items: center; width: 56px; height: 56px; border-radius: 50%; background: var(--nw-accent); color: var(--nw-accent-ink); flex: none; }
+  .ratio .one .nw-ico { width: 30px; height: 30px; }
+
+  .cards3 { display: grid; gap: 10px; }
+  .cards3 .tile { display: flex; gap: 14px; align-items: center; }
+  .cards3 .tile > .nw-ico { width: 34px; height: 34px; color: var(--nw-accent); }
+  .cards3 .tile.now > .nw-ico { color: var(--nw-ok); }
+  .cards3 .tile b { display: block; font-size: 18px; }
+  .cards3 .tile span { color: var(--nw-muted); font-size: 14px; }
+
+  .facts { list-style: none; margin: 0; padding: 0; display: grid; gap: 10px; }
+  .facts li { display: flex; gap: 12px; align-items: flex-start; font-size: 16px; color: var(--nw-ink-2); }
+  .facts li .nw-ico { width: 24px; height: 24px; color: var(--nw-ok); margin-top: 1px; }
+  .facts b { color: var(--nw-ink); }
+
+  .open-link { display: inline-flex; }
+  @media (prefers-reduced-motion: reduce) {
+    .live li { animation: none; }
+    .prog .bar i, .steps3 div { transition: none; }
+    .nw-attn { animation: none; outline: 4px solid var(--nw-l3); outline-offset: 2px; }
+  }
+</style>
+</head>
+<body class="nw">
+<header class="nw-topbar">
+  <div class="nw-brand"><div class="nw-brand-mark" id="logo"></div><div><div class="nw-brand-name">NightWatch · Story mode</div>
+    <div class="nw-brand-sub">A guided run of the real system on this laptop · residents are synthetic</div></div></div>
+  <nav class="nav" aria-label="Other screens">
+    <a class="nw-btn nw-btn--ghost" href="/dashboard/">Nurse station</a>
+    <a class="nw-btn nw-btn--ghost" href="/wall/">Wall display</a>
+    <a class="nw-btn nw-btn--ghost" href="/perf/">Performance</a>
+  </nav>
+</header>
+
+<main class="stage">
+  <section class="cap" aria-labelledby="head">
+    <div class="kicker"><span>Step <span class="n" id="num">1</span> of 8</span><span aria-hidden="true">·</span><span id="kick"></span><span id="simtag"></span></div>
+    <h1 class="head" id="head" tabindex="-1"></h1>
+    <div class="body" id="body"></div>
+    <ol class="live" id="live" aria-live="polite" aria-label="What the system is doing now"></ol>
+    <div class="note" id="note"></div>
+    <div class="foot">
+      <div class="prog" id="prog" role="group" aria-label="Steps"></div>
+      <div class="ctl">
+        <button class="nw-btn" id="prev" aria-label="Previous step"></button>
+        <button class="nw-btn nw-btn--primary" id="play"></button>
+        <button class="nw-btn" id="next" aria-label="Next step"></button>
+        <button class="nw-btn nw-btn--ghost" id="restart"></button>
+        <span class="hint"><span class="nw-kbd">←</span> <span class="nw-kbd">→</span> step · <span class="nw-kbd">Space</span> play/pause · <span class="nw-kbd">R</span> restart</span>
+      </div>
+    </div>
+  </section>
+  <section class="view" id="view" aria-label="Live view of the system"></section>
+</main>
+
+<script src="/assets/nw.js"></script>
+<script>
+(() => {
+const { esc, icon } = NW;
+const $ = (id) => document.getElementById(id);
+const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
+$('logo').innerHTML = icon('logo');
+$('prev').innerHTML = `${icon('back')}Prev`;
+$('next').innerHTML = `Next${icon('next')}`;
+$('restart').innerHTML = `${icon('reset')}Restart`;
+
+// ---------------------------------------------------------------- state from the server
+let S = null, R = null, online = true, lastOk = 0;
+async function poll() {
+  try {
+    const r = await fetch('/api/state', { cache: 'no-store' });
+    if (!r.ok) throw new Error(r.status);
+    S = await r.json(); online = true; lastOk = Date.now();
+  } catch { online = false; }
+  tick();
+  setTimeout(poll, online ? 700 : 2000);
+}
+async function loadReport() {
+  try { R = await (await fetch('/api/report', { cache: 'no-store' })).json(); } catch { R = null; }
+}
+
+const resident = (id) => (S && S.residents.find((r) => r.id === id)) || null;
+const exitOf = (id) => (S && S.exits.find((e) => e.id === id)) || null;
+const top = () => (S && S.alerts[0]) || null;
+const clockIs = (pre) => S && S.clock.startsWith(pre);
+const hist = (a, re) => a && a.history.some(([, h]) => re.test(h));
+const hm = () => (S ? S.clock.slice(0, 5) : '');
+
+// ---------------------------------------------------------------- the 8 steps
+// beats: narrated in order once `when(state)` is true (the real system did it). done(): step can advance.
+const STEPS = [
+  { key: 'problem', label: 'The problem', kick: 'The problem', scenario: 'reset', dwell: 16,
+    head: 'At night, one worker may be covering a whole wing.',
+    body: `<p>Residents with dementia sometimes leave their room at night. In one Wisconsin case, a memory-care resident walked out through a door at <b>12:41 a.m.</b> <b>According to authorities, a door alarm went off and was ignored.</b> The resident was found dead outside; a jury ordered the operator to pay about $4 million.</p>
+           <p>By the time a door alarm goes off, it's already late. The care team wants to know earlier: <b>a resident has left their room.</b></p>`,
+    note: `Case: McKnight's Senior Living (jury verdict). Wandering affects roughly 20–30% of nursing-home residents with dementia. The 1-to-40 staffing figure is our teammate's experience in memory care, not a statistic.` },
+
+  { key: 'day', label: 'Day', kick: 'Daytime · 2 p.m.', scenario: 'day_visits', at: '14:', hold: 5, max: 45,
+    head: 'In the day, doors are visits, not alarms.',
+    body: `<p>Visitors come and go and residents walk the corridors. Every door is <b>logged as a visit</b>. Nobody's phone buzzes.</p>`,
+    beats: [
+      { when: () => clockIs('14:') && !S.night, say: () => `Clock set to ${hm()}: day mode`, ico: 'sun' },
+      { when: () => clockIs('14:') && S.stats.visits_today >= 1, say: () => 'Front entrance opened: logged as a visit, no alarm', ico: 'door' },
+      { when: () => clockIs('14:') && S.stats.visits_today >= 3 && !S.exits.some((e) => e.open), say: () => `${S.stats.visits_today} visits logged · ${S.alerts.length ? S.alerts.length + ' alerts' : 'no alerts'}`, ico: 'check' },
+    ] },
+
+  { key: 'bath', label: 'Normal night', kick: 'Normal night · 3 a.m.', scenario: 'night_bathroom', at: '03:', hold: 5, max: 50,
+    head: 'A bathroom trip at 3 a.m. stays quiet.',
+    body: `<p>R-15 gets up for the ensuite. They never leave their room, so <b>nothing fires</b>.</p>
+           <p>The care team only needs to know when someone <b>leaves their room</b> at night. Everything else stays quiet.</p>`,
+    beats: [
+      { when: () => clockIs('03:') && S.night, say: () => `Clock set to ${hm()}: night mode`, ico: 'moon' },
+      { when: () => clockIs('03:') && resident('R-15') && !resident('R-15').in_bed, say: () => 'R-15 is out of bed, still in their room', ico: 'bed' },
+      { when: (c) => c.saw[1] && clockIs('03:') && resident('R-15') && resident('R-15').in_bed, say: () => `R-15 is back in bed · ${S.alerts.length ? 'an alert was raised' : 'no alert sent'}`, ico: 'check' },
+    ] },
+
+  { key: 'walk', label: 'Leaves room', kick: 'Night · 2:08 a.m.', scenario: 'camera_walkout', at: '02:', hold: 8, max: 40, sim: true,
+    head: 'A resident leaves their room at 2:08.',
+    body: `<p>The hallway camera watches one line: <b>the doorway</b>. When feet cross it going out at night, the night phone gets a quiet <b>heads-up</b>.</p>
+           <p>The nurse station sees a dot on a radar, never video. Frames are analysed in memory and dropped.</p>`,
+    note: `This step uses <b>simulated camera data</b>: no webcam is involved. On a real camera, a person detector runs through ExecuTorch on this laptop and feeds the same path.`,
+    beats: [
+      { when: () => clockIs('02:') && cam() && cam().simulated, say: () => 'Simulated hallway camera: someone is in the doorway of room 12', ico: 'camera' },
+      { when: () => clockIs('02:') && top(), say: () => `Heads-up to the night phone: ${top().title}`, lvl: () => top().level, ico: 'bell' },
+    ] },
+
+  { key: 'climb', label: 'Nobody answers', kick: 'Nobody answers', scenario: 'night_elopement', at: '02:', hold: 7, max: 130,
+    head: 'Nobody answers. So it keeps climbing.',
+    body: `<p>The one night worker is busy with someone else. NightWatch <b>only climbs when nobody responds</b>: heads-up, then urgent, then emergency.</p>
+           <p>A small model, run through <b>ExecuTorch on this laptop</b>, flags that being up at this hour is unusual for R-07.</p>`,
+    note: `Emergency services are contacted through the facility's own chain. In this build that step is <b>simulated</b>: it never dials anyone. "Normal" was learned from simulated days; in a facility it would come from each resident's own first weeks.`,
+    beats: [
+      { when: () => clockIs('02:') && resident('R-07') && !resident('R-07').in_bed, say: () => 'R-07 is out of bed at 02:08, unusual for them', ico: 'bed' },
+      { when: () => clockIs('02:') && top() && top().level >= 1, say: () => 'Level 1 · Heads-up to the night phone. No answer…', lvl: () => 1, ico: 'bell' },
+      { when: () => clockIs('02:') && top() && top().level >= 2, say: () => 'Level 2 · Urgent: the front entrance opened', lvl: () => 2, ico: 'door' },
+      { when: () => clockIs('02:') && top() && top().level >= 3, say: () => 'Level 3 · Emergency: full screen at the nurse station, every phone', lvl: () => 3, ico: 'siren' },
+      { when: () => clockIs('02:') && hist(top(), /supervisor/i), say: () => 'Calling the on-call supervisor (simulated)', lvl: () => 3, ico: 'phone' },
+      { when: () => clockIs('02:') && hist(top(), /^Emergency services/), say: () => 'Emergency services would be called now (simulated: never dials)', lvl: () => 3, ico: 'siren' },
+    ] },
+
+  { key: 'privacy', label: 'Privacy', kick: 'Privacy', dwell: 16,
+    head: 'Families and staff decide when it watches.',
+    body: `<p>Each camera can be <b>on, night only, or off</b>. Off means physically off: the webcam is released and nothing is analysed. Every switch is logged with who did it.</p>
+           <p>Nothing is recorded or sent anywhere, and it keeps working <b>with Wi-Fi off</b>.</p>` },
+
+  { key: 'report', label: 'Morning report', kick: 'Morning handover', dwell: 15,
+    head: 'In the morning, one report for the handover.',
+    body: `<p>Every alert, how fast someone responded, severity, and <b>draft care records in the care team's own format</b>, ready for staff to confirm.</p>
+           <p><a class="nw-btn nw-btn--primary open-link" href="/report/">${icon('report')}Open the report</a></p>` },
+
+  { key: 'next', label: "What's next", kick: "What's next", dwell: 16,
+    head: 'It notices early, and keeps going when nobody answers.',
+    body: `<p>The same on-device approach fits anywhere someone has to notice at night: <b>nurseries</b>, and <b>home care for aging parents</b> living alone.</p>
+           <p>NightWatch supports the night shift; it doesn't replace them.</p>`,
+    note: `Not a medical device. Measured on-device numbers, no estimates: <a href="/perf/">/perf/</a>.` },
+];
+
+const cam = () => (S && S.cameras.find((c) => c.id === 'hall12')) || null;
+
+// ---------------------------------------------------------------- player
+let i = 0, playing = false, enteredAt = 0, pausedElapsed = 0, ctx = null, doneAt = 0;
+const prog = $('prog');
+prog.innerHTML = STEPS.map((s, k) => `<button data-k="${k}" aria-label="Step ${k + 1}: ${esc(s.label)}"><span class="bar"><i></i></span><span class="lbl">${k + 1} · ${esc(s.label)}</span></button>`).join('');
+prog.addEventListener('click', (e) => { const b = e.target.closest('button'); if (b) go(+b.dataset.k); });
+
+function go(k) {
+  i = Math.max(0, Math.min(STEPS.length - 1, k));
+  const s = STEPS[i];
+  enteredAt = Date.now(); pausedElapsed = 0; doneAt = 0; ctx = { saw: [], armed: !s.beats, posted: !s.scenario };
+  if (s.scenario) { const c = ctx; NW.post('/api/scenario', { name: s.scenario }).then(() => { c.posted = true; }, () => { c.posted = true; }); }
+  if (s.key === 'report') loadReport();
+  $('num').textContent = i + 1;
+  $('kick').textContent = s.kick;
+  $('simtag').innerHTML = s.sim ? `<span class="sim-tag">${icon('camera')}SIMULATED camera</span>` : '';
+  $('head').textContent = s.head;
+  $('body').innerHTML = s.body;
+  $('note').innerHTML = s.note || '';
+  $('live').innerHTML = '';
+  [...prog.children].forEach((b, k) => { b.classList.toggle('done', k < i); if (k === i) b.setAttribute('aria-current', 'step'); else b.removeAttribute('aria-current'); b.querySelector('i').style.width = k < i ? '100%' : '0'; });
+  $('prev').disabled = i === 0;
+  $('view').innerHTML = '';
+  tick();
+}
+
+function setPlaying(p) {
+  playing = p;
+  $('play').innerHTML = p ? `<svg class="nw-ico" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><rect x="6" y="5" width="4" height="14" rx="1"/><rect x="14" y="5" width="4" height="14" rx="1"/></svg>Pause` : `${icon('play')}Play`;
+  $('play').setAttribute('aria-pressed', String(p));
+  if (p) enteredAt = Date.now() - pausedElapsed;
+  else pausedElapsed = Date.now() - enteredAt;
+}
+const elapsed = () => (playing ? Date.now() - enteredAt : pausedElapsed);
+
+function narrate() {
+  const s = STEPS[i];
+  if (!s.beats || !S) return;
+  // Only narrate once the scenario has actually restarted (no stale alerts from the previous step).
+  if (!ctx.armed && ctx.posted && clockIs(s.at) && !S.alerts.length) ctx.armed = true;
+  if (ctx.armed) s.beats.forEach((b, k) => {
+    if (ctx.saw[k]) return;
+    if (k > 0 && !ctx.saw[k - 1] && !b.lvl) return;   // keep order for plain beats
+    let ok = false; try { ok = b.when(ctx); } catch {}
+    if (!ok) return;
+    ctx.saw[k] = true;
+    const lvl = b.lvl ? b.lvl() : 0;
+    const li = document.createElement('li');
+    if (lvl) li.className = `nw-l${lvl}`;
+    li.innerHTML = `${icon(b.ico)}<span>${esc(b.say())}</span><time>${esc(S.clock)}</time>`;
+    $('live').appendChild(li);
+  });
+  const all = s.beats.every((_, k) => ctx.saw[k]);
+  if (all && !doneAt) doneAt = Date.now();
+  let w = $('live').querySelector('.wait');
+  if (all) { if (w) w.remove(); return; }
+  if (Date.now() - enteredAt < 1200) return;
+  if (!w) { w = document.createElement('li'); w.className = 'wait'; }
+  if (w !== $('live').lastElementChild) $('live').appendChild(w);
+  const msg = !online ? 'Reconnecting to the laptop…'
+    : ctx.armed && !clockIs(s.at) ? `Another screen changed the demo clock. Press step ${i + 1} below to replay this step.`
+    : 'Watching the real system…';
+  if (w.dataset.msg !== msg) { w.dataset.msg = msg; w.innerHTML = `${icon('clock')}<span>${esc(msg)}</span>`; }
+}
+
+function stepProgress() {
+  const s = STEPS[i], el = elapsed();
+  if (s.beats) {
+    const n = s.beats.filter((_, k) => ctx.saw[k]).length;
+    const hold = doneAt ? Math.min(1, (Date.now() - doneAt) / (s.hold * 1000)) : 0;
+    return Math.min(1, (n + hold) / (s.beats.length + 1));
+  }
+  return Math.min(1, el / (s.dwell * 1000));
+}
+
+function maybeAdvance() {
+  if (!playing) return;
+  const s = STEPS[i], el = elapsed();
+  const ready = s.beats ? (doneAt && Date.now() - doneAt >= s.hold * 1000) || el > s.max * 1000 : el >= s.dwell * 1000;
+  if (!ready) return;
+  if (i < STEPS.length - 1) go(i + 1);
+  else if (el >= (s.dwell + 20) * 1000) go(0);   // loop for judges walking up to the table
+}
+
+function tick() {
+  narrate();
+  const bar = prog.children[i] && prog.children[i].querySelector('i');
+  if (bar) bar.style.width = `${Math.round(stepProgress() * 100)}%`;
+  render();
+  maybeAdvance();
+}
+
+setInterval(tick, 500);
+
+// ---------------------------------------------------------------- mini views
+function header() {
+  if (!S) return `<div class="nw-panel"><div class="conn">Connecting to the laptop…</div></div>`;
+  return `<div class="nw-panel vhead">
+    <span class="nw-mode ${S.night ? 'is-night' : 'is-day'}">${icon(S.night ? 'moon' : 'sun')}${S.night ? 'NIGHT' : 'DAY'}</span>
+    <span class="nw-clock">${esc(S.clock.slice(0, 5))}<small>${esc(S.clock.slice(5))}</small></span>
+    <span class="fac">${esc(S.facility)}<br>${S.night_staff} night staff · ${esc(S.scorer.device)}${online ? '' : ' · <span class="conn">reconnecting…</span>'}</span></div>`;
+}
+function focusCard() {
+  const a = top();
+  if (!a) return `<div class="nw-panel focus"><div class="quiet">${icon('check')}<div><b>All quiet</b><span>No open alerts · ${S.stats.visits_today} visit${S.stats.visits_today === 1 ? '' : 's'} logged today</span></div></div></div>`;
+  const r = resident(a.resident), L = NW.LEVELS[a.level];
+  const limit = NW.limitFor(a, S);
+  const ring = a.escalates_in_s != null && a.level < 3 ? NW.ring(a.escalates_in_s, a.escalates_in_s / limit, 'Climbs') : '';
+  return `<div class="nw-panel focus nw-l${a.level} ${a.level === 3 && !reduce ? 'nw-attn' : ''}" role="status">
+    <div class="row">${NW.badge(a.level)}${NW.ladder(a.level)}<span class="state">${a.acked_by ? `${icon('check')}${esc(a.acked_by)} is going` : '<span class="who">Nobody has answered</span>'}${ring}</span></div>
+    <div class="ttl">${esc(a.title)}</div>
+    <div class="who">${icon('user')} ${esc(r ? r.name : a.resident || 'Unknown')}${a.room ? ` · Room ${esc(a.room)}` : ''}${a.description ? ` · ${esc(a.description)}` : ''}</div></div>`;
+}
+function feed(n = 5, filter) {
+  const ev = (S.events || []).filter(filter || (() => true)).slice(0, n);
+  if (!ev.length) return '';
+  return `<div class="nw-panel"><div class="nw-panel-head"><div class="nw-panel-title">${icon('clock')}Event log</div></div>
+    <ul class="feed">${ev.map((e) => `<li class="${esc(e.kind)}"><time>${esc(e.t)}</time><span>${/^(L\d|contact)$/.test(e.kind) ? `<b>${esc(e.text)}</b>` : esc(e.text)}</span></li>`).join('')}</ul></div>`;
+}
+function radar() {
+  const c = cam(); if (!c) return '';
+  const d = c.doorway && c.doorway.line, W = 400, H = 240;
+  const tracks = (c.tracks || []).map((t) => {
+    const fx = ((t.x1 + t.x2) / 2) * W, fy = t.y2 * H;
+    const trail = (t.trail || []).map(([x, y]) => `${(x * W).toFixed(1)},${(y * H).toFixed(1)}`).join(' ');
+    const col = t.side === 1 ? 'var(--nw-room)' : 'var(--nw-hall)';
+    return `${trail ? `<polyline points="${trail}" fill="none" stroke="${col}" stroke-width="3" stroke-linecap="round" opacity=".55"/>` : ''}
+      <circle cx="${fx.toFixed(1)}" cy="${fy.toFixed(1)}" r="11" fill="${col}"/><text x="${fx.toFixed(1)}" y="${(fy - 18).toFixed(1)}" fill="var(--nw-ink)" font-size="15" text-anchor="middle" font-weight="700">${t.side === 1 ? 'in room' : 'hallway'}</text>`;
+  }).join('');
+  const line = d ? `<line x1="${d[0] * W}" y1="${d[1] * H}" x2="${d[2] * W}" y2="${d[3] * H}" stroke="var(--nw-ink)" stroke-width="3" stroke-dasharray="8 6"/>
+      <text x="${d[2] * W + 8}" y="${d[3] * H - 4}" fill="var(--nw-muted)" font-size="13">doorway</text>
+      <text x="${d[0] * W - 90}" y="40" fill="var(--nw-room)" font-size="14" font-weight="700">ROOM 12</text>
+      <text x="${d[0] * W + 40}" y="40" fill="var(--nw-hall)" font-size="14" font-weight="700">HALLWAY</text>` : '';
+  const st = NW.camState(c);
+  return `<div class="nw-panel"><div class="nw-panel-head"><div class="nw-panel-title">${icon('radar')}Camera radar · positions only</div>${NW.camStateHTML(c)}</div>
+    <div class="radar"><svg viewBox="0 0 ${W} ${H}" role="img" aria-label="Hallway camera radar: ${esc(st.long)}${(c.tracks || []).length ? ', one person ' + ((c.tracks[0].side === 1) ? 'in the room' : 'in the hallway') : ''}">${line}${tracks}
+      ${!(c.tracks || []).length ? `<text x="${W / 2}" y="${H / 2}" fill="var(--nw-faint)" font-size="15" text-anchor="middle">${esc(st.long)}</text>` : ''}</svg>
+      ${c.simulated ? `<span class="sim-tag">${icon('camera')}SIMULATED</span>` : ''}</div>
+    <div class="legend"><span><i style="background:var(--nw-room)"></i>Room side</span><span><i style="background:var(--nw-hall)"></i>Hallway side</span><span>No video shown or stored</span></div></div>`;
+}
+
+const VIEWS = {
+  problem: () => `<div class="nw-panel case"><div class="nw-panel-title">${icon('door')}Wisconsin · jury verdict</div>
+      <div class="t" style="margin-top:10px">12:41<small>a.m.</small></div>
+      <p>According to authorities, the door alarm went off and workers ignored it. A jury ordered the operator to pay about <b>$4 million</b>.</p></div>
+    <div class="nw-panel"><div class="nw-panel-title">${icon('user')}One night worker</div>
+      <div class="ratio" style="margin-top:12px"><span class="one">${icon('user')}</span><span class="dots" aria-hidden="true">${'<i></i>'.repeat(40)}</span>
+      <span style="color:var(--nw-ink-2);font-size:16px">around <b style="color:var(--nw-ink)">40 residents</b><br><span style="color:var(--nw-faint);font-size:13px">our teammate's experience</span></span></div></div>
+    <div class="grid2"><div class="tile big"><div class="k">Wander</div><div class="v">20–30%</div><div class="s">of nursing-home residents with dementia</div></div>
+      <div class="tile big"><div class="k">${icon('moon')}Worst at</div><div class="v">Night</div><div class="s">when the worst outcomes happen</div></div></div>`,
+
+  day: () => `${header()}${focusCard()}
+    <div class="grid2">${S.exits.filter((e) => e.kind === 'exterior_door').map((e) => `<div class="tile ${e.open ? 'is-open' : ''}"><div class="k">${icon('door')}${esc(e.short || e.label)}</div><div class="v">${e.open ? 'OPEN' : 'Closed'}</div><div class="s">${e.open ? (S.night ? 'Open at night' : 'Visitor: logged, no alarm') : '&nbsp;'}</div></div>`).join('')}
+      <div class="tile is-good big"><div class="k">${icon('check')}Visits logged</div><div class="v">${S.stats.visits_today}</div><div class="s">Alarms: ${S.alerts.length}</div></div></div>
+    ${feed(5)}`,
+
+  bath: () => { const r = resident('R-15');
+    return `${header()}${focusCard()}
+    ${r ? `<div class="grid2"><div class="tile big ${r.in_bed ? '' : 'is-open'}"><div class="k">${icon('bed')}${esc(r.name)} · Room ${esc(r.room)}</div><div class="v">${r.in_bed ? 'In bed' : 'Out of bed'}</div><div class="s">Where: ${esc(r.zone)}${r.hr ? ` · heart rate ${Math.round(r.hr)}` : ''}</div></div>
+      <div class="tile big ${r.zone === 'room' && !S.alerts.length ? 'is-good' : ''}"><div class="k">${icon('door')}Left their room?</div><div class="v">${r.zone === 'room' ? 'No' : 'Yes'}</div><div class="s">Phone alerts: ${S.alerts.length}</div></div></div>` : ''}
+    ${feed(4)}`; },
+
+  walk: () => `${header()}${radar()}${focusCard()}${feed(3)}`,
+
+  climb: () => { const a = top(), lv = a ? a.level : 0;
+    const box = (n, sub) => { const L = NW.LEVELS[n]; return `<div class="nw-l${n} ${lv >= n ? 'on' : ''} ${lv === n ? 'now' : ''}">${icon(L.icon)}<b>${L.word}</b><small>${sub}</small></div>`; };
+    return `${header()}${focusCard()}
+    <div class="steps3" role="img" aria-label="Escalation level ${lv} of 3">${box(1, 'night phone')}${box(2, 'door / entrance')}${box(3, 'everyone, supervisor')}</div>
+    ${a ? `<div class="nw-panel"><div class="nw-panel-head"><div class="nw-panel-title">${icon('clock')}What happened, live</div></div>${NW.timeline(a.history)}</div>` : feed(4)}`; },
+
+  privacy: () => { const cams = S.cameras;
+    return `${header()}
+    <div class="grid2">${cams.map((c) => { const st = NW.camState(c); return `<div class="tile"><div class="k">${icon('camera')}${esc(c.label)}</div><div class="v">${c.enabled === false ? 'Off' : c.schedule === 'night' ? 'Night only' : 'On'}</div><div class="s">${NW.camStateHTML(c)} ${esc(st.sub || st.long)}</div></div>`; }).join('')}
+      <div class="tile is-good big"><div class="k">${icon('eye')}Frames stored</div><div class="v">0</div><div class="s">Analysed in memory, then dropped</div></div>
+      <div class="tile big ${navigator.onLine ? '' : 'is-good'}"><div class="k">${icon('wifiOff')}Internet needed</div><div class="v">No</div><div class="s">${navigator.onLine ? 'Wi-Fi is on right now; turn it off and this keeps working' : 'Offline · still protecting'}</div></div></div>
+    <div class="nw-panel"><ul class="facts">
+      <li>${icon('shield')}<span><b>Off means off.</b> The webcam is released; frames that arrive are dropped unanalysed.</span></li>
+      <li>${icon('moon')}<span><b>Night only.</b> Watches ${esc(NW.nightBand(S).label)}, nothing in the day.</span></li>
+      <li>${icon('user')}<span><b>Every switch is logged</b> with who did it. Switch it on the <a class="nw-link" href="/dashboard/">nurse station</a>.</span></li></ul></div>`; },
+
+  report: () => { const t = R && R.totals;
+    if (!R) return `${header()}<div class="nw-panel">Loading the report…</div>`;
+    return `${header()}
+    <div class="grid2"><div class="tile big"><div class="k">${icon('bell')}Alerts tonight</div><div class="v">${t.alerts}</div><div class="s">${t.open} still open</div></div>
+      <div class="tile big"><div class="k">${icon('siren')}Reached emergency</div><div class="v">${t.reached_emergency}</div><div class="s">went outside: ${t.went_outside}</div></div>
+      <div class="tile big"><div class="k">${icon('clock')}Median response</div><div class="v">${R.response_s.median == null ? '–' : R.response_s.median + ' s'}</div><div class="s">${R.response_s.count ? R.response_s.count + ' answered' : 'nobody answered tonight'}</div></div>
+      <div class="tile big"><div class="k">${icon('note')}Care records</div><div class="v">${t.records_draft + t.records_filed}</div><div class="s">${t.records_draft} draft · ${t.records_filed} filed</div></div></div>
+    <div class="nw-panel"><div class="nw-panel-head"><div class="nw-panel-title">${icon('report')}Alerts in the report</div><a class="nw-link" href="/report/">Open /report/ →</a></div>
+      ${R.alerts.length ? `<ul class="feed">${R.alerts.slice(-5).map((a) => `<li><time>${esc((a.history[0] || [''])[0])}</time><span>${NW.badge(a.max_level)} ${esc(a.title)}</span></li>`).join('')}</ul>` : '<div class="nw-empty">No alerts in tonight\'s report yet.</div>'}</div>`; },
+
+  next: () => `<div class="cards3">
+      <div class="tile now">${icon('shield')}<div><b>Memory care: today</b><span>Night supervision that runs on one laptop, offline</span></div></div>
+      <div class="tile">${icon('moon')}<div><b>Nurseries</b><span>Someone needs to notice at night, without a cloud camera</span></div></div>
+      <div class="tile">${icon('heart')}<div><b>Home care for aging parents</b><span>A heads-up to family when a parent living alone is up and out</span></div></div></div>
+    <div class="nw-panel"><ul class="facts">
+      <li>${icon('chip')}<span><b>Two models through ExecuTorch</b>: a person detector and a small normal-pattern model. <a class="nw-link" href="/perf/">Measured numbers on /perf/</a>.</span></li>
+      <li>${icon('wifiOff')}<span><b>Nothing to the cloud.</b> No video stored or sent.</span></li>
+      <li>${icon('user')}<span><b>Supports staff.</b> Not a medical device.</span></li></ul></div>`,
+};
+
+let lastHTML = '';
+function render() {
+  const s = STEPS[i];
+  const needsState = s.key !== 'problem' && s.key !== 'next';
+  const html = needsState && !S ? header() : VIEWS[s.key]();
+  if (html !== lastHTML) { $('view').innerHTML = html; lastHTML = html; }
+  $('view').classList.toggle('is-stale', !online && needsState);
+}
+
+// ---------------------------------------------------------------- controls
+$('play').onclick = () => { setPlaying(!playing); tick(); };
+$('next').onclick = () => go(i + 1 < STEPS.length ? i + 1 : 0);
+$('prev').onclick = () => go(i - 1);
+$('restart').onclick = () => { go(0); };
+document.addEventListener('keydown', (e) => {
+  if (NW.typing(e) || e.metaKey || e.ctrlKey || e.altKey) return;
+  if (e.key === 'ArrowRight' || e.key === 'PageDown') { e.preventDefault(); $('next').click(); }
+  else if (e.key === 'ArrowLeft' || e.key === 'PageUp') { e.preventDefault(); $('prev').click(); }
+  else if (e.key === ' ' && !(e.target.closest && e.target.closest('button, a'))) { e.preventDefault(); $('play').click(); }
+  else if (e.key === 'r' || e.key === 'R' || e.key === 'Home') { e.preventDefault(); $('restart').click(); }
+});
+
+const q = new URLSearchParams(location.search);
+const start = Math.max(0, Math.min(STEPS.length - 1, (+q.get('step') || 1) - 1));
+setPlaying(false);
+// Opening the page doesn't touch the system; it starts on Play or when you step (or ?autoplay=1).
+i = start;
+(function showStatic() {
+  const s = STEPS[i];
+  enteredAt = Date.now(); ctx = { saw: [], armed: false, posted: false };
+  if (s.key === 'report') loadReport();
+  $('num').textContent = i + 1; $('kick').textContent = s.kick; $('head').textContent = s.head; $('body').innerHTML = s.body; $('note').innerHTML = s.note || '';
+  [...prog.children].forEach((b, k) => { b.classList.toggle('done', k < i); if (k === i) b.setAttribute('aria-current', 'step'); });
+  $('prev').disabled = i === 0;
+})();
+let primed = false;
+const firstPlay = $('play').onclick;
+$('play').onclick = () => { if (!primed) { primed = true; go(i); setPlaying(true); tick(); return; } firstPlay(); };
+if (q.get('autoplay') === '1') $('play').click();
+NW.offlineBadge(document.querySelector('.nw-topbar'));
+poll();
+})();
+</script>
+</body>
+</html>

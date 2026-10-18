@@ -1,0 +1,1173 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>NightWatch · Settings</title>
+<script src="/assets/auth.js"></script>
+<script src="/assets/a11y.js"></script>
+<link rel="stylesheet" href="/assets/theme.css">
+<link rel="stylesheet" href="/assets/a11y.css">
+<link rel="icon" href="/assets/brand/favicon.svg" type="image/svg+xml">
+<link rel="apple-touch-icon" href="/assets/brand/apple-touch-icon.png">
+<style>
+  .nw-topbar { justify-content: space-between; }
+  .nav { display: flex; gap: 8px; flex-wrap: wrap; align-items: center; }
+  .nav .nw-btn { min-height: 36px; font-size: 13.5px; }
+  main { max-width: 1180px; margin: 0 auto; padding: 18px 24px 120px; display: grid; grid-template-columns: minmax(0, 1fr); gap: 16px; }
+  main > * { min-width: 0; }
+  @media (max-width: 860px) { main { padding: 14px 16px 150px; } .nw-topbar { padding: 12px 16px; } }
+  .muted { color: var(--nw-muted); font-size: 13px; }
+  h2.nw-panel-title { font-size: 12px; }
+  code { font-family: var(--nw-mono); font-size: 12.5px; color: var(--nw-ink); background: var(--nw-raised); padding: 1px 6px; border-radius: 6px; overflow-wrap: anywhere; }
+
+  .banner { display: flex; gap: 12px; align-items: flex-start; padding: 12px 14px; border-radius: 12px; font-size: 14px; color: var(--nw-ink-2);
+            border: 1px solid var(--nw-line-strong); background: var(--nw-surface-2); }
+  .banner > .nw-ico { width: 22px; height: 22px; margin-top: 1px; color: var(--nw-moon); }
+  .banner b { color: var(--nw-ink); }
+  .banner.is-warn { border-color: rgba(246,195,68,.5); background: var(--nw-l1-bg); } .banner.is-warn > .nw-ico { color: var(--nw-l1); }
+  .banner.is-bad { border-color: var(--nw-l3); background: var(--nw-l3-bg); color: #ffd6da; } .banner.is-bad > .nw-ico { color: var(--nw-l3); }
+  .banner.is-ok { border-color: rgba(61,220,151,.45); background: rgba(61,220,151,.08); } .banner.is-ok > .nw-ico { color: var(--nw-ok); }
+  .banner[hidden] { display: none; }
+
+  /* form fields */
+  .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(min(190px, 100%), 1fr)); gap: 12px 14px; }
+  .grid .wide { grid-column: 1 / -1; }
+  .f { display: grid; gap: 5px; min-width: 0; align-content: start; }
+  .f > label, .f > .lbl { font-size: 12.5px; font-weight: 650; color: var(--nw-ink-2); }
+  .f .hint { font-size: 12px; color: var(--nw-faint); }
+  input, select, textarea {
+    font: 15px/1.3 var(--nw-font); color: var(--nw-ink); background: var(--nw-bg); width: 100%; min-width: 0;
+    border: 1px solid var(--nw-line-strong); border-radius: 10px; padding: 9px 11px; min-height: 42px;
+  }
+  textarea { resize: vertical; min-height: 64px; }
+  select { appearance: none; -webkit-appearance: none; padding-right: 30px; cursor: pointer;
+           background-image: linear-gradient(45deg, transparent 50%, var(--nw-muted) 50%), linear-gradient(135deg, var(--nw-muted) 50%, transparent 50%);
+           background-position: calc(100% - 17px) 50%, calc(100% - 12px) 50%; background-size: 5px 5px; background-repeat: no-repeat; }
+  input:hover, select:hover, textarea:hover { border-color: #3f5584; }
+  input:focus-visible, select:focus-visible, textarea:focus-visible { outline: 3px solid var(--nw-accent); outline-offset: 1px; border-color: var(--nw-accent); }
+  [aria-invalid="true"] { border-color: var(--nw-l3) !important; background: rgba(255,82,99,.06); }
+  .unit { display: flex; align-items: center; gap: 8px; } .unit span { color: var(--nw-muted); font-size: 13px; white-space: nowrap; }
+  input[type="range"] { padding: 0; min-height: 30px; border: 0; background: none; accent-color: var(--nw-accent); }
+  .risk { display: flex; align-items: center; gap: 10px; max-width: 560px; }
+  .risk output { min-width: 86px; font-weight: 750; font-variant-numeric: tabular-nums; font-size: 13px; white-space: nowrap; }
+  .risk output.hi { color: var(--nw-l2); } .risk output.mid { color: var(--nw-l1); } .risk output.lo { color: var(--nw-ok); }
+  .nightline { font-size: 13px; color: var(--nw-ink-2); }
+
+  /* residents */
+  .list { display: grid; gap: 12px; }
+  details.item { border: 1px solid var(--nw-line); border-radius: 14px; background: var(--nw-bg-2); min-width: 0; }
+  details.item[open] { border-color: var(--nw-line-strong); }
+  details.item.has-err { border-color: var(--nw-l3); }
+  details.item > summary { list-style: none; cursor: pointer; display: flex; align-items: center; gap: 10px; flex-wrap: wrap; padding: 12px 14px; border-radius: 14px; }
+  details.item > summary::-webkit-details-marker { display: none; }
+  summary .chev { transition: transform .15s; color: var(--nw-muted); }
+  details[open] > summary .chev { transform: rotate(90deg); }
+  summary .ttl { font-weight: 700; min-width: 0; overflow-wrap: anywhere; }
+  summary .sub { color: var(--nw-muted); font-size: 13px; }
+  summary .errflag { margin-left: auto; color: var(--nw-l3); font-size: 12px; font-weight: 800; letter-spacing: .06em; display: none; align-items: center; gap: 5px; }
+  details.has-err > summary .errflag { display: inline-flex; }
+  .item-body { padding: 4px 14px 14px; display: grid; gap: 14px; }
+  .item-actions { display: flex; gap: 8px; flex-wrap: wrap; justify-content: space-between; align-items: center; }
+  .nw-btn.sm { min-height: 36px; font-size: 13.5px; padding: 0 12px; }
+  .nw-btn.danger { color: #ffc2c8; border-color: rgba(255,82,99,.45); }
+  .nw-btn.danger:hover { background: var(--nw-l3-bg); }
+  .nw-btn:disabled { opacity: .5; cursor: not-allowed; }
+
+  fieldset { border: 1px solid var(--nw-line); border-radius: 12px; padding: 10px 12px 12px; margin: 0; min-width: 0; }
+  legend { padding: 0 6px; font-size: 12.5px; font-weight: 700; color: var(--nw-ink-2); }
+  .helped { display: grid; gap: 8px; }
+  .hrow { display: grid; grid-template-columns: minmax(0, 1fr) 92px 92px auto; gap: 8px; align-items: end; }
+  .hrow .rate { font-size: 12px; color: var(--nw-muted); grid-column: 1 / -1; margin-top: -4px; }
+  @media (max-width: 560px) { .hrow { grid-template-columns: 1fr 1fr auto; } .hrow .f:first-child { grid-column: 1 / -1; } }
+
+  /* exits and cameras: compact rows */
+  .row-card { border: 1px solid var(--nw-line); border-radius: 12px; background: var(--nw-bg-2); padding: 12px; display: grid; gap: 10px; }
+  .row-card.has-err { border-color: var(--nw-l3); }
+  .row-card .grid { grid-template-columns: repeat(auto-fill, minmax(min(150px, 100%), 1fr)); }
+  .row-head { display: flex; justify-content: space-between; align-items: center; gap: 8px; flex-wrap: wrap; }
+  .row-head b { display: flex; align-items: center; gap: 8px; }
+
+  /* floor-plan editor */
+  #form { display: grid; gap: 16px; min-width: 0; }
+  .plan-tools { display: flex; flex-wrap: wrap; gap: 6px 18px; align-items: center; margin-bottom: 10px; }
+  .plan-tools .chk { display: inline-flex; gap: 8px; align-items: center; font-size: 13.5px; color: var(--nw-ink-2); cursor: pointer; min-height: 36px; }
+  .plan-tools input[type="checkbox"] { width: 18px; height: 18px; min-height: 0; padding: 0; accent-color: var(--nw-accent); }
+  .plan-tools select { width: auto; min-height: 36px; padding: 6px 30px 6px 10px; font-size: 13.5px; }
+  .plan-layout { display: grid; grid-template-columns: minmax(0, 1fr) 280px; gap: 16px; align-items: start; }
+  @media (max-width: 980px) { .plan-layout { grid-template-columns: minmax(0, 1fr); } }
+  .plan-wrap { min-width: 0; }
+  svg.plan { width: 100%; height: auto; display: block; border-radius: 12px; background: var(--nw-bg); border: 1px solid var(--nw-line);
+             touch-action: none; user-select: none; -webkit-user-select: none; }
+  .plan .mk { cursor: grab; outline: none; }
+  .plan .mk.dragging { cursor: grabbing; }
+  .plan .mk .hit { fill: transparent; }
+  .plan .ring { fill: none; stroke: transparent; }
+  .plan .mk.sel .ring { stroke: var(--nw-accent); stroke-width: 2.5; }
+  .plan .mk:focus-visible .ring { stroke: var(--nw-accent); stroke-width: 3.5; }
+  .plan .mk.drop .ring { stroke: var(--nw-ok); stroke-width: 3; stroke-dasharray: 4 3; }
+  .plan .gridl { stroke: rgba(138, 180, 255, .08); stroke-width: .6; }
+  .plan .roombox { fill: #111b31; stroke: var(--nw-line-strong); }
+  .plan .roombox.overlap { stroke: var(--nw-l1); stroke-dasharray: 5 3; stroke-width: 1.5; }
+  .plan .roombox.target { stroke: var(--nw-ok); stroke-width: 3; }
+  .legend { display: flex; gap: 14px; flex-wrap: wrap; font-size: 12.5px; color: var(--nw-muted); margin-top: 8px; }
+  .legend i { display: inline-block; width: 11px; height: 11px; margin-right: 6px; vertical-align: -1px; }
+  .sel-card { border: 1px solid var(--nw-line); border-radius: 12px; background: var(--nw-bg-2); padding: 14px; display: grid; gap: 12px; min-width: 0; }
+  .sel-card h3 { margin: 0; font-size: 15px; display: flex; gap: 8px; align-items: center; overflow-wrap: anywhere; }
+  .keys { font-size: 13px; color: var(--nw-ink-2); display: grid; gap: 8px; margin: 0; padding: 0; list-style: none; }
+  .keys .nw-kbd { margin: 0 1px; }
+  .warnline { font-size: 13px; color: var(--nw-l1); display: inline-flex; gap: 6px; align-items: flex-start; }
+  .warnline:empty { display: none; }
+
+  /* import / export / reset */
+  .file-acts { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(240px, 100%), 1fr)); gap: 12px; }
+  .fa { display: grid; gap: 8px; align-content: start; justify-items: start; padding: 14px; border: 1px solid var(--nw-line); border-radius: 12px; background: var(--nw-bg-2); }
+  .cmd { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 6px 10px; align-items: center; padding: 10px 12px; border-radius: 10px; background: var(--nw-bg); border: 1px solid var(--nw-line); }
+  .cmd .k { grid-column: 1 / -1; font-size: 12px; color: var(--nw-muted); }
+  .cmd code { font-size: 13px; }
+  .impact { margin: 0; padding: 0; list-style: none; display: grid; gap: 8px; }
+  .impact:empty { display: none; }
+  .impact li { display: grid; grid-template-columns: auto 1fr; gap: 10px; align-items: start; padding: 10px 12px; border-radius: 10px; font-size: 14px;
+               border: 1px solid var(--nw-line); background: var(--nw-bg-2); color: var(--nw-ink-2); }
+  .impact li .nw-ico { width: 18px; height: 18px; margin-top: 1px; }
+  .impact li.bad { border-color: var(--nw-l3); background: var(--nw-l3-bg); color: var(--nw-ink); } .impact li.bad .nw-ico { color: var(--nw-l3); }
+  .impact li.warn { border-color: rgba(246,195,68,.5); background: var(--nw-l1-bg); color: var(--nw-ink); } .impact li.warn .nw-ico { color: var(--nw-l1); }
+  .impact li.ok .nw-ico { color: var(--nw-ok); }
+  .impact b { color: var(--nw-ink); }
+  dialog.wide { max-width: min(600px, calc(100vw - 32px)); }
+  [hidden] { display: none !important; }
+
+  /* sticky save bar */
+  .bar { position: fixed; left: 0; right: 0; bottom: 0; z-index: 50; border-top: 1px solid var(--nw-line-strong);
+         background: rgba(10, 16, 32, .96); backdrop-filter: blur(6px); }
+  .bar-in { max-width: 1180px; margin: 0 auto; padding: 12px 24px; display: flex; gap: 10px 14px; align-items: center; flex-wrap: wrap; }
+  @media (max-width: 860px) { .bar-in { padding: 10px 16px; } }
+  .bar .state { flex: 1 1 260px; min-width: 0; font-size: 14px; display: flex; gap: 8px; align-items: center; }
+  .bar .state b { white-space: nowrap; }
+  .bar .btns .nw-btn { gap: 0; } .bar .long { margin-left: .28em; }
+  @media (max-width: 480px) { .bar .long { display: none; } }
+  .bar .state.is-dirty b { color: var(--nw-l1); }
+  .bar .state.is-clean b { color: var(--nw-ok); }
+  .bar .btns { display: flex; gap: 8px; flex-wrap: wrap; }
+  @media (max-width: 480px) { .bar .btns { width: 100%; display: grid; grid-template-columns: 1fr 1fr 1.4fr; }
+    .bar .btns .nw-btn { padding: 0 8px; font-size: 14px; min-height: 40px; } .bar .state .muted { display: none; } .bar .state { font-size: 13px; } }
+
+  .errors { border: 1px solid var(--nw-l3); background: var(--nw-l3-bg); border-radius: 12px; padding: 12px 14px; color: #ffd6da; }
+  .errors[hidden] { display: none; }
+  .errors h2 { margin: 0 0 6px; font-size: 15px; color: #fff; display: flex; gap: 8px; align-items: center; }
+  .errors ul { margin: 0; padding-left: 20px; display: grid; gap: 3px; }
+  .errors a { color: #ffd6da; }
+
+  dialog { max-width: min(480px, calc(100vw - 32px)); padding: 0; border-radius: 16px; border: 1px solid var(--nw-line-strong);
+           background: var(--nw-surface); color: var(--nw-ink); box-shadow: var(--nw-shadow); }
+  dialog::backdrop { background: rgba(3, 6, 12, .78); }
+  dialog form { padding: 20px; display: grid; gap: 12px; }
+  dialog h2 { margin: 0; font-size: 19px; display: flex; gap: 8px; align-items: center; }
+  dialog p { margin: 0; color: var(--nw-ink-2); }
+  dialog .row { display: flex; justify-content: flex-end; gap: 8px; flex-wrap: wrap; }
+  .loading { padding: 30px; text-align: center; color: var(--nw-muted); }
+</style>
+</head>
+<body class="nw">
+<header class="nw-topbar">
+  <a class="nw-brand" href="/home/" title="NightWatch home" style="color:inherit;text-decoration:none"><div class="nw-brand-mark" style="background:none;border:0"><img src="/assets/brand/logo.svg" alt="" width="38" height="38" style="display:block"></div><div><div class="nw-brand-name">NightWatch</div>
+    <div class="nw-brand-sub" id="sub">Settings · facility, residents, exits and cameras</div></div></a>
+  <div data-nw-display></div>
+  <nav data-nw-nav style="flex-basis:100%"></nav>
+</header>
+
+<main>
+  <div class="banner is-warn" role="note">
+    <span id="ic-syn"></span>
+    <div><b>Demo residents are synthetic.</b> Never type real resident names, health details or room numbers here in a public demo.
+      Saved settings go to <code>data/facility.local.json</code> on this laptop (git-ignored, never uploaded) and win over the demo file on the next start.</div>
+  </div>
+  <div class="banner" id="srcnote" hidden></div>
+  <div class="banner is-bad" id="readonly" role="alert" hidden></div>
+  <div class="banner" id="result" role="status" aria-live="polite" hidden></div>
+  <section class="errors" id="errors" tabindex="-1" aria-labelledby="err-title" hidden>
+    <h2 id="err-title"></h2><ul id="err-list"></ul>
+  </section>
+
+  <form id="form" novalidate autocomplete="off">
+    <div class="loading" id="loading">Loading settings…</div>
+  </form>
+</main>
+
+<div class="bar" role="region" aria-label="Save settings">
+  <div class="bar-in">
+    <div class="state is-clean" id="dirty" aria-live="polite"></div>
+    <div class="btns">
+      <button type="button" class="nw-btn nw-btn--ghost" id="undo" disabled>Undo<span class="long">changes</span></button>
+      <button type="button" class="nw-btn nw-btn--ghost" id="reload">Reload</button>
+      <button type="button" class="nw-btn nw-btn--primary" id="save" disabled>Save<span class="long">and restart night</span></button>
+    </div>
+  </div>
+</div>
+
+<dialog id="dlg-save" class="wide" aria-labelledby="ds-title" aria-describedby="ds-body">
+  <form method="dialog">
+    <h2 id="ds-title"></h2>
+    <p id="ds-body"><b>Saving restarts the night: current alerts are cleared.</b> Residents go back to bed, the event log empties, and the new settings apply straight away. Paired phones stay paired.</p>
+    <ul id="ds-impact" class="impact"></ul>
+    <p class="muted" style="font-size:13px">Written to <code>data/facility.local.json</code> on this laptop (git-ignored).</p>
+    <div class="row"><button class="nw-btn nw-btn--ghost" value="cancel" autofocus>Keep editing</button><button class="nw-btn nw-btn--primary" value="ok" id="ds-ok">Save and restart night</button></div>
+  </form>
+</dialog>
+<dialog id="dlg-reset" class="wide" aria-labelledby="dr-title">
+  <form method="dialog">
+    <h2 id="dr-title">Reset to the demo facility</h2>
+    <div id="dr-body" style="display:grid;gap:10px;color:var(--nw-ink-2)"></div>
+    <div class="row"><button class="nw-btn nw-btn--ghost" value="cancel" autofocus>Close</button><button class="nw-btn nw-btn--primary" value="load" id="dr-load" hidden>Load demo values into the form</button></div>
+  </form>
+</dialog>
+<input type="file" id="imp" accept="application/json,.json" aria-label="Import settings from a JSON file" hidden>
+<dialog id="dlg-confirm" aria-labelledby="dc-title" aria-describedby="dc-body">
+  <form method="dialog">
+    <h2 id="dc-title"></h2><p id="dc-body"></p>
+    <div class="row"><button class="nw-btn nw-btn--ghost" value="cancel" autofocus>Cancel</button><button class="nw-btn nw-btn--primary" value="ok" id="dc-ok">OK</button></div>
+  </form>
+</dialog>
+
+<script src="/assets/nw.js"></script>
+<script>
+const $ = (id) => document.getElementById(id);
+const { esc, icon } = NW;
+$('ic-syn').outerHTML = icon('shield');
+$('ds-title').innerHTML = `${icon('reset')}Save and restart the night?`;
+
+const PLAN_W = 560, PLAN_H = 290, MAX_HELPED = 8;
+const ID_RE = /^[A-Za-z0-9-]{1,12}$/;
+const clone = (o) => JSON.parse(JSON.stringify(o));
+
+let orig = null;        // last settings from the server (normalized)
+let draft = null;       // what the form shows
+let isLaptop = true;    // POST /api/settings only works on the laptop itself
+let showErrors = false; // after the first save attempt, validate as you type
+let origSource = '';    // which file the server loaded: facility.json (demo) or facility.local.json
+
+// ------------------------------------------------------------------ data
+function normalize(s) {
+  return {
+    facility: s.facility ?? '', night_staff: s.night_staff ?? 1, outside_temp_c: s.outside_temp_c ?? 0,
+    night_hours: [...(s.night_hours || [21, 5])],
+    timeouts: { l1: s.timeouts?.l1 ?? 45, ack: s.timeouts?.ack ?? 25 },
+    residents: (s.residents || []).map((r) => ({ id: r.id ?? '', name: r.name ?? '', room: r.room ?? '', wander_risk: r.wander_risk ?? 0.3,
+      hr_rest: r.hr_rest ?? 70, pattern: r.pattern ?? '', description: r.description ?? '',
+      what_helped: (r.what_helped || []).map((h) => [h[0] ?? '', h[1] ?? 0, h[2] ?? 0]), x: r.x ?? 100, y: r.y ?? 70 })),
+    exits: (s.exits || []).map((x) => ({ id: x.id ?? '', label: x.label ?? '', short: x.short ?? '', kind: x.kind || 'exterior_door', x: x.x ?? 470, y: x.y ?? 250 })),
+    cameras: (s.cameras || []).map((c) => ({ id: c.id ?? '', label: c.label ?? '', zone: c.zone || 'corridor', resident: c.resident || '', exit: c.exit || '' })),
+  };
+}
+const isDirty = () => orig && JSON.stringify(draft) !== JSON.stringify(orig);
+
+function payload(src = draft) {
+  const d = clone(src);
+  const num = (v) => (v === '' || v == null ? v : Number(v));
+  return {
+    facility: d.facility.trim(), night_staff: num(d.night_staff), outside_temp_c: num(d.outside_temp_c),
+    night_hours: d.night_hours.map(Number), timeouts: { l1: num(d.timeouts.l1), ack: num(d.timeouts.ack) },
+    residents: d.residents.map((r) => ({ ...r, id: r.id.trim(), wander_risk: num(r.wander_risk), hr_rest: num(r.hr_rest), x: num(r.x), y: num(r.y),
+      what_helped: r.what_helped.map(([n, a, b]) => [n.trim(), num(a), num(b)]) })),
+    exits: d.exits.map((x) => ({ ...x, id: x.id.trim(), x: num(x.x), y: num(x.y) })),
+    cameras: d.cameras.map((c) => {
+      const o = { id: c.id.trim(), label: c.label, zone: c.zone, resident: c.resident || null };
+      if (c.exit) o.exit = c.exit;
+      return o;
+    }),
+  };
+}
+
+// ------------------------------------------------------------------ validation (mirrors engine.validate_settings)
+function validate(p) {
+  const errs = [];
+  const add = (field, msg) => errs.push({ field, msg });
+  const isNum = (v) => v !== '' && v != null && Number.isFinite(Number(v));
+  const num = (v, lo, hi, field, what, int = false) => {
+    if (!isNum(v)) return add(field, `${what} must be a number`);
+    if (v < lo || v > hi) return add(field, `${what} must be between ${lo} and ${hi}`);
+    if (int && !Number.isInteger(Number(v))) add(field, `${what} must be a whole number`);
+  };
+  const text = (v, n, field, what, required = true) => {
+    const t = String(v ?? '').trim();
+    if (required && !t) add(field, `${what} is required`);
+    else if (t.length > n) add(field, `${what} is longer than ${n} characters (${t.length})`);
+  };
+  text(p.facility, 60, 'f-facility', 'Facility name');
+  num(p.night_staff, 1, 50, 'f-staff', 'Night staff on duty', true);
+  num(p.outside_temp_c, -50, 50, 'f-temp', 'Outside temperature');
+  if (p.night_hours[0] === p.night_hours[1]) add('f-nstart', "Night start and end can't be the same hour");
+  num(p.timeouts.l1, 5, 600, 'f-l1', 'Heads-up wait');
+  num(p.timeouts.ack, 5, 600, 'f-ack', 'Urgent wait');
+
+  const rids = new Set();
+  if (!p.residents.length) add('add-res', 'Add at least one resident');
+  p.residents.forEach((r, i) => {
+    const who = `Resident ${i + 1}${r.id ? ` (${r.id})` : ''}`;
+    if (!ID_RE.test(r.id)) add(`r${i}-id`, `${who}: id must be 1-12 letters, digits or dashes`);
+    else if (rids.has(r.id)) add(`r${i}-id`, `${who}: id ${r.id} is used twice`);
+    rids.add(r.id);
+    text(r.name, 40, `r${i}-name`, `${who}: name`, false);
+    text(r.room, 8, `r${i}-room`, `${who}: room`);
+    num(r.wander_risk, 0, 1, `r${i}-risk`, `${who}: wander risk`);
+    num(r.hr_rest, 30, 150, `r${i}-hr`, `${who}: resting heart rate`);
+    text(r.pattern, 300, `r${i}-pattern`, `${who}: pattern`, false);
+    text(r.description, 120, `r${i}-desc`, `${who}: description`, false);
+    num(r.x, 0, PLAN_W, `r${i}-x`, `${who}: x`); num(r.y, 0, PLAN_H, `r${i}-y`, `${who}: y`);
+    r.what_helped.forEach(([n, ok, tried], j) => {
+      text(n, 60, `r${i}-h${j}-n`, `${who}: approach ${j + 1}`);
+      num(ok, 0, 999, `r${i}-h${j}-ok`, `${who}: times "${n || j + 1}" helped`, true);
+      num(tried, 0, 999, `r${i}-h${j}-tr`, `${who}: times "${n || j + 1}" was tried`, true);
+      if (isNum(ok) && isNum(tried) && Number(ok) > Number(tried)) add(`r${i}-h${j}-ok`, `${who}: "${n || j + 1}" helped more times than it was tried`);
+    });
+  });
+  const xids = new Set();
+  p.exits.forEach((x, i) => {
+    const what = `Exit ${i + 1}${x.id ? ` (${x.id})` : ''}`;
+    if (!ID_RE.test(x.id)) add(`x${i}-id`, `${what}: id must be 1-12 letters, digits or dashes`);
+    else if (xids.has(x.id)) add(`x${i}-id`, `${what}: id ${x.id} is used twice`);
+    xids.add(x.id);
+    text(x.label, 40, `x${i}-label`, `${what}: label`);
+    text(x.short || x.label, 24, `x${i}-short`, `${what}: short label`);
+    if (!['exterior_door', 'window'].includes(x.kind)) add(`x${i}-kind`, `${what}: kind must be exterior door or window`);
+    num(x.x, 0, PLAN_W, `x${i}-x`, `${what}: x`); num(x.y, 0, PLAN_H, `x${i}-y`, `${what}: y`);
+  });
+  const cids = new Set();
+  p.cameras.forEach((c, i) => {
+    const what = `Camera ${i + 1}${c.id ? ` (${c.id})` : ''}`;
+    if (!ID_RE.test(c.id)) add(`c${i}-id`, `${what}: id must be 1-12 letters, digits or dashes`);
+    else if (cids.has(c.id)) add(`c${i}-id`, `${what}: id ${c.id} is used twice`);
+    cids.add(c.id);
+    text(c.label, 60, `c${i}-label`, `${what}: label`);
+    if (c.resident && !rids.has(c.resident)) add(`c${i}-res`, `${what}: resident ${c.resident} doesn't exist`);
+    if (c.zone === 'exit' && !xids.has(c.exit || '')) add(`c${i}-exit`, `${what}: pick which exit it watches`);
+    else if (c.exit && !xids.has(c.exit)) add(`c${i}-exit`, `${what}: exit ${c.exit} doesn't exist`);
+  });
+  return errs;
+}
+
+// ------------------------------------------------------------------ rendering
+const hourOpts = (sel) => Array.from({ length: 24 }, (_, h) => `<option value="${h}"${h === Number(sel) ? ' selected' : ''}>${String(h).padStart(2, '0')}:00</option>`).join('');
+const opt = (v, label, sel) => `<option value="${esc(v)}"${v === sel ? ' selected' : ''}>${esc(label)}</option>`;
+const riskWord = (v) => (v >= 0.7 ? ['hi', 'High'] : v >= 0.4 ? ['mid', 'Medium'] : ['lo', 'Low']);
+function nightLine() {
+  const [a, b] = draft.night_hours.map(Number);
+  if (a === b) return 'Start and end must differ.';
+  const len = (b - a + 24) % 24;
+  return `Night mode ${String(a).padStart(2, '0')}:00 → ${String(b).padStart(2, '0')}:00 (${len} hour${len === 1 ? '' : 's'}). Door and window alerts are urgent only at night.`;
+}
+
+function field(id, label, input, hint = '', cls = '') {
+  return `<div class="f ${cls}"><label for="${id}">${label}</label>${input}${hint ? `<span class="hint" id="${id}-hint">${hint}</span>` : ''}</div>`;
+}
+const inp = (id, path, val, attrs = '') => `<input id="${id}" data-p="${path}" value="${esc(val)}" ${attrs}>`;
+
+function facilityHTML() {
+  const d = draft;
+  return `<section class="nw-panel" aria-labelledby="t-fac">
+    <div class="nw-panel-head"><h2 class="nw-panel-title" id="t-fac">${icon('moon')} Facility and night shift</h2></div>
+    <div class="grid">
+      ${field('f-facility', 'Facility name', inp('f-facility', 'facility', d.facility, 'maxlength="60" required'), '', 'wide')}
+      ${field('f-staff', 'Night staff on duty', inp('f-staff', 'night_staff', d.night_staff, 'type="number" min="1" max="50" step="1" inputmode="numeric"'), '1-50 people')}
+      ${field('f-temp', 'Outside temperature', `<div class="unit">${inp('f-temp', 'outside_temp_c', d.outside_temp_c, 'type="number" min="-50" max="50" step="0.5"')}<span>°C</span></div>`, 'Cold nights raise the stakes of a walk-out')}
+      ${field('f-nstart', 'Night starts', `<select id="f-nstart" data-p="night_hours.0">${hourOpts(d.night_hours[0])}</select>`)}
+      ${field('f-nend', 'Night ends', `<select id="f-nend" data-p="night_hours.1">${hourOpts(d.night_hours[1])}</select>`)}
+      <div class="wide nightline" id="nightline">${esc(nightLine())}</div>
+      ${field('f-l1', 'Heads-up wait', `<div class="unit">${inp('f-l1', 'timeouts.l1', d.timeouts.l1, 'type="number" min="5" max="600" step="1" inputmode="numeric" aria-describedby="f-l1-hint"')}<span>seconds</span></div>`, 'Level 1 climbs to Urgent if nobody responds in this time')}
+      ${field('f-ack', 'Urgent wait', `<div class="unit">${inp('f-ack', 'timeouts.ack', d.timeouts.ack, 'type="number" min="5" max="600" step="1" inputmode="numeric" aria-describedby="f-ack-hint"')}<span>seconds</span></div>`, 'Level 2/3 climbs again if not acknowledged in this time')}
+    </div>
+  </section>`;
+}
+
+function residentHTML(r, i) {
+  const [rk, rw] = riskWord(Number(r.wander_risk));
+  const helped = r.what_helped.map(([n, ok, tr], j) => {
+    const rate = Number(tr) > 0 ? `${Math.round(100 * Number(ok) / Number(tr))}% success` : 'not tried yet';
+    return `<div class="hrow">
+      ${field(`r${i}-h${j}-n`, `Approach ${j + 1}`, inp(`r${i}-h${j}-n`, `residents.${i}.what_helped.${j}.0`, n, 'maxlength="60" placeholder="e.g. Walk with staff"'))}
+      ${field(`r${i}-h${j}-ok`, 'Helped', inp(`r${i}-h${j}-ok`, `residents.${i}.what_helped.${j}.1`, ok, 'type="number" min="0" max="999" step="1" inputmode="numeric"'))}
+      ${field(`r${i}-h${j}-tr`, 'Tried', inp(`r${i}-h${j}-tr`, `residents.${i}.what_helped.${j}.2`, tr, 'type="number" min="0" max="999" step="1" inputmode="numeric"'))}
+      <button type="button" class="nw-btn sm danger" data-act="del-helped" data-i="${i}" data-j="${j}" aria-label="Remove approach ${j + 1}${n ? `, ${esc(n)}` : ''}">Remove</button>
+      <span class="rate" id="r${i}-h${j}-rate">${esc(rate)}</span></div>`;
+  }).join('');
+  return `<details class="item" id="res-${i}" data-list="residents" data-i="${i}" ${r._open !== false ? 'open' : ''}>
+    <summary>${icon('next', 'chev')}<span class="ttl" id="res-${i}-ttl">${esc(r.id || 'New resident')}${r.name ? ` · ${esc(r.name)}` : ''}</span>
+      <span class="sub" id="res-${i}-sub">Room ${esc(r.room || '–')} · ${rw} wander risk</span>
+      <span class="errflag">${icon('siren')}NEEDS FIXING</span></summary>
+    <div class="item-body">
+      <div class="grid">
+        ${field(`r${i}-id`, 'Resident id', inp(`r${i}-id`, `residents.${i}.id`, r.id, 'maxlength="12" spellcheck="false" aria-describedby="r' + i + '-id-hint"'), 'Letters, digits, dashes · e.g. R-07')}
+        ${field(`r${i}-name`, 'Display name', inp(`r${i}-name`, `residents.${i}.name`, r.name, 'maxlength="40"'), 'Synthetic in demos')}
+        ${field(`r${i}-room`, 'Room', inp(`r${i}-room`, `residents.${i}.room`, r.room, 'maxlength="8"'))}
+        ${field(`r${i}-hr`, 'Resting heart rate', `<div class="unit">${inp(`r${i}-hr`, `residents.${i}.hr_rest`, r.hr_rest, 'type="number" min="30" max="150" step="1" inputmode="numeric"')}<span>bpm</span></div>`)}
+        <div class="f wide"><label for="r${i}-risk">Wander risk</label>
+          <div class="risk"><input type="range" id="r${i}-risk" data-p="residents.${i}.wander_risk" min="0" max="1" step="0.01" value="${esc(r.wander_risk)}" aria-valuetext="${Math.round(r.wander_risk * 100)} percent, ${rw}">
+          <output for="r${i}-risk" id="r${i}-risk-out" class="${rk}">${Math.round(r.wander_risk * 100)}% · ${rw}</output></div></div>
+        ${field(`r${i}-pattern`, 'Pattern (what staff should know)', `<textarea id="r${i}-pattern" data-p="residents.${i}.pattern" maxlength="300" rows="2">${esc(r.pattern)}</textarea>`, 'Up to 300 characters', 'wide')}
+        ${field(`r${i}-desc`, 'Description (to recognise them)', inp(`r${i}-desc`, `residents.${i}.description`, r.description, 'maxlength="120" placeholder="Clothing, walking aid…"'), '', 'wide')}
+      </div>
+      <fieldset><legend>What has worked before</legend>
+        <div class="helped">${helped || '<span class="muted">Nothing logged yet.</span>'}</div>
+        <div style="margin-top:10px"><button type="button" class="nw-btn sm" data-act="add-helped" data-i="${i}" ${r.what_helped.length >= MAX_HELPED ? 'disabled' : ''}>+ Add approach</button>
+          <span class="muted">${r.what_helped.length}/${MAX_HELPED} · shown to staff best-first</span></div>
+      </fieldset>
+      <fieldset><legend>Position on the floor plan</legend>
+        <div class="grid">
+          ${field(`r${i}-x`, 'x (0-560)', inp(`r${i}-x`, `residents.${i}.x`, r.x, 'type="number" min="0" max="560" step="1" inputmode="numeric"'))}
+          ${field(`r${i}-y`, 'y (0-290)', inp(`r${i}-y`, `residents.${i}.y`, r.y, 'type="number" min="0" max="290" step="1" inputmode="numeric"'))}
+          <div class="f"><span class="lbl" aria-hidden="true">&nbsp;</span><button type="button" class="nw-btn sm" data-act="show" data-list="residents" data-i="${i}">${icon('pin')}Show on plan</button></div>
+        </div>
+      </fieldset>
+      <div class="item-actions"><span></span>
+        <button type="button" class="nw-btn sm danger" data-act="del" data-list="residents" data-i="${i}">Remove ${esc(r.id || 'resident')}</button></div>
+    </div></details>`;
+}
+
+function residentsHTML() {
+  return `<section class="nw-panel" aria-labelledby="t-res">
+    <div class="nw-panel-head"><h2 class="nw-panel-title" id="t-res">${icon('user')} Residents <span class="nw-count">${draft.residents.length}</span></h2>
+      <div style="display:flex;gap:8px;flex-wrap:wrap"><button type="button" class="nw-btn sm nw-btn--ghost" data-act="fold">Collapse all</button>
+      <button type="button" class="nw-btn sm" id="add-res" data-act="add" data-list="residents">+ Add resident</button></div></div>
+    <div class="list">${draft.residents.map(residentHTML).join('')}</div>
+  </section>`;
+}
+
+function exitHTML(x, i) {
+  return `<div class="row-card" id="exit-${i}">
+    <div class="row-head"><b>${icon(x.kind === 'window' ? 'window' : 'door')}<span id="exit-${i}-ttl">${esc(x.label || x.id || 'New exit')}</span></b>
+      <span style="display:flex;gap:8px;flex-wrap:wrap"><button type="button" class="nw-btn sm" data-act="show" data-list="exits" data-i="${i}">${icon('pin')}Show on plan</button>
+      <button type="button" class="nw-btn sm danger" data-act="del" data-list="exits" data-i="${i}">Remove ${esc(x.id || 'exit')}</button></span></div>
+    <div class="grid">
+      ${field(`x${i}-id`, 'Exit id', inp(`x${i}-id`, `exits.${i}.id`, x.id, 'maxlength="12" spellcheck="false"'))}
+      ${field(`x${i}-label`, 'Label', inp(`x${i}-label`, `exits.${i}.label`, x.label, 'maxlength="40"'))}
+      ${field(`x${i}-short`, 'Short label', inp(`x${i}-short`, `exits.${i}.short`, x.short, `maxlength="24" placeholder="${esc((x.label || '').slice(0, 24))}"`), 'For phones · blank = label')}
+      ${field(`x${i}-kind`, 'Kind', `<select id="x${i}-kind" data-p="exits.${i}.kind">${opt('exterior_door', 'Exterior door', x.kind)}${opt('window', 'Window', x.kind)}</select>`)}
+      ${field(`x${i}-x`, 'x (0-560)', inp(`x${i}-x`, `exits.${i}.x`, x.x, 'type="number" min="0" max="560" step="1" inputmode="numeric"'))}
+      ${field(`x${i}-y`, 'y (0-290)', inp(`x${i}-y`, `exits.${i}.y`, x.y, 'type="number" min="0" max="290" step="1" inputmode="numeric"'))}
+    </div></div>`;
+}
+
+function cameraHTML(c, i) {
+  const resOpts = opt('', 'Nobody in particular', c.resident) + draft.residents.filter((r) => r.id).map((r) => opt(r.id, `${r.id}${r.name ? ` · ${r.name}` : ''} (room ${r.room || '–'})`, c.resident)).join('')
+    + (c.resident && !draft.residents.some((r) => r.id === c.resident) ? opt(c.resident, `${c.resident} (removed)`, c.resident) : '');
+  const exOpts = opt('', c.zone === 'exit' ? 'Pick an exit…' : 'None', c.exit) + draft.exits.filter((x) => x.id).map((x) => opt(x.id, `${x.id} · ${x.label}`, c.exit)).join('')
+    + (c.exit && !draft.exits.some((x) => x.id === c.exit) ? opt(c.exit, `${c.exit} (removed)`, c.exit) : '');
+  return `<div class="row-card" id="cam-${i}">
+    <div class="row-head"><b>${icon('camera')}<span id="cam-${i}-ttl">${esc(c.label || c.id || 'New camera')}</span></b>
+      <button type="button" class="nw-btn sm danger" data-act="del" data-list="cameras" data-i="${i}">Remove ${esc(c.id || 'camera')}</button></div>
+    <div class="grid">
+      ${field(`c${i}-id`, 'Camera id', inp(`c${i}-id`, `cameras.${i}.id`, c.id, 'maxlength="12" spellcheck="false"'))}
+      ${field(`c${i}-label`, 'Label', inp(`c${i}-label`, `cameras.${i}.label`, c.label, 'maxlength="60"'), '', 'wide')}
+      ${field(`c${i}-zone`, 'Where it looks', `<select id="c${i}-zone" data-p="cameras.${i}.zone">${opt('corridor', 'Corridor outside a room', c.zone)}${opt('exit', 'An exit', c.zone)}</select>`)}
+      ${field(`c${i}-res`, 'Resident it watches for', `<select id="c${i}-res" data-p="cameras.${i}.resident">${resOpts}</select>`)}
+      ${field(`c${i}-exit`, c.zone === 'exit' ? 'Exit it watches (required)' : 'Exit it watches', `<select id="c${i}-exit" data-p="cameras.${i}.exit">${exOpts}</select>`)}
+    </div></div>`;
+}
+
+function exitsHTML() {
+  return `<section class="nw-panel" aria-labelledby="t-exits">
+    <div class="nw-panel-head"><h2 class="nw-panel-title" id="t-exits">${icon('door')} Exits <span class="nw-count">${draft.exits.length}</span></h2>
+      <button type="button" class="nw-btn sm" data-act="add" data-list="exits">+ Add exit</button></div>
+    <div class="list" id="exits">${draft.exits.map(exitHTML).join('') || '<p class="muted">No exits. Door sensors need an exit here to raise alerts.</p>'}</div>
+  </section>`;
+}
+function camerasHTML() {
+  return `<section class="nw-panel" aria-labelledby="t-cams">
+    <div class="nw-panel-head"><h2 class="nw-panel-title" id="t-cams">${icon('camera')} Cameras <span class="nw-count">${draft.cameras.length}</span></h2>
+      <button type="button" class="nw-btn sm" data-act="add" data-list="cameras">+ Add camera</button></div>
+    <p class="muted" style="margin-top:0">Frames are analysed in memory on this laptop and never stored. On/off and night-only are set live on the nurse station or camera page.</p>
+    <div class="list" id="cams">${draft.cameras.map(cameraHTML).join('') || '<p class="muted">No cameras.</p>'}</div>
+  </section>`;
+}
+
+// ------------------------------------------------------------------ floor-plan editor
+// Same coordinate space and drawing as the nurse-station map (viewBox 564 × 290, wing 10-490, outside 500-558).
+const VIEW_W = 564;
+let snapOn = (() => { try { return localStorage.getItem('nw-plan-snap') !== '0'; } catch { return true; } })();
+let gridStep = (() => { try { return Number(localStorage.getItem('nw-plan-grid')) || 10; } catch { return 10; } })();
+let planKey = '';
+let drag = null;
+let selected = null;      // {list, i}
+const keyOf = (list, i) => `${list}:${i}`;
+const smooth = () => (window.NWDisplay ? NWDisplay.scrollBehavior() : 'smooth');
+const clamp = (v, lo, hi) => Math.max(lo, Math.min(hi, v));
+const snapV = (v, force) => (snapOn && !force ? Math.round(v / gridStep) * gridStep : Math.round(v));
+const glyph = (name, size, color) => `<g transform="translate(${-size / 2} ${-size / 2}) scale(${size / 24})" fill="none" stroke="${color}" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">${NW.paths[name] || ''}</g>`;
+
+function camPos(c, i) {
+  const ex = c.zone === 'exit' ? draft.exits.find((x) => x.id === c.exit) : null;
+  if (ex) return [Number(ex.x) || 0, (Number(ex.y) || 0) - 30];
+  const r = draft.residents.find((x) => x.id === c.resident);
+  if (r) return [(Number(r.x) || 0) + 24, 134];
+  return [40 + i * 26, 150];
+}
+function camWatches(c) {
+  if (c.zone === 'exit') { const x = draft.exits.find((e) => e.id === c.exit); return x ? `exit ${x.id} (${x.label || x.id})` : 'no exit yet'; }
+  const r = draft.residents.find((e) => e.id === c.resident);
+  return r ? `the corridor outside room ${r.room || '?'} (${r.id})` : 'the corridor, nobody in particular';
+}
+function exitLabelPos(x, y) {   // same rule as the nurse-station map
+  if (y < 40) return [-16, 4, 'end'];
+  if (x > 400) return [11, 26, 'end'];
+  if (x < 60) return [16, 4, 'start'];
+  return [0, 28, 'middle'];
+}
+
+function planBase() {
+  return `<defs><pattern id="pl-hatch" width="6" height="6" patternUnits="userSpaceOnUse" patternTransform="rotate(45)"><line x1="0" y1="0" x2="0" y2="6" stroke="#16223d" stroke-width="2"/></pattern></defs>
+    <rect x="10" y="10" width="480" height="270" rx="14" fill="#0a1120" stroke="var(--nw-line-strong)" stroke-width="1.5"/>
+    <rect x="500" y="10" width="58" height="270" rx="12" fill="url(#pl-hatch)" stroke="var(--nw-line-strong)" stroke-dasharray="4 4"/>
+    <text x="529" y="28" fill="var(--nw-muted)" font-size="10" font-weight="600" text-anchor="middle" letter-spacing=".06em">OUTSIDE</text>
+    <g id="pl-grid"></g>
+    <rect x="20" y="128" width="460" height="44" rx="4" fill="#0f1830"/>
+    <text x="260" y="167" fill="var(--nw-faint)" font-size="10" font-weight="600" text-anchor="middle" letter-spacing=".06em">CORRIDOR</text>
+    <rect x="22" y="190" width="124" height="80" rx="7" fill="#0e1729" stroke="var(--nw-line)"/>
+    <text x="84" y="226" fill="var(--nw-faint)" font-size="10" font-weight="600" text-anchor="middle" letter-spacing=".04em">NURSE STATION</text>
+    <rect x="160" y="190" width="172" height="80" rx="7" fill="#111b31" stroke="var(--nw-line-strong)"/>
+    <text x="246" y="206" fill="var(--nw-muted)" font-size="10" font-weight="600" text-anchor="middle" letter-spacing=".04em">COMMON ROOM</text>
+    <rect x="346" y="190" width="134" height="80" rx="7" fill="#0e1729" stroke="var(--nw-line)"/>
+    <text x="378" y="206" fill="var(--nw-faint)" font-size="10" font-weight="600" text-anchor="middle" letter-spacing=".04em">ENTRANCE</text>
+    <g id="pl-rooms"></g><g id="pl-marks"></g>`;
+}
+
+function planHTML() {
+  return `<section class="nw-panel" aria-labelledby="t-plan">
+    <div class="nw-panel-head"><h2 class="nw-panel-title" id="t-plan">${icon('pin')} Floor plan</h2><span class="muted">Same map as the nurse station</span></div>
+    <div class="plan-tools">
+      <label class="chk"><input type="checkbox" id="snap" ${snapOn ? 'checked' : ''}> Snap to grid</label>
+      <label class="chk" for="gridsz">Grid
+        <select id="gridsz">${[5, 10, 20].map((g) => `<option value="${g}"${g === gridStep ? ' selected' : ''}>${g} units</option>`).join('')}</select></label>
+      <span class="warnline" id="overlap" role="status"></span>
+    </div>
+    <div class="plan-layout">
+      <div class="plan-wrap">
+        <svg class="plan" id="plan" viewBox="0 0 ${VIEW_W} ${PLAN_H}" role="group" aria-labelledby="t-plan" aria-describedby="plan-keys">${planBase()}</svg>
+        <div class="legend" aria-hidden="true"><span><i style="background:var(--nw-accent);border-radius:50%"></i>Resident (drag the room)</span><span><i style="background:#0a1222;border:1.5px solid var(--nw-muted);border-radius:3px"></i>Door or window</span><span><i style="background:#0a1222;border:1.5px solid var(--nw-accent);border-radius:3px"></i>Camera (drop on a room or exit)</span></div>
+      </div>
+      <aside class="sel-card" id="selcard" aria-label="Selected item"></aside>
+    </div>
+    <div id="plan-live" class="nw-sr-only" aria-live="polite"></div>
+  </section>`;
+}
+
+function syncVal(id, v) { const el = $(id); if (el && document.activeElement !== el && el.value !== String(v)) el.value = v; }
+
+function syncPlan() {
+  const svg = $('plan'); if (!svg) return;
+  const key = JSON.stringify([draft.residents.map((r) => [r.id, r.room]), draft.exits.map((x) => [x.id, x.kind, x.short || x.label]),
+    draft.cameras.map((c) => [c.id, c.label]), snapOn, gridStep, isLaptop]);
+  if (key !== planKey) {
+    planKey = key;
+    const hadFocus = document.activeElement?.closest?.('#plan .mk')?.dataset.k;
+    let grid = '';
+    if (snapOn) {
+      for (let x = 0; x <= PLAN_W; x += gridStep) grid += `<line class="gridl" x1="${x}" y1="0" x2="${x}" y2="${PLAN_H}"/>`;
+      for (let y = 0; y <= PLAN_H; y += gridStep) grid += `<line class="gridl" x1="0" y1="${y}" x2="${PLAN_W}" y2="${y}"/>`;
+    }
+    $('pl-grid').innerHTML = grid;
+    $('pl-rooms').innerHTML = draft.residents.map((r, i) => `<g data-room="${i}"><rect class="roombox" y="30" width="72" height="88" rx="7"/>
+      <text class="rl" y="47" fill="var(--nw-muted)" font-size="10" font-weight="600" text-anchor="middle" letter-spacing=".04em">ROOM ${esc(r.room || '?')}</text>
+      <rect y="100" width="28" height="12" rx="3" fill="none" stroke="var(--nw-line-strong)"/></g>`).join('');
+    const tab = isLaptop ? 'tabindex="0"' : 'tabindex="-1"';
+    const cams = draft.cameras.map((c, i) => `<g class="mk mk-cam" data-k="${keyOf('cameras', i)}" ${tab} role="button" aria-roledescription="camera marker">
+      <rect class="hit" x="-16" y="-14" width="32" height="28"/><rect class="ring" x="-13" y="-11" width="26" height="22" rx="6"/>
+      <rect x="-9" y="-7" width="18" height="14" rx="4" fill="#0a1222" stroke="var(--nw-accent)" stroke-width="1.2"/>${glyph('camera', 10, 'var(--nw-accent)')}</g>`).join('');
+    const exits = draft.exits.map((x, i) => `<g class="mk mk-exit" data-k="${keyOf('exits', i)}" ${tab} role="button" aria-roledescription="draggable exit">
+      <rect class="hit" x="-17" y="-17" width="34" height="34"/><rect class="ring" x="-15" y="-15" width="30" height="30" rx="8"/>
+      <rect x="-11" y="-11" width="22" height="22" rx="6" fill="#0a1222" stroke="var(--nw-muted)" stroke-width="1.5"/>${glyph(x.kind === 'window' ? 'window' : 'door', 13, 'var(--nw-muted)')}
+      <text class="xl" font-size="10.5" fill="var(--nw-muted)">${esc(x.short || x.label || x.id)}</text></g>`).join('');
+    const res = draft.residents.map((r, i) => `<g class="mk mk-res" data-k="${keyOf('residents', i)}" ${tab} role="button" aria-roledescription="draggable room">
+      <circle class="hit" r="18"/><circle class="ring" r="15"/>
+      <circle r="10" fill="var(--nw-accent)" stroke="#070b14" stroke-width="2.5"/>
+      <text y="25" fill="var(--nw-ink)" font-size="10.5" font-weight="700" text-anchor="middle">${esc(r.id)}</text></g>`).join('');
+    $('pl-marks').innerHTML = cams + exits + res;
+    if (hadFocus) svg.querySelector(`[data-k="${hadFocus}"]`)?.focus({ preventScroll: true });
+    renderSelCard();
+  }
+  // positions
+  const overlaps = new Set(), pairs = [];
+  draft.residents.forEach((a, i) => draft.residents.forEach((b, j) => {
+    if (j > i && Math.abs((Number(a.x) || 0) - (Number(b.x) || 0)) < 72) { overlaps.add(i); overlaps.add(j); pairs.push(`${a.id || '?'} and ${b.id || '?'}`); }
+  }));
+  draft.residents.forEach((r, i) => {
+    const x = Number(r.x) || 0, y = Number(r.y) || 0;
+    const room = svg.querySelector(`[data-room="${i}"]`);
+    if (room) {
+      const [box, door] = room.querySelectorAll('rect');
+      box.setAttribute('x', x - 36); door.setAttribute('x', x - 14); room.querySelector('.rl').setAttribute('x', x);
+      box.classList.toggle('overlap', overlaps.has(i));
+    }
+    const g = svg.querySelector(`[data-k="residents:${i}"]`);
+    if (g) {
+      g.setAttribute('transform', `translate(${x} ${y})`);
+      g.setAttribute('aria-label', `Room ${r.room || '?'}, resident ${r.id || 'without id'}, at x ${x}, y ${y}. Arrow keys move it, Enter edits details.`);
+    }
+    syncVal(`r${i}-x`, r.x); syncVal(`r${i}-y`, r.y);
+  });
+  draft.exits.forEach((e, i) => {
+    const x = Number(e.x) || 0, y = Number(e.y) || 0;
+    const g = svg.querySelector(`[data-k="exits:${i}"]`);
+    if (g) {
+      g.setAttribute('transform', `translate(${x} ${y})`);
+      const [lx, ly, anchor] = exitLabelPos(x, y), t = g.querySelector('.xl');
+      t.setAttribute('x', lx); t.setAttribute('y', ly); t.setAttribute('text-anchor', anchor);
+      g.setAttribute('aria-label', `${e.kind === 'window' ? 'Window' : 'Door'} ${e.label || e.id || 'without a name'}, at x ${x}, y ${y}. Arrow keys move it, Enter edits details.`);
+    }
+    syncVal(`x${i}-x`, e.x); syncVal(`x${i}-y`, e.y);
+  });
+  draft.cameras.forEach((c, i) => {
+    const g = svg.querySelector(`[data-k="cameras:${i}"]`); if (!g) return;
+    const [x, y] = drag && drag.list === 'cameras' && drag.i === i && drag.at ? drag.at : camPos(c, i);
+    g.setAttribute('transform', `translate(${x} ${y})`);
+    const camName = c.label || c.id;   // setAttribute: plain text, no HTML parsing
+    g.setAttribute('aria-label', `Camera ${camName}, watches ${camWatches(c)}. Arrow keys change what it watches, Enter edits details.`);
+  });
+  svg.querySelectorAll('.mk').forEach((g) => g.classList.toggle('sel', !!selected && g.dataset.k === keyOf(selected.list, selected.i)));
+  const ov = $('overlap');
+  if (ov) ov.innerHTML = pairs.length ? `${icon('bell')}<span>Rooms ${esc(pairs.slice(0, 3).join(', '))} overlap on the nurse-station map. Move them at least 72 apart.</span>` : '';
+  if (selected) {
+    const it = draft[selected.list]?.[selected.i];
+    if (it && selected.list !== 'cameras') { syncVal('sel-x', it.x); syncVal('sel-y', it.y); }
+    if (it && selected.list === 'cameras') syncVal('sel-watch', camTargetValue(it));
+  }
+}
+
+const camTargets = () => [...draft.residents.filter((r) => r.id).map((r) => ({ type: 'res', id: r.id, label: `Room ${r.room || '?'} · ${r.id}` })),
+  ...draft.exits.filter((x) => x.id).map((x) => ({ type: 'exit', id: x.id, label: `${x.kind === 'window' ? 'Window' : 'Door'} · ${x.label || x.id}` }))];
+const camTargetValue = (c) => (c.zone === 'exit' ? `exit:${c.exit || ''}` : c.resident ? `res:${c.resident}` : 'none');
+
+function renderSelCard() {
+  const card = $('selcard'); if (!card) return;
+  const it = selected && draft[selected.list]?.[selected.i];
+  if (!it) {
+    selected = null;
+    card.innerHTML = `<h3>${icon('pin')}Move things on the map</h3>
+      <ul class="keys" id="plan-keys">
+        <li><b>Drag</b> a room or a door to move it. Hold <span class="nw-kbd">Alt</span> to place it off the grid.</li>
+        <li><b>Tab</b> to an item, then <span class="nw-kbd">←</span><span class="nw-kbd">→</span><span class="nw-kbd">↑</span><span class="nw-kbd">↓</span> move it one grid step, <span class="nw-kbd">Shift</span> + arrows move 1.</li>
+        <li><b>Drop a camera</b> on a room or an exit to choose what it watches (arrows cycle through them).</li>
+        <li><span class="nw-kbd">Enter</span> opens the item's details below.</li>
+      </ul>`;
+    return;
+  }
+  const L = selected.list, i = selected.i;
+  if (L === 'cameras') {
+    const v = camTargetValue(it);
+    card.innerHTML = `<h3>${icon('camera')}${esc(it.label || it.id)}</h3>
+      <div class="f"><label for="sel-watch">Watches</label><select id="sel-watch" ${isLaptop ? '' : 'disabled'}>
+        <option value="none"${v === 'none' ? ' selected' : ''}>Corridor, nobody in particular</option>
+        ${camTargets().map((t) => `<option value="${t.type}:${esc(t.id)}"${v === `${t.type}:${t.id}` ? ' selected' : ''}>${esc(t.label)}</option>`).join('')}</select></div>
+      <p class="muted" style="margin:0">On the nurse station the camera sits by the room or exit it watches, so its position follows that choice.</p>
+      <div style="display:flex;gap:8px;flex-wrap:wrap"><button type="button" class="nw-btn sm" data-act="details" data-list="cameras" data-i="${i}">Edit details ↓</button>
+      <button type="button" class="nw-btn sm nw-btn--ghost" data-act="deselect">Done</button></div>
+      <ul class="keys" id="plan-keys"><li>Arrow keys on the marker cycle what it watches.</li></ul>`;
+    return;
+  }
+  const pre = L === 'residents' ? 'r' : 'x';
+  const title = L === 'residents' ? `${icon('user')}Room ${esc(it.room || '?')} · ${esc(it.id || 'new')}` : `${icon(it.kind === 'window' ? 'window' : 'door')}${esc(it.label || it.id || 'New exit')}`;
+  card.innerHTML = `<h3>${title}</h3>
+    <div class="grid" style="grid-template-columns:1fr 1fr">
+      ${field('sel-x', 'x (0-560)', `<input id="sel-x" data-p="${L}.${i}.x" value="${esc(it.x)}" type="number" min="0" max="560" step="1" inputmode="numeric" ${isLaptop ? '' : 'disabled'}>`)}
+      ${field('sel-y', 'y (0-290)', `<input id="sel-y" data-p="${L}.${i}.y" value="${esc(it.y)}" type="number" min="0" max="290" step="1" inputmode="numeric" ${isLaptop ? '' : 'disabled'}>`)}
+    </div>
+    ${L === 'residents' ? '<p class="muted" style="margin:0">The nurse station draws each room as a column on the bedroom row at this x.</p>' : ''}
+    <div style="display:flex;gap:8px;flex-wrap:wrap"><button type="button" class="nw-btn sm" data-act="details" data-list="${L}" data-i="${i}">Edit details ↓</button>
+    <button type="button" class="nw-btn sm nw-btn--ghost" data-act="deselect">Done</button></div>
+    <ul class="keys" id="plan-keys"><li>Arrow keys on the marker: one grid step. <span class="nw-kbd">Shift</span>: 1 unit.</li></ul>`;
+  void pre;
+}
+
+function select(list, i) {
+  const same = selected && selected.list === list && selected.i === i;
+  selected = list ? { list, i } : null;
+  if (!same) renderSelCard();
+  syncPlan();
+}
+
+let liveT = null;
+function announce(msg) { clearTimeout(liveT); liveT = setTimeout(() => { const l = $('plan-live'); if (l) l.textContent = msg; }, 350); }
+
+function moveTo(list, i, x, y) {
+  const it = draft[list][i];
+  // Rooms are 72 wide on the nurse-station map: keep a dragged room inside the wing (10-490).
+  const [lo, hi] = list === 'residents' ? [46, 454] : [0, PLAN_W];
+  it.x = clamp(Math.round(x), lo, hi); it.y = clamp(Math.round(y), 0, PLAN_H);
+  refresh();
+}
+function assignCam(i, t) {
+  const c = draft.cameras[i];
+  if (!t) { c.zone = 'corridor'; c.resident = ''; c.exit = ''; }
+  else if (t.type === 'exit') { c.zone = 'exit'; c.exit = t.id; c.resident = ''; }
+  else { c.zone = 'corridor'; c.resident = t.id; c.exit = ''; }
+  $('cams').innerHTML = draft.cameras.map(cameraHTML).join('') || '<p class="muted">No cameras.</p>';
+  if (!isLaptop) $('cams').querySelectorAll('input, select, button').forEach((el) => { el.disabled = true; });
+  renderSelCard(); refresh();
+  const camName = c.label || c.id;   // announce() sets textContent
+  announce(`${camName} now watches ${camWatches(c)}`);
+}
+function camTargetAt(p) {
+  let best = null, bd = 1e9;
+  draft.exits.forEach((x) => { const d = Math.hypot(p.x - x.x, p.y - x.y); if (x.id && d < 34 && d < bd) { bd = d; best = { type: 'exit', id: x.id }; } });
+  if (best) return best;
+  draft.residents.forEach((r) => { const d = Math.abs(p.x - r.x); if (r.id && p.y < 185 && d <= 40 && d < bd) { bd = d; best = { type: 'res', id: r.id }; } });
+  return best;
+}
+function markDrop(t) {
+  const svg = $('plan');
+  svg.querySelectorAll('.roombox.target').forEach((el) => el.classList.remove('target'));
+  svg.querySelectorAll('.mk.drop').forEach((el) => el.classList.remove('drop'));
+  if (!t) return;
+  if (t.type === 'res') { const i = draft.residents.findIndex((r) => r.id === t.id); svg.querySelector(`[data-room="${i}"] .roombox`)?.classList.add('target'); }
+  else { const i = draft.exits.findIndex((x) => x.id === t.id); svg.querySelector(`[data-k="exits:${i}"]`)?.classList.add('drop'); }
+}
+function svgPoint(e) {
+  const svg = $('plan'), pt = svg.createSVGPoint(); pt.x = e.clientX; pt.y = e.clientY;
+  return pt.matrixTransform(svg.getScreenCTM().inverse());
+}
+function openDetails(list, i) {
+  const target = list === 'residents' ? `res-${i}` : list === 'exits' ? `exit-${i}` : `cam-${i}`;
+  const el = $(target); if (!el) return;
+  if (el.tagName === 'DETAILS') el.open = true;
+  el.scrollIntoView({ block: 'start', behavior: smooth() });
+  const first = el.querySelector('input, select, textarea'); first?.focus({ preventScroll: true });
+}
+
+$('form').addEventListener('pointerdown', (e) => {
+  const g = e.target.closest('#plan .mk'); if (!g || !isLaptop || e.button > 0) return;
+  e.preventDefault();
+  const [list, si] = g.dataset.k.split(':'); const i = Number(si);
+  select(list, i); g.focus({ preventScroll: true });
+  const p = svgPoint(e);
+  const it = draft[list][i];
+  const base = list === 'cameras' ? camPos(it, i) : [Number(it.x) || 0, Number(it.y) || 0];
+  drag = { list, i, dx: p.x - base[0], dy: p.y - base[1], id: e.pointerId, moved: false, at: null, target: null };
+  $('plan').setPointerCapture(e.pointerId);
+  g.classList.add('dragging');
+});
+$('form').addEventListener('pointermove', (e) => {
+  if (!drag || e.pointerId !== drag.id) return;
+  const p = svgPoint(e);
+  drag.moved = true;
+  if (drag.list === 'cameras') {
+    drag.at = [clamp(p.x, 0, VIEW_W), clamp(p.y, 0, PLAN_H)];
+    drag.target = camTargetAt(p); markDrop(drag.target); syncPlan();
+    return;
+  }
+  moveTo(drag.list, drag.i, clamp(snapV(p.x - drag.dx, e.altKey), 0, PLAN_W), clamp(snapV(p.y - drag.dy, e.altKey), 0, PLAN_H));
+});
+function endDrag(e) {
+  if (!drag || (e && e.pointerId !== drag.id)) return;
+  const d = drag; drag = null;
+  $('plan').querySelectorAll('.dragging').forEach((g) => g.classList.remove('dragging'));
+  markDrop(null);
+  if (d.list === 'cameras') {
+    if (d.moved && d.target) assignCam(d.i, d.target);
+    else { syncPlan(); if (d.moved) announce('Not dropped on a room or exit: nothing changed'); }
+    return;
+  }
+  const it = draft[d.list][d.i];
+  if (d.moved) announce(`${it.id || 'Item'} moved to x ${it.x}, y ${it.y}`);
+}
+$('form').addEventListener('pointerup', endDrag);
+$('form').addEventListener('pointercancel', endDrag);
+
+$('form').addEventListener('focusin', (e) => {
+  const g = e.target.closest?.('#plan .mk'); if (!g) return;
+  const [list, i] = g.dataset.k.split(':'); select(list, Number(i));
+});
+$('form').addEventListener('keydown', (e) => {
+  const g = e.target.closest?.('#plan .mk'); if (!g) return;
+  const [list, si] = g.dataset.k.split(':'); const i = Number(si);
+  const dirs = { ArrowLeft: [-1, 0], ArrowRight: [1, 0], ArrowUp: [0, -1], ArrowDown: [0, 1] };
+  if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); openDetails(list, i); return; }
+  if (e.key === 'Escape') { e.preventDefault(); select(null); return; }
+  if (!dirs[e.key] || !isLaptop) return;
+  e.preventDefault();
+  if (list === 'cameras') {
+    const ts = camTargets(); if (!ts.length) return;
+    const cur = ts.findIndex((t) => `${t.type}:${t.id}` === camTargetValue(draft.cameras[i]));
+    const step = dirs[e.key][0] + dirs[e.key][1];
+    assignCam(i, ts[(cur + step + ts.length) % ts.length] || ts[0]);
+    $('plan').querySelector(`[data-k="cameras:${i}"]`)?.focus({ preventScroll: true });
+    return;
+  }
+  const it = draft[list][i], [dx, dy] = dirs[e.key];
+  const step = e.shiftKey || !snapOn ? 1 : gridStep;
+  let nx = (Number(it.x) || 0) + dx * step, ny = (Number(it.y) || 0) + dy * step;
+  if (!e.shiftKey && snapOn) { nx = Math.round(nx / gridStep) * gridStep; ny = Math.round(ny / gridStep) * gridStep; }
+  moveTo(list, i, nx, ny);
+  announce(`x ${it.x}, y ${it.y}`);
+});
+
+// ------------------------------------------------------------------ import, export, reset to demo
+function fileHTML() {
+  return `<section class="nw-panel" aria-labelledby="t-file">
+    <div class="nw-panel-head"><h2 class="nw-panel-title" id="t-file">${icon('note')} Import, export, reset</h2></div>
+    <div class="file-acts">
+      <div class="fa"><b>Export</b><span class="muted">Download what the form shows now, unsaved edits included, as a JSON file. Treat it like a care record if it ever holds real names.</span>
+        <button type="button" class="nw-btn sm" data-act="export">${icon('note')}Download JSON</button></div>
+      <div class="fa"><b>Import</b><span class="muted">Load a JSON file into the form. It is checked with the same rules first, and nothing is saved until you press Save.</span>
+        <button type="button" class="nw-btn sm" data-act="import">${icon('back')}Choose a file…</button></div>
+      <div class="fa"><b>Reset to the demo facility</b><span class="muted">Go back to the synthetic Maple Wing residents that ship with NightWatch.</span>
+        <button type="button" class="nw-btn sm danger" data-act="reset-demo">${icon('reset')}Reset to demo…</button></div>
+    </div></section>`;
+}
+
+function doExport() {
+  const data = { _note: 'NightWatch facility settings (export). Demo residents are synthetic: never share a file with real resident data.',
+    _exported: new Date().toISOString(), ...payload() };
+  const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = `nightwatch-facility-${new Date().toISOString().slice(0, 10)}.json`;
+  document.body.appendChild(a); a.click(); a.remove();
+  setTimeout(() => URL.revokeObjectURL(a.href), 2000);
+  banner($('result'), 'ok', `${icon('check')}<div><b>Exported</b> ${esc(a.download)} to your Downloads folder${isDirty() ? ' (includes your unsaved changes)' : ''}.</div>`);
+}
+
+$('imp').addEventListener('change', async () => {
+  const f = $('imp').files[0]; $('imp').value = '';
+  if (!f) return;
+  const fail = (msg) => { banner($('result'), 'bad', `${icon('siren')}<div><b>Not imported.</b> ${msg}</div>`); $('result').scrollIntoView({ block: 'center', behavior: smooth() }); };
+  if (f.size > 1_000_000) return fail(`${esc(f.name)} is larger than 1 MB, which is far too big for a facility file.`);
+  let obj;
+  try { obj = JSON.parse(await f.text()); } catch { return fail(`${esc(f.name)} isn't valid JSON.`); }
+  if (!obj || typeof obj !== 'object' || !Array.isArray(obj.residents)) return fail(`${esc(f.name)} doesn't look like NightWatch settings (there is no residents list).`);
+  let cand;
+  try { cand = normalize({ ...obj, timeouts: obj.timeouts || draft.timeouts }); } catch { return fail(`${esc(f.name)} has fields in an unexpected shape.`); }
+  const errs = validate(payload(cand));
+  if (errs.length) {
+    return fail(`${esc(f.name)} has ${errs.length} problem${errs.length > 1 ? 's' : ''}. Fix ${errs.length > 1 ? 'them' : 'it'} in the file and try again:
+      <ul style="margin:6px 0 0;padding-left:20px">${errs.slice(0, 8).map((e) => `<li>${esc(e.msg)}</li>`).join('')}${errs.length > 8 ? `<li>…and ${errs.length - 8} more</li>` : ''}</ul>`);
+  }
+  if (isDirty() && !(await confirmDlg('Replace your unsaved changes?', `The form will show ${f.name} instead. Your unsaved edits are lost (export them first if you need them).`, 'Import'))) return;
+  draft = cand; selected = null; showErrors = false; $('errors').hidden = true;
+  render();
+  banner($('result'), 'ok', `${icon('check')}<div><b>Imported ${esc(f.name)}:</b> ${cand.residents.length} residents, ${cand.exits.length} exits, ${cand.cameras.length} cameras.
+    ${isDirty() ? '<b>Not saved yet.</b> Check the form, then press Save.' : 'It matches the saved settings exactly, so there is nothing to save.'}</div>`);
+  $('result').scrollIntoView({ block: 'center', behavior: smooth() });
+});
+
+const DEMO_KEY = 'nw-demo-facility';
+async function demoValues() {
+  try {   // a server that knows ?demo=1 returns the shipped file; older servers return the current one (source tells which)
+    const r = await fetch('/api/settings?demo=1');
+    const s = await r.json();
+    if (s && s.source === 'facility.json') return [s, 'from the server'];
+  } catch { /* fall through */ }
+  try {
+    const s = JSON.parse(localStorage.getItem(DEMO_KEY));
+    if (s && Array.isArray(s.residents)) return [s, 'remembered by this browser from the last time the server used the demo file'];
+  } catch { /* no storage */ }
+  return [null, ''];
+}
+
+async function openReset(btn) {
+  const d = $('dlg-reset'), body = $('dr-body'), load = $('dr-load');
+  const onDemo = origSource === 'facility.json';
+  const [demo, how] = onDemo ? [null, ''] : await demoValues();
+  const cmd = (k, c) => `<div class="cmd"><span class="k">${k}</span><code>${esc(c)}</code><button type="button" class="nw-btn sm" data-copy="${esc(c)}">Copy</button></div>`;
+  body.innerHTML = onDemo
+    ? `<p>You're already using the demo facility (<code>nightwatch/demo/facility.json</code>), so there's nothing to reset. Use <b>Undo changes</b> to drop edits you haven't saved.</p>`
+    : `<p><b>NightWatch is using your edited copy, <code>data/facility.local.json</code>.</b> The server never deletes files from a web page, so remove it yourself, in the ExecuTorch folder:</p>
+       ${cmd('Windows (PowerShell)', 'Remove-Item data\\facility.local.json')}
+       ${cmd('macOS / Linux', 'rm data/facility.local.json')}
+       <p>Then restart NightWatch (<code>demo.ps1</code>). The demo file loads again. Restarting clears tonight's alerts.</p>
+       ${demo ? `<p><b>Or, without a restart:</b> load the demo values into this form (${esc(how)}) and press Save. That writes the demo residents into <code>data/facility.local.json</code>, which works the same.</p>`
+         : '<p class="muted">This browser hasn\'t seen the demo file yet, so it can\'t fill the form with it. Use the command above.</p>'}`;
+  load.hidden = !demo || !isLaptop;
+  d.returnValue = ''; d.showModal();
+  const res = await new Promise((r) => d.addEventListener('close', () => r(d.returnValue), { once: true }));
+  if (res === 'load' && demo) {
+    draft = normalize({ ...demo, timeouts: draft.timeouts }); selected = null; render();
+    banner($('result'), 'ok', `${icon('check')}<div><b>Demo values loaded into the form.</b> Not saved yet: press Save to apply them (the night restarts).</div>`);
+    $('save').focus();
+  } else btn?.focus();
+}
+$('dlg-reset').addEventListener('click', async (e) => {
+  const b = e.target.closest('[data-copy]'); if (!b) return;
+  e.preventDefault();
+  try { await navigator.clipboard.writeText(b.dataset.copy); b.textContent = 'Copied'; } catch { b.textContent = 'Select and copy'; }
+  setTimeout(() => { b.textContent = 'Copy'; }, 1600);
+});
+
+function render(focusId) {
+  const f = $('form');
+  const open = {};
+  f.querySelectorAll('details.item').forEach((d) => { open[d.dataset.i] = d.open; });
+  draft.residents.forEach((r, i) => { if (i in open) r._open = open[i]; });
+  const strip = (o) => { o.residents.forEach((r) => delete r._open); return o; };
+  planKey = '';
+  if (selected && !draft[selected.list]?.[selected.i]) selected = null;
+  f.innerHTML = facilityHTML() + planHTML() + residentsHTML() + exitsHTML() + camerasHTML() + fileHTML();
+  strip(draft);
+  if (!isLaptop) f.querySelectorAll('input, select, textarea, button[data-act]:not([data-act="fold"]):not([data-act="export"]):not([data-act="show"]):not([data-act="details"]):not([data-act="deselect"])').forEach((el) => { el.disabled = true; });
+  if (focusId && $(focusId)) { $(focusId).focus({ preventScroll: true }); $(focusId).scrollIntoView({ block: 'center', behavior: smooth() }); }
+  refresh();
+}
+
+// After an edit: things that depend on values but don't need a full re-render.
+function refresh() {
+  syncPlan();
+  if ($('nightline')) $('nightline').textContent = nightLine();
+  draft.residents.forEach((r, i) => {
+    const [rk, rw] = riskWord(Number(r.wander_risk));
+    const out = $(`r${i}-risk-out`); if (out) { out.textContent = `${Math.round(r.wander_risk * 100)}% · ${rw}`; out.className = rk; }
+    const rg = $(`r${i}-risk`); if (rg) rg.setAttribute('aria-valuetext', `${Math.round(r.wander_risk * 100)} percent, ${rw}`);
+    if ($(`res-${i}-ttl`)) $(`res-${i}-ttl`).textContent = `${r.id || 'New resident'}${r.name ? ` · ${r.name}` : ''}`;
+    if ($(`res-${i}-sub`)) $(`res-${i}-sub`).textContent = `Room ${r.room || '–'} · ${rw} wander risk`;
+    r.what_helped.forEach(([, ok, tr], j) => { const el = $(`r${i}-h${j}-rate`); if (el) el.textContent = Number(tr) > 0 ? `${Math.round(100 * Number(ok) / Number(tr))}% success` : 'not tried yet'; });
+  });
+  draft.exits.forEach((x, i) => { const t = $(`exit-${i}-ttl`); if (t) t.textContent = x.label || x.id || 'New exit'; });
+  draft.cameras.forEach((c, i) => { const t = $(`cam-${i}-ttl`); if (t) t.textContent = c.label || c.id || 'New camera'; });
+  const dirty = isDirty();
+  const st = $('dirty');
+  st.className = 'state ' + (dirty ? 'is-dirty' : 'is-clean');
+  st.innerHTML = !isLaptop ? `${icon('eye')}<span><b>Read only.</b> Open Settings on the nurse-station laptop to change anything.</span>`
+    : dirty ? `${icon('note')}<span><b>Unsaved changes.</b> Nothing applies until you save.</span>`
+    : `${icon('check')}<span><b>Saved.</b> <span class="muted">Loaded from <code>${esc(origSource)}</code></span></span>`;
+  $('undo').disabled = !dirty;
+  $('save').disabled = !dirty || !isLaptop;
+  if (showErrors) showValidation(validate(payload()), false);
+}
+
+function showValidation(errs, focus) {
+  document.querySelectorAll('[aria-invalid="true"]').forEach((el) => el.removeAttribute('aria-invalid'));
+  document.querySelectorAll('.has-err').forEach((el) => el.classList.remove('has-err'));
+  const box = $('errors');
+  if (!errs.length) { box.hidden = true; return; }
+  errs.forEach((e) => {
+    const el = $(e.field); if (!el) return;
+    el.setAttribute('aria-invalid', 'true');
+    el.closest('details.item, .row-card')?.classList.add('has-err');
+  });
+  $('err-title').innerHTML = `${icon('siren')}${errs.length} thing${errs.length > 1 ? 's' : ''} to fix before saving`;
+  $('err-list').innerHTML = errs.map((e) => `<li><a href="#${esc(e.field)}" data-goto="${esc(e.field)}">${esc(e.msg)}</a></li>`).join('');
+  box.hidden = false;
+  if (focus) { box.focus(); box.scrollIntoView({ block: 'start' }); }
+}
+$('err-list').addEventListener('click', (e) => {
+  const a = e.target.closest('[data-goto]'); if (!a) return;
+  e.preventDefault();
+  const el = $(a.dataset.goto); if (!el) return;
+  const d = el.closest('details'); if (d) d.open = true;
+  el.focus(); el.scrollIntoView({ block: 'center' });
+});
+
+// ------------------------------------------------------------------ editing
+function setPath(path, value) {
+  const keys = path.split('.');
+  let o = draft;
+  for (const k of keys.slice(0, -1)) o = o[k];
+  o[keys.at(-1)] = value;
+}
+function getPath(path) { return path.split('.').reduce((o, k) => o?.[k], draft); }
+let before = null;   // value of an id field when it got focus, to rename references on change
+
+$('form').addEventListener('focusin', (e) => { if (e.target.dataset.p) before = getPath(e.target.dataset.p); });
+$('form').addEventListener('input', (e) => {
+  const el = e.target; const p = el.dataset.p; if (!p) return;
+  let v = el.value;
+  if (el.type === 'range' || (el.type === 'number' && v.trim() !== '' && Number.isFinite(Number(v)))) v = Number(v);
+  if (p.startsWith('night_hours.')) v = Number(v);
+  setPath(p, v);
+  refresh();
+});
+$('form').addEventListener('change', (e) => {
+  const t = e.target;
+  if (t.id === 'snap') { snapOn = t.checked; try { localStorage.setItem('nw-plan-snap', snapOn ? '1' : '0'); } catch { /* fine */ } syncPlan(); return; }
+  if (t.id === 'gridsz') { gridStep = Number(t.value); try { localStorage.setItem('nw-plan-grid', String(gridStep)); } catch { /* fine */ } syncPlan(); return; }
+  if (t.id === 'sel-watch' && selected?.list === 'cameras') {
+    const [type, ...rest] = t.value.split(':'); assignCam(selected.i, type === 'none' ? null : { type, id: rest.join(':') }); $('sel-watch')?.focus(); return;
+  }
+  const p = t.dataset.p; if (!p) return;
+  const m = /^(residents|exits)\.(\d+)\.(id|name|label|room)$/.exec(p);
+  if (m) {
+    // Renaming a resident or exit: keep the cameras that pointed at it.
+    if (m[3] === 'id' && before && before !== e.target.value) {
+      const key = m[1] === 'residents' ? 'resident' : 'exit';
+      draft.cameras.forEach((c) => { if (c[key] === before) c[key] = e.target.value.trim(); });
+    }
+    $('cams').innerHTML = draft.cameras.map(cameraHTML).join('') || '<p class="muted">No cameras.</p>';
+    before = e.target.value;
+    refresh();
+  }
+  if (/^cameras\.\d+\.zone$/.test(p)) render(e.target.id);
+});
+
+function newId(prefix, list) {
+  for (let n = list.length + 1; ; n++) { const id = `${prefix}${String(n).padStart(2, '0')}`; if (!list.some((x) => x.id === id)) return id; }
+}
+async function confirmDlg(title, body, okLabel) {
+  const d = $('dlg-confirm');
+  $('dc-title').textContent = title; $('dc-body').textContent = body; $('dc-ok').textContent = okLabel;
+  d.returnValue = ''; d.showModal();
+  return new Promise((res) => d.addEventListener('close', () => res(d.returnValue === 'ok'), { once: true }));
+}
+
+$('form').addEventListener('click', async (e) => {
+  const b = e.target.closest('button[data-act]'); if (!b) return;
+  const { act, list } = b.dataset; const i = Number(b.dataset.i);
+  if (act === 'fold') {
+    const ds = [...document.querySelectorAll('details.item')]; const anyOpen = ds.some((d) => d.open);
+    ds.forEach((d) => { d.open = !anyOpen; }); b.textContent = anyOpen ? 'Expand all' : 'Collapse all'; return;
+  }
+  if (act === 'add') {
+    if (list === 'residents') draft.residents.push({ id: newId('R-', draft.residents), name: '', room: '', wander_risk: 0.3, hr_rest: 70, pattern: '', description: '', what_helped: [], x: 100, y: 70 });
+    if (list === 'exits') draft.exits.push({ id: newId('exit', draft.exits), label: '', short: '', kind: 'exterior_door', x: 470, y: 250 });
+    if (list === 'cameras') draft.cameras.push({ id: newId('cam', draft.cameras), label: '', zone: 'corridor', resident: '', exit: '' });
+    const n = draft[list].length - 1;
+    render(list === 'residents' ? `r${n}-name` : list === 'exits' ? `x${n}-label` : `c${n}-label`);
+    return;
+  }
+  if (act === 'del') {
+    const item = draft[list][i];
+    const label = item.id || 'this item';
+    const refs = list === 'cameras' ? [] : draft.cameras.filter((c) => (list === 'residents' ? c.resident : c.exit) === item.id).map((c) => c.id);
+    const extra = refs.length ? ` Camera${refs.length > 1 ? 's' : ''} ${refs.join(', ')} point${refs.length > 1 ? '' : 's'} at it and will need a new choice.` : '';
+    if (!(await confirmDlg(`Remove ${label}?`, `This only changes the form until you save.${extra}`, 'Remove'))) return;
+    draft[list].splice(i, 1);
+    if (selected?.list === list) selected = null;
+    render();
+    const head = { residents: 't-res', exits: 't-exits', cameras: 't-cams' }[list];
+    const addBtn = $(head).closest('section').querySelector('[data-act="add"]'); addBtn && addBtn.focus();
+    return;
+  }
+  if (act === 'add-helped') {
+    draft.residents[i].what_helped.push(['', 0, 0]);
+    render(`r${i}-h${draft.residents[i].what_helped.length - 1}-n`); return;
+  }
+  if (act === 'del-helped') {
+    draft.residents[i].what_helped.splice(Number(b.dataset.j), 1);
+    render(); const add = document.querySelector(`[data-act="add-helped"][data-i="${i}"]`); add && add.focus(); return;
+  }
+  if (act === 'show') {
+    select(list, i);
+    const g = $('plan').querySelector(`[data-k="${keyOf(list, i)}"]`);
+    $('plan').scrollIntoView({ block: 'center', behavior: smooth() });
+    g?.focus({ preventScroll: true });
+    return;
+  }
+  if (act === 'details') { openDetails(list, i); return; }
+  if (act === 'deselect') { const k = selected && keyOf(selected.list, selected.i); select(null); $('plan').querySelector(`[data-k="${k}"]`)?.focus({ preventScroll: true }); return; }
+  if (act === 'export') { doExport(); return; }
+  if (act === 'import') { $('imp').click(); return; }
+  if (act === 'reset-demo') { openReset(b); return; }
+});
+
+// ------------------------------------------------------------------ load, undo, save
+function banner(el, kind, html) { el.className = `banner is-${kind}`; el.innerHTML = html; el.hidden = !html; }
+
+async function load() {
+  $('result').hidden = true;
+  try {
+    const [sr, hr] = await Promise.all([fetch('/api/settings'), fetch('/api/health')]);
+    if (!sr.ok) throw new Error(sr.status === 401 ? 'this device is not paired' : `server answered ${sr.status}`);
+    const s = await sr.json();
+    const h = hr.ok ? await hr.json() : {};
+    isLaptop = !!h.phones;   // the server only sends the phone PIN/address to the laptop itself
+    orig = normalize(s); origSource = s.source || '';
+    if (s.source === 'facility.json') { try { localStorage.setItem(DEMO_KEY, JSON.stringify({ ...s, timeouts: undefined, source: undefined })); } catch { /* fine */ } }
+    draft = clone(orig);
+    showErrors = false; $('errors').hidden = true;
+    banner($('readonly'), 'bad', isLaptop ? '' : `${icon('shield')}<div><b>Read only on this device.</b> Settings can only be changed on the nurse-station laptop itself, so a phone on the Wi-Fi can't rewrite the residents list.</div>`);
+    const demo = s.source === 'facility.json';
+    banner($('srcnote'), demo ? 'ok' : 'warn', demo
+      ? `${icon('check')}<div>Using the <b>demo facility</b> (<code>nightwatch/demo/facility.json</code>). Your first save creates <code>data/facility.local.json</code>.</div>`
+      : `${icon('note')}<div>Using <b>edited settings</b> from <code>data/${esc(s.source)}</code>. To go back to the demo facility, delete that file and restart the server.</div>`);
+    render();
+  } catch (e) {
+    $('form').innerHTML = `<div class="banner is-bad" role="alert">${icon('siren')}<div><b>Couldn't load settings</b> (${esc(e.message)}). Is nightwatch/server.py running?</div></div>`;
+  }
+}
+
+$('undo').onclick = async () => {
+  if (!(await confirmDlg('Undo all changes?', 'The form goes back to the saved settings. Nothing on the server changes.', 'Undo changes'))) return;
+  draft = clone(orig); showErrors = false; $('errors').hidden = true; render();
+  $('undo').focus();
+};
+$('reload').onclick = async () => {
+  if (isDirty() && !(await confirmDlg('Reload and lose your changes?', 'The form will show what the server has saved now.', 'Reload'))) return;
+  await load(); $('reload').focus();
+};
+$('save').onclick = async () => {
+  const p = payload();
+  const errs = validate(p);
+  showErrors = true;
+  showValidation(errs, true);
+  if (errs.length) return;
+  const before = await nightSnapshot();
+  $('ds-impact').innerHTML = impactHTML(before);
+  const nAlerts = before?.open || 0;
+  $('ds-ok').textContent = nAlerts ? `Clear ${nAlerts} open alert${nAlerts > 1 ? 's' : ''} and save` : 'Save and restart night';
+  const d = $('dlg-save'); d.returnValue = ''; d.showModal();
+  const ok = await new Promise((res) => d.addEventListener('close', () => res(d.returnValue === 'ok'), { once: true }));
+  if (!ok) { $('save').focus(); return; }
+  $('save').disabled = true; $('save').textContent = 'Saving…';
+  try {
+    const r = await NW.post('/api/settings', p);
+    const out = await r.json().catch(() => ({}));
+    if (r.status === 403) {
+      isLaptop = false; refresh();
+      banner($('result'), 'bad', `${icon('shield')}<div><b>Not saved.</b> ${esc(out.error || 'Settings can only be changed on the nurse-station laptop.')}</div>`);
+    } else if (!r.ok || out.error) {
+      banner($('result'), 'bad', `${icon('siren')}<div><b>The server didn't accept these settings.</b> ${esc(out.error || `HTTP ${r.status}`)}</div>`);
+    } else {
+      const cams = await keepCameraPrivacy(before, out);
+      await load();
+      banner($('result'), 'ok', `${icon('check')}<div><b>Saved and applied.</b> Written to <code>data/facility.local.json</code> on this laptop. The night restarted: alerts cleared, residents back in bed.${cams}
+        <a class="nw-link" href="/dashboard/">Open the nurse station →</a></div>`);
+    }
+  } catch (e) {
+    banner($('result'), 'bad', `${icon('siren')}<div><b>Not saved.</b> Couldn't reach the server (${esc(e.message)}).</div>`);
+  } finally {
+    $('save').innerHTML = 'Save<span class="long">and restart night</span>'; refresh();
+    $('result').scrollIntoView({ block: 'center' }); $('result').setAttribute('tabindex', '-1'); $('result').focus({ preventScroll: true });
+  }
+};
+
+// ------------------------------------------------------------------ what a save will clear, and keeping cameras off
+async function nightSnapshot() {
+  try {
+    const [st, rp] = await Promise.all([fetch('/api/state').then((r) => r.json()), fetch('/api/report').then((r) => r.json()).catch(() => null)]);
+    return { open: (st.alerts || []).length, drafts: rp?.totals?.records_draft ?? 0,
+      cameras: (st.cameras || []).map((c) => ({ id: c.id, label: c.label, enabled: c.enabled !== false, schedule: c.schedule || 'always' })) };
+  } catch { return null; }
+}
+function impactHTML(b) {
+  if (!b) return `<li class="warn">${icon('bell')}<span>Couldn't check tonight's alerts and records. Saving clears whatever is open.</span></li>`;
+  const li = (cls, ic, html) => `<li class="${cls}">${icon(ic)}<span>${html}</span></li>`;
+  const out = [];
+  out.push(b.open ? li('bad', 'siren', `<b>${b.open} open alert${b.open > 1 ? 's' : ''} will be cleared.</b> If someone is still out of bed, finish it on the nurse station first.`)
+    : li('ok', 'check', 'No open alerts right now.'));
+  out.push(b.drafts ? li('bad', 'note', `<b>${b.drafts} care record${b.drafts > 1 ? 's' : ''} not filed yet will be lost.</b> <a class="nw-link" href="/report/">File ${b.drafts > 1 ? 'them' : 'it'} in the shift report</a> first.`)
+    : li('ok', 'check', 'No unfiled care records.'));
+  const off = b.cameras.filter((c) => !c.enabled || c.schedule === 'night');
+  out.push(off.length ? li('ok', 'shield', `<b>Camera privacy stays as staff set it:</b> ${off.map((c) => `${esc(c.label)} (${c.enabled ? 'night only' : 'off'})`).join(', ')}. This page checks it after saving and puts it back if needed.`)
+    : li('ok', 'camera', 'All cameras are on and watching always; they stay that way.'));
+  return out.join('');
+}
+// Off must mean off: if the server switched a camera back on (or to always-on) while restarting the night,
+// put the staff's choice back right away. Servers that already keep camera states need nothing.
+async function keepCameraPrivacy(before, out) {
+  if (!before) return '';
+  const after = await nightSnapshot(); if (!after) return '';
+  const fixed = [];
+  for (const c of before.cameras) {
+    const now = after.cameras.find((x) => x.id === c.id); if (!now) continue;
+    if (now.enabled !== c.enabled || now.schedule !== c.schedule) {
+      const body = { camera: c.id, enabled: c.enabled, schedule: c.schedule, by: 'Settings (kept after save)' };
+      try { await NW.post('/api/camera/config', body); fixed.push(c.label); } catch { /* reported below */ }
+    }
+  }
+  const kept = before.cameras.filter((c) => !c.enabled || c.schedule === 'night');
+  if (fixed.length) return ` Camera settings restored after the restart: ${esc(fixed.join(', '))}.`;
+  if (kept.length) return ` Cameras kept as staff set them (${esc(kept.map((c) => `${c.label}: ${c.enabled ? 'night only' : 'off'}`).join(', '))}).`;
+  void out; return '';
+}
+
+window.addEventListener('beforeunload', (e) => { if (isDirty()) { e.preventDefault(); e.returnValue = ''; } });
+load();
+</script>
+</body>
+</html>

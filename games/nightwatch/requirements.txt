@@ -1,0 +1,9 @@
+# Runtime on the laptop (server + both models). The server alone needs only the standard library.
+torch
+executorch
+pillow
+# Optional sensors
+bleak        # watch heart rate over Bluetooth (nightwatch/bridges/hr_bridge.py)
+pyserial     # Arduino door sensor (nightwatch/bridges/door_serial.py)
+# Development / re-exporting models (not needed on the laptop)
+# torchvision  pytest

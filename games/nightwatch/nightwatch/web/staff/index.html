@@ -1,0 +1,430 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#070b14">
+<title>NightWatch · Staff</title>
+<script src="/assets/auth.js"></script>
+<link rel="stylesheet" href="/assets/theme.css">
+<style>
+  body.nw { font-size: 17px; padding: max(14px, env(safe-area-inset-top)) 14px calc(24px + env(safe-area-inset-bottom)); }
+  .wrap { max-width: 560px; margin: 0 auto; }
+  .head { display: flex; align-items: center; justify-content: space-between; gap: 10px; margin-bottom: 14px; }
+  .head .nw-brand-mark { width: 34px; height: 34px; }
+  .head .when { text-align: right; }
+  .head .t { font: 750 26px/1 var(--nw-font-display); font-variant-numeric: tabular-nums; }
+  .head .m { display: inline-flex; align-items: center; gap: 5px; font-size: 12px; font-weight: 750; letter-spacing: .08em; margin-top: 4px; }
+  .head .m.is-night { color: var(--nw-moon); } .head .m.is-day { color: var(--nw-sun); }
+
+  .start { width: 100%; margin-bottom: 14px; flex-direction: column; gap: 2px; }
+  .start small { font-size: 13px; font-weight: 600; opacity: .8; }
+  .onshift { display: flex; align-items: center; gap: 8px; font-size: 13px; color: var(--nw-muted); margin: -4px 0 12px; }
+
+  .quiet { text-align: center; padding: 56px 16px; border: 1px solid var(--nw-line); border-radius: 20px;
+           background: linear-gradient(180deg, var(--nw-surface), var(--nw-bg-2)); }
+  .quiet .nw-ico { width: 56px; height: 56px; color: var(--nw-ok); }
+  .quiet b { display: block; font: 750 26px/1.2 var(--nw-font-display); margin: 12px 0 6px; }
+  .quiet p { margin: 0; color: var(--nw-muted); }
+
+  .card { border-radius: 20px; overflow: hidden; margin-bottom: 14px; border: 2px solid var(--lvl);
+          background: linear-gradient(180deg, var(--lvl-bg), var(--nw-bg-2) 45%); }
+  .band { display: flex; align-items: center; justify-content: space-between; gap: 10px; padding: 12px 16px; background: var(--lvl); color: #120a02; }
+  .nw-l3 .band { color: #120a02; }   /* dark ink on red: 6.2:1 */
+  .band .lv { display: flex; align-items: center; gap: 9px; font-weight: 850; font-size: 19px; letter-spacing: .08em; }
+  .band .lv .nw-ico { width: 24px; height: 24px; }
+  .band .cd { font-weight: 750; font-size: 14px; font-variant-numeric: tabular-nums; text-align: right; line-height: 1.2; }
+  .band .cd b { font-size: 22px; display: block; }
+  .body { padding: 16px; }
+  .title { font: 750 23px/1.25 var(--nw-font-display); margin: 0 0 14px; }
+  .facts { display: grid; gap: 10px; margin-bottom: 14px; }
+  .fact { display: flex; gap: 12px; align-items: flex-start; }
+  .fact .nw-ico { width: 22px; height: 22px; color: var(--nw-muted); margin-top: 2px; }
+  .fact .k { font-size: 11.5px; font-weight: 750; letter-spacing: .1em; text-transform: uppercase; color: var(--nw-faint); }
+  .fact .v { font-size: 18px; font-weight: 600; color: var(--nw-ink); }
+  .nw-tip { font-size: 16px; }
+  .responding { display: flex; align-items: center; gap: 10px; padding: 12px 14px; border-radius: 14px; margin-top: 14px;
+                background: rgba(61, 220, 151, .12); border: 1px solid rgba(61, 220, 151, .4); color: var(--nw-ok); font-weight: 700; }
+  .btns { display: grid; gap: 12px; margin-top: 16px; }
+  .btns .nw-btn { width: 100%; }
+  .btns .nw-btn .nw-ico { width: 24px; height: 24px; }
+  details { margin-top: 14px; } summary { cursor: pointer; color: var(--nw-muted); font-size: 14px; padding: 6px 0; }
+  .off-host .nw-offline.is-on { display: flex; justify-content: center; margin-bottom: 12px; font-size: 15px; padding: 11px 14px; }
+  .net { margin-top: 18px; text-align: center; font-size: 12.5px; color: var(--nw-faint); }
+  /* audit fixes */
+  .quiet.is-down { border-color: var(--nw-l3); background: linear-gradient(180deg, #3a0d16, var(--nw-bg-2)); }
+  .quiet.is-down .nw-ico { color: var(--nw-l3); }
+  .quiet.is-down b { color: #ffd6da; }
+  .head .t.is-stale { color: var(--nw-l3); text-decoration: line-through; }
+  .start { background: var(--nw-surface-2); border-color: var(--nw-line-strong); color: var(--nw-ink); min-height: 56px; }
+  .soundoff { display: flex; align-items: center; justify-content: center; gap: 8px; width: 100%; margin: 0 0 12px; min-height: 48px; border-radius: 12px;
+              border: 2px dashed var(--nw-l1); background: var(--nw-l1-bg); color: #ffe3a3; font: 750 15px/1.2 var(--nw-font); cursor: pointer; }
+  #summ { position: sticky; top: 0; z-index: 20; }
+  .summ { display: flex; flex-wrap: wrap; gap: 6px; align-items: center; padding: 8px 10px; margin: 0 -4px 12px;
+          border-radius: 14px; background: rgba(7, 11, 20, .94); border: 1px solid var(--nw-line-strong); backdrop-filter: blur(6px); }
+  .summ b { font-size: 14px; margin-right: 4px; }
+  .summ a { display: inline-flex; align-items: center; gap: 6px; min-height: 36px; padding: 0 10px; border-radius: 999px; text-decoration: none; font-size: 13px; font-weight: 750;
+            color: var(--lvl); background: var(--lvl-bg); border: 1px solid color-mix(in srgb, var(--lvl) 45%, transparent); }
+  .card.is-collapsed .facts, .card.is-collapsed .nw-tip, .card.is-collapsed [data-backup] { display: none; }
+  .card.is-collapsed .title { font-size: 19px; margin-bottom: 6px; }
+  .nw-btn--safe.armed { background: #0b5136; color: #d6ffe9; border-color: var(--nw-ok); }
+  /* name, language, backup, record sheet */
+  .me { display: flex; align-items: center; justify-content: space-between; gap: 10px; margin: -4px 0 12px; font-size: 14px; color: var(--nw-muted); }
+  .me b { color: var(--nw-ink); }
+  .me .lnk { -webkit-appearance: none; appearance: none; background: none; border: 0; color: var(--nw-accent); font: 600 14px var(--nw-font); cursor: pointer; padding: 6px 4px; min-height: 36px; }
+  .lang { display: inline-flex; border: 1px solid var(--nw-line-strong); border-radius: 10px; overflow: hidden; }
+  .lang button { font: 750 13px/1 var(--nw-font); min-width: 44px; min-height: 36px; border: 0; background: var(--nw-surface); color: var(--nw-ink-2); cursor: pointer; }
+  .lang button[aria-pressed="true"] { background: var(--nw-accent); color: var(--nw-accent-ink); }
+  .backup-line { display: flex; align-items: center; gap: 10px; padding: 12px 14px; border-radius: 14px; margin-top: 14px; font-weight: 700;
+                 color: #ffd0a8; background: var(--nw-l2-bg); border: 1px solid rgba(255, 143, 63, .5); }
+  .backup-line .nw-ico { color: var(--nw-l2); width: 22px; height: 22px; }
+  .nw-btn--backup { background: transparent; border: 2px solid var(--nw-l2); color: #ffc79e; }
+  .nw-btn--help { background: transparent; border: 2px solid var(--nw-l3); color: #ffb3bb; }
+  .nw-btn--help.armed { background: var(--nw-l3); color: #120a02; }
+  .nw-btn--backup.armed { background: var(--nw-l2); color: #1a0d00; }
+  .todo { margin-top: 18px; border: 1px dashed var(--nw-l1); border-radius: 18px; padding: 14px; background: var(--nw-l1-bg); }
+  .todo h2 { margin: 0 0 10px; font-size: 13px; font-weight: 800; letter-spacing: .08em; text-transform: uppercase; color: var(--nw-l1); display: flex; gap: 8px; align-items: center; }
+  .todo .it { display: flex; align-items: center; justify-content: space-between; gap: 10px; padding: 10px 0; border-top: 1px solid rgba(246, 195, 68, .25); }
+  .todo .it:first-of-type { border-top: 0; }
+  .todo .it span { font-size: 14.5px; }
+  .sheet .box { border-radius: 22px; }
+  .sheet h2 { margin: 0; font: 800 22px/1.2 var(--nw-font-display); }
+  .sheet .sub { color: var(--nw-muted); font-size: 14px; margin: 4px 0 12px; }
+  .pick { margin: 14px 0 6px; font-size: 12px; font-weight: 800; letter-spacing: .1em; text-transform: uppercase; color: var(--nw-faint); }
+  .pick .opt { font-weight: 600; text-transform: none; letter-spacing: 0; }
+  .chips { display: flex; flex-wrap: wrap; gap: 8px; }
+  .chips button { font: 650 15px/1.15 var(--nw-font); min-height: 46px; padding: 8px 14px; border-radius: 14px; border: 1px solid var(--nw-line-strong);
+                  background: var(--nw-surface-2); color: var(--nw-ink); cursor: pointer; text-align: left; }
+  .chips button[aria-pressed="true"] { background: var(--nw-accent); border-color: var(--nw-accent); color: var(--nw-accent-ink); }
+  .chips button[aria-pressed="true"]::before { content: "✓ "; font-weight: 900; }
+  .sheet .acts { display: grid; grid-template-columns: 1fr 2fr; gap: 10px; margin-top: 16px; position: sticky; bottom: -20px; padding: 12px 0 20px; margin-bottom: -20px;
+                 background: linear-gradient(180deg, transparent, var(--nw-surface) 22%); }
+  .namebox .nw-input { font-size: 20px; min-height: 54px; }
+</style>
+</head>
+<body class="nw">
+<div class="wrap">
+  <div class="head">
+    <div class="nw-brand"><div class="nw-brand-mark" id="logo"></div><div><div class="nw-brand-name">NightWatch</div><div class="nw-brand-sub" data-t="phone">Night staff phone</div></div></div>
+    <div class="when"><div class="t" id="clock">--:--</div><div class="m" id="mode"></div></div>
+  </div>
+  <div class="me"><span id="me"></span><span class="lang" role="group" aria-label="Language / Idioma"><button data-lang="en" aria-pressed="true">EN</button><button data-lang="es" aria-pressed="false">ES</button></span></div>
+  <button class="nw-btn nw-btn--lg start" id="start"><span data-t="start">Start shift</span><small data-t="startSub">Turns on sound and vibration for alerts</small></button>
+  <div id="summ"></div>
+  <div id="list"><div class="quiet"><b data-t="connecting">Connecting…</b></div></div>
+  <div id="todo"></div>
+  <div class="net" id="net"></div>
+</div>
+
+<div class="nw-modal namebox" id="namebox" hidden role="dialog" aria-modal="true" aria-labelledby="name-title"><form class="box" id="nameform">
+  <h2 id="name-title" style="margin:0 0 6px;font:800 22px/1.2 var(--nw-font-display)" data-t="yourName">Your name</h2>
+  <p style="margin:0 0 14px;color:var(--nw-muted)" data-t="nameWhy">Shown when you acknowledge, find someone safe, call for backup or file a record.</p>
+  <input class="nw-input" name="name" maxlength="40" required autocomplete="name" aria-labelledby="name-title">
+  <div class="nw-err" role="alert" style="margin-top:8px"></div>
+  <button class="nw-btn nw-btn--primary nw-btn--lg" style="width:100%;margin-top:12px" data-t="save">Save</button>
+  <button type="button" class="nw-btn" style="width:100%;margin-top:8px" id="name-skip" data-t="skip">Skip for now</button>
+</form></div>
+
+<div class="nw-modal sheet" id="sheet" hidden role="dialog" aria-modal="true" aria-labelledby="sheet-title"><div class="box" id="sheet-box"></div></div>
+
+<script src="/assets/nw.js"></script>
+<script>
+const { contactsList, notesKey, esc, icon, LEVELS, timeline, contactsDone, post, audio, trapFocus, act, toast, sortAlerts, tracker, announce } = NW;
+const $ = (id) => document.getElementById(id);
+$('logo').innerHTML = icon('logo');
+// No 'Offline · still protecting' badge here: on a phone, offline means it is NOT protected (see the red card).
+const store = { get: (k) => { try { return localStorage.getItem(k); } catch { return null; } }, set: (k, v) => { try { localStorage.setItem(k, v); } catch {} } };
+
+/* ------------------------------------------------------------------ language (UI chrome only; server text stays as is) */
+const STR = {
+  en: { phone: 'Night staff phone', start: 'Start shift', startSub: 'Turns on sound and vibration for alerts', onShift: 'On shift · sound and vibration on',
+        connecting: 'Connecting…', unreachable: 'Server not reachable', wifi: 'Check you are on the facility Wi-Fi.', quiet: 'All quiet',
+        quietSub: (a, b) => `${a} of ${b} residents in bed. You'll get a buzz if anyone needs you.`, night: 'NIGHT', day: 'DAY',
+        L1: 'HEADS-UP', L2: 'URGENT', L3: 'EMERGENCY', lvlIn: (n) => `Level ${n} in`, nextCall: 'Next call in', lookFor: 'Look for', room: 'Their room',
+        helps: 'What helps', going: "I'm going", safe: 'Found safe', backup: 'Need backup', backupArm: 'Tap again to call backup', backupBy: (x) => `Backup requested by ${x} · all phones alerted`,
+        responding: (x) => `${x} is responding`, history: (n) => `What happened so far (${n})`, net: (f) => `Runs on the nurse-station laptop · no internet needed · ${f}`,
+        yourName: 'Your name', nameWhy: 'Shown when you acknowledge, find someone safe, call for backup or file a record.', save: 'Save', nameNeed: 'Please enter your name.',
+        you: 'You:', change: 'change', recTitle: 'File the care record', recSub: 'Two taps: how they were, and what you did.', affect: 'How were they?', interv: 'What did you do?',
+        alt: 'Non-drug alternative', optional: 'optional', note: 'Note', later: 'Later', file: 'File record', filed: 'Record filed. Thank you.',
+        pickBoth: 'Choose one of each.', todo: 'Records to file', fileNow: 'File now', network: 'Could not reach the laptop. Try again.',
+        skip: 'Skip for now', down: 'Not connected: you will NOT get alerts', downSub: 'This phone lost contact with the nurse-station laptop. Reconnect to the facility Wi-Fi now, or tell the nurse station.',
+        soundOff: 'Sound and vibration are OFF · tap to turn on', safeArm: 'Tap again: found safe', alerts: (n) => `${n} alerts`,
+        failAck: "\"I'm going\" didn't reach the laptop. Tap again.", failSafe: "\"Found safe\" didn't reach the laptop. Tap again.", failBackup: "Backup request didn't reach the laptop. Tap again.",
+        roomN: (r) => `Room ${r}`, newAlert: 'New alert', help: 'Call for help', helpReal: 'Call for help (REAL calls)', helpArm: 'Tap again to call contacts',
+        helpArmReal: 'Tap again: REALLY call/text contacts', helpDone: 'Contacts notified (simulated: no real calls).', helpDoneReal: 'Calling and texting the contacts now.',
+        failHelp: "Call for help didn't reach the laptop. Tap again.", contacted: "Who's been contacted", ctr: null },
+  es: { phone: 'Teléfono del turno de noche', start: 'Empezar turno', startSub: 'Activa sonido y vibración para las alertas', onShift: 'En turno · sonido y vibración activados',
+        connecting: 'Conectando…', unreachable: 'No se puede conectar', wifi: 'Compruebe que está en el Wi-Fi del centro.', quiet: 'Todo tranquilo',
+        quietSub: (a, b) => `${a} de ${b} residentes en la cama. Le avisaremos si alguien le necesita.`, night: 'NOCHE', day: 'DÍA',
+        L1: 'AVISO', L2: 'URGENTE', L3: 'EMERGENCIA', lvlIn: (n) => `Nivel ${n} en`, nextCall: 'Próxima llamada en', lookFor: 'Cómo reconocerle', room: 'Su habitación',
+        helps: 'Lo que ayuda', going: 'Voy', safe: 'Encontrado a salvo', backup: 'Necesito ayuda', backupArm: 'Toque otra vez para pedir ayuda', backupBy: (x) => `Ayuda pedida por ${x} · todos los teléfonos avisados`,
+        responding: (x) => `${x} está respondiendo`, history: (n) => `Lo que ha pasado (${n})`, net: (f) => `Funciona en el portátil del control de enfermería · sin internet · ${f}`,
+        yourName: 'Su nombre', nameWhy: 'Se muestra cuando confirma, encuentra a alguien a salvo, pide ayuda o registra un informe.', save: 'Guardar', nameNeed: 'Escriba su nombre, por favor.',
+        you: 'Usted:', change: 'cambiar', recTitle: 'Registrar el informe', recSub: 'Dos toques: cómo estaba y qué hizo usted.', affect: '¿Cómo estaba?', interv: '¿Qué hizo usted?',
+        alt: 'Alternativa no farmacológica', optional: 'opcional', note: 'Nota', later: 'Más tarde', file: 'Registrar', filed: 'Informe registrado. Gracias.',
+        pickBoth: 'Elija una opción de cada grupo.', todo: 'Informes por registrar', fileNow: 'Registrar ahora', network: 'No se puede conectar con el portátil. Inténtelo de nuevo.',
+        skip: 'Ahora no', down: 'Sin conexión: NO recibirá alertas', downSub: 'Este teléfono perdió el contacto con el portátil del control de enfermería. Vuelva a conectarse al Wi-Fi del centro o avise al control.',
+        soundOff: 'Sonido y vibración APAGADOS · toque para activar', safeArm: 'Toque otra vez: a salvo', alerts: (n) => `${n} alertas`,
+        failAck: '"Voy" no llegó al portátil. Toque otra vez.', failSafe: '"Encontrado a salvo" no llegó al portátil. Toque otra vez.', failBackup: 'La petición de ayuda no llegó al portátil. Toque otra vez.',
+        roomN: (r) => `Habitación ${r}`, newAlert: 'Nueva alerta', help: 'Llamar para pedir ayuda', helpReal: 'Llamar para pedir ayuda (llamadas REALES)', helpArm: 'Toque otra vez para avisar a los contactos',
+        helpArmReal: 'Toque otra vez: llamar/escribir DE VERDAD', helpDone: 'Contactos avisados (simulado: sin llamadas reales).', helpDoneReal: 'Llamando y escribiendo a los contactos ahora.',
+        failHelp: 'La llamada de ayuda no llegó al portátil. Toque otra vez.', contacted: 'A quién se ha avisado',
+        ctr: { roles: { on_call: 'Supervisor de guardia', family: 'Familia', owner: 'Dirección del centro', emergency_services: 'Servicios de emergencia', other: 'Contacto' },
+               status: { queued: 'En cola', calling: 'Llamando…', sent: 'Enviado', failed: 'Falló', simulated: 'Simulado' }, channels: { call: 'llamada', sms: 'mensaje de texto', 'call+sms': 'llamada + texto', push: 'notificación (ntfy)', imessage: 'iMessage' }, es: 'se llamaría según el protocolo del centro (simulado)' } },
+};
+let lang = store.get('nw-lang') === 'es' ? 'es' : 'en';
+const T = (k, ...a) => { const v = STR[lang][k] ?? STR.en[k]; return typeof v === 'function' ? v(...a) : v; };
+function applyLang() {
+  document.documentElement.lang = lang;
+  document.querySelectorAll('[data-t]').forEach((el) => { el.textContent = T(el.dataset.t); });
+  document.querySelectorAll('[data-lang]').forEach((b) => b.setAttribute('aria-pressed', String(b.dataset.lang === lang)));
+  renderMe(); lastKey = ''; todoKey = ''; if (lastState) render(lastState);
+}
+
+/* ------------------------------------------------------------------ who am I */
+let myName = store.get('nw-staff-name') || '';
+const by = () => myName || 'Night staff (phone)';
+function renderMe() { $('me').innerHTML = myName ? `${esc(T('you'))} <b>${esc(myName)}</b> <button class="lnk" id="rename">${esc(T('change'))}</button>` : ''; }
+let modalReturn = null;
+function askName() {
+  modalReturn = document.activeElement;
+  $('namebox').hidden = false; const f = $('nameform'); f.name.value = myName; setTimeout(() => f.name.focus(), 30);
+}
+$('name-skip').onclick = () => { nameSkipped = true; $('namebox').hidden = true; if (modalReturn && document.contains(modalReturn)) modalReturn.focus(); };
+let nameSkipped = false;
+$('nameform').onsubmit = (e) => {
+  e.preventDefault();
+  const v = e.target.name.value.trim().slice(0, 40);
+  if (!v) { e.target.querySelector('.nw-err').textContent = T('nameNeed'); return; }
+  myName = v; store.set('nw-staff-name', v); $('namebox').hidden = true; renderMe();
+  if (modalReturn && document.contains(modalReturn)) modalReturn.focus();
+};
+
+/* ------------------------------------------------------------------ sound + vibration */
+let shift = false;
+try { shift = sessionStorage.getItem('nw-shift') === '1'; } catch {}
+const track = tracker();
+function startShift() {
+  shift = true; audio(); try { sessionStorage.setItem('nw-shift', '1'); } catch {}
+  if ($('start')) $('start').outerHTML = `<div class="onshift"><span class="nw-dot is-live"></span><span data-t="onShift">${esc(T('onShift'))}</span></div>`;
+  document.querySelectorAll('.soundoff').forEach((b) => b.remove());
+}
+$('start').onclick = startShift;
+if (shift) startShift();   // remembered for this tab; audio re-arms on the first tap anywhere
+document.addEventListener('pointerdown', () => { if (shift) audio(); });
+function beep(level) {
+  if (navigator.vibrate) navigator.vibrate(level >= 3 ? [400, 150, 400, 150, 400] : level === 2 ? [300, 100, 300] : [150]);
+  if (!shift) return;
+  const ctx = audio(); if (!ctx) return;
+  const times = level >= 3 ? 4 : level === 2 ? 2 : 1;
+  for (let i = 0; i < times; i++) {
+    const o = ctx.createOscillator(), g = ctx.createGain();
+    o.frequency.value = level >= 3 ? 980 : level === 2 ? 760 : 520;
+    g.gain.value = level === 1 ? 0.05 : 0.2;
+    o.connect(g).connect(ctx.destination);
+    o.start(ctx.currentTime + i * 0.35); o.stop(ctx.currentTime + i * 0.35 + 0.22);
+  }
+}
+
+/* ------------------------------------------------------------------ alert cards */
+function countdown(a) {
+  if (a.acked_by || a.escalates_in_s == null) return '';
+  if (a.level === 3) return contactsDone(a) ? '' : `<div class="cd">${esc(T('nextCall'))}<b data-cd="${a.id}">${a.escalates_in_s} s</b></div>`;
+  return `<div class="cd">${esc(T('lvlIn', a.level + 1))}<b data-cd="${a.id}">${a.escalates_in_s} s</b></div>`;
+}
+function card(a) {
+  const L = LEVELS[a.level];
+  const collapsed = a.acked_by && lastState && lastState.alerts.length > 1;
+  return `<article class="card nw-l${a.level}${a.level === 3 && !a.acked_by ? ' nw-attn' : ''}${collapsed ? ' is-collapsed' : ''}" id="alert-${a.id}" data-id="${a.id}" tabindex="-1" aria-label="${esc(T('L' + a.level))}: ${esc(a.title)}">
+    <div class="band"><div class="lv">${icon(L.icon)}${esc(T('L' + a.level))}</div>${countdown(a)}</div>
+    <div class="body">
+      ${shift ? '' : `<button class="soundoff" type="button" data-soundon>${icon('mute')}${esc(T('soundOff'))}</button>`}
+      <h2 class="title">${esc(a.title)}</h2>
+      <div class="facts">
+        ${a.description ? `<div class="fact">${icon('eye')}<div><div class="k">${esc(T('lookFor'))}</div><div class="v">${esc(a.description)}</div></div></div>` : ''}
+        ${a.room ? `<div class="fact">${icon('pin')}<div><div class="k">${esc(T('room'))}</div><div class="v">${esc(T('roomN', a.room))}${a.resident ? ` · ${esc(a.resident)}` : ''}</div></div></div>` : ''}
+      </div>
+      ${a.suggestions[0] ? `<div class="nw-tip">${icon('bulb')}<div><div class="nw-tip-k">${esc(T('helps'))}</div><div class="nw-tip-v">${esc(a.suggestions[0])}</div>${a.suggestions[1] ? `<div class="nw-tip-more">${esc(a.suggestions[1])}</div>` : ''}</div></div>` : ''}
+      ${a.acked_by ? `<div class="responding">${icon('walk')}${esc(T('responding', a.acked_by))}</div>` : ''}
+      ${a.backup_by ? `<div class="backup-line" role="status">${icon('phone')}${esc(T('backupBy', a.backup_by))}</div>` : ''}
+      ${(a.notifications || []).length ? `<div class="pick" style="margin-top:14px">${esc(T('contacted'))}</div>${contactsList(a.notifications, T('ctr') || undefined)}` : ''}
+      <div class="btns">
+        ${a.acked_by ? '' : `<button class="nw-btn nw-btn--primary nw-btn--lg" data-ack="${a.id}">${icon('walk')}${esc(T('going'))}</button>`}
+        <button class="nw-btn nw-btn--safe nw-btn--lg" data-res="${a.id}">${icon('check')}<span>${esc(T('safe'))}</span></button>
+        ${a.backup_by ? '' : `<button class="nw-btn nw-btn--backup nw-btn--lg" data-backup="${a.id}" aria-describedby="bk-${a.id}">${icon('phone')}<span>${esc(T('backup'))}</span></button><span id="bk-${a.id}" class="nw-sr-only">${esc(T('backupArm'))}</span>`}
+        <button class="nw-btn nw-btn--help nw-btn--lg" data-notify="${a.id}">${icon('siren')}<span>${esc(T(LIVE ? 'helpReal' : 'help'))}</span></button>
+      </div>
+      <details><summary>${esc(T('history', a.history.length))}</summary>${timeline(a.history)}</details>
+    </div>
+  </article>`;
+}
+
+/* ------------------------------------------------------------------ care record sheet (after Found safe, or from "Records to file") */
+let TAX = null, sheetAlert = null, pickA = '', pickI = '', pickAlt = '';
+function chips(name, list, cur) { return `<div class="chips" role="group" aria-label="${esc(name)}">${(list || []).map((v) => `<button type="button" data-pick="${esc(name)}" data-v="${esc(v)}" aria-pressed="${v === cur}">${esc(v)}</button>`).join('')}</div>`; }
+function sheetHTML(a) {
+  return `<h2 id="sheet-title">${esc(T('recTitle'))}</h2><div class="sub">${esc(a.title)}<br>${esc(T('recSub'))}</div>
+    <div class="pick">${esc(T('affect'))}</div>${chips('affect', TAX && TAX.affect, pickA)}
+    <div class="pick">${esc(T('interv'))}</div>${chips('intervention', TAX && TAX.intervention, pickI)}
+    <div class="pick">${esc(T('alt'))} <span class="opt">(${esc(T('optional'))})</span></div>${chips('nondrug_alt', TAX && TAX.nondrug_alt, pickAlt)}
+    <div class="pick">${esc(T('note'))} <span class="opt">(${esc(T('optional'))})</span></div><textarea class="nw-textarea" id="sheet-note" maxlength="500" rows="2" aria-label="${esc(T('note'))}"></textarea>
+    <div class="nw-err" role="alert" id="sheet-err" style="margin-top:8px"></div>
+    <div class="acts"><button class="nw-btn nw-btn--lg" data-sheet="later">${esc(T('later'))}</button><button class="nw-btn nw-btn--primary nw-btn--lg" data-sheet="file">${icon('check')}${esc(T('file'))}</button></div>`;
+}
+function openSheet(a) {
+  sheetAlert = a; pickA = pickI = pickAlt = ''; modalReturn = document.activeElement;
+  $('sheet-box').innerHTML = sheetHTML(a); $('sheet').hidden = false;
+  $('sheet-box').querySelector('[data-pick]')?.focus();
+}
+function closeSheet() { $('sheet').hidden = true; sheetAlert = null; todoKey = ''; if (lastState) render(lastState); }
+async function fileSheet() {
+  if (!pickA || !pickI) { $('sheet-err').textContent = T('pickBoth'); return; }
+  const btn = $('sheet-box').querySelector('[data-sheet="file"]'); btn.disabled = true;
+  try {
+    const r = await post('/api/record', { alert: sheetAlert.id, affect: pickA, intervention: pickI, nondrug_alt: pickAlt || null, note: $('sheet-note').value, by: by() });
+    const out = await r.json().catch(() => ({ error: `Server error (${r.status})` }));
+    if (out.error) { $('sheet-err').textContent = out.error; btn.disabled = false; return; }
+    $('sheet-box').innerHTML = `<div class="quiet" style="border:0;padding:30px 8px">${icon('check')}<b>${esc(T('filed'))}</b></div>`;
+    setTimeout(closeSheet, 1200); tick();
+  } catch { $('sheet-err').textContent = T('network'); btn.disabled = false; }
+}
+
+/* ------------------------------------------------------------------ actions */
+const armed = {};
+document.addEventListener('click', async (e) => {
+  const lb = e.target.closest('[data-lang]'); if (lb) { lang = lb.dataset.lang; store.set('nw-lang', lang); applyLang(); return; }
+  if (e.target.closest('#rename')) { askName(); return; }
+  const pk = e.target.closest('[data-pick]');
+  if (pk) {
+    const v = pk.dataset.v, k = pk.dataset.pick;
+    if (k === 'affect') pickA = pickA === v ? '' : v; else if (k === 'intervention') pickI = pickI === v ? '' : v; else pickAlt = pickAlt === v ? '' : v;
+    pk.parentElement.querySelectorAll('[data-pick]').forEach((b) => b.setAttribute('aria-pressed', String(b.dataset.v === (k === 'affect' ? pickA : k === 'intervention' ? pickI : pickAlt))));
+    $('sheet-err').textContent = ''; return;
+  }
+  const sh = e.target.closest('[data-sheet]'); if (sh) { sh.dataset.sheet === 'file' ? fileSheet() : closeSheet(); return; }
+  const fileNow = e.target.closest('[data-filenow]');
+  if (fileNow) { const a = lastState && lastState.recent.find((x) => String(x.id) === fileNow.dataset.filenow); if (a) openSheet(a); return; }
+  const b = e.target.closest('button'); if (!b) return;
+  if (b.dataset.soundon != null && 'soundon' in b.dataset) { startShift(); lastKey = ''; tick(); return; }
+  if (b.dataset.ack) { b.disabled = true; const r = await act('/api/ack', { alert: +b.dataset.ack, by: by() }, T('failAck')); if (!r.ok) b.disabled = false; tick(); }
+  if (b.dataset.res) {
+    const id = +b.dataset.res, a = lastState && lastState.alerts.find((x) => x.id === id);
+    if (!armed['res' + id]) {   // M4: one pocket tap must not close an alert; tap again within 4 s
+      armed['res' + id] = setTimeout(() => { delete armed['res' + id]; b.classList.remove('armed'); b.querySelector('span').textContent = T('safe'); }, 4000);
+      b.classList.add('armed'); b.querySelector('span').textContent = T('safeArm'); return;
+    }
+    clearTimeout(armed['res' + id]); delete armed['res' + id]; b.disabled = true;
+    const r = await act('/api/resolve', { alert: id, outcome: 'Found safe, returned to room' }, T('failSafe'));
+    if (!r.ok) { b.disabled = false; b.classList.remove('armed'); b.querySelector('span').textContent = T('safe'); return; }
+    await tick();
+    const closed = lastState && lastState.recent.find((x) => x.id === id);
+    if (closed && closed.record && closed.record.status !== 'filed') openSheet(closed); else if (a) openSheet({ ...a });
+  }
+  if (b.dataset.notify) {
+    const id = 'n' + b.dataset.notify;
+    if (!armed[id]) {   // arm-to-confirm, like Need backup
+      armed[id] = setTimeout(() => { delete armed[id]; b.classList.remove('armed'); b.querySelector('span').textContent = T(LIVE ? 'helpReal' : 'help'); }, 4000);
+      b.classList.add('armed'); b.querySelector('span').textContent = T(LIVE ? 'helpArmReal' : 'helpArm'); return;
+    }
+    clearTimeout(armed[id]); delete armed[id]; b.disabled = true;
+    const r = await act('/api/notify', { alert: +b.dataset.notify, by: by() }, T('failHelp'));
+    if (r.ok) { toast(T(LIVE ? 'helpDoneReal' : 'helpDone'), 'good'); b.classList.remove('armed'); b.querySelector('span').textContent = T(LIVE ? 'helpReal' : 'help'); setTimeout(() => { b.disabled = false; }, 3000); }
+    else { b.disabled = false; b.classList.remove('armed'); b.querySelector('span').textContent = T(LIVE ? 'helpReal' : 'help'); }
+    tick(); return;
+  }
+  if (b.dataset.backup) {
+    const id = b.dataset.backup;
+    if (!armed[id]) {   // first tap arms, second tap within 4 s sends
+      armed[id] = setTimeout(() => { delete armed[id]; b.classList.remove('armed'); b.querySelector('span').textContent = T('backup'); }, 4000);
+      b.classList.add('armed'); b.querySelector('span').textContent = T('backupArm'); return;
+    }
+    clearTimeout(armed[id]); delete armed[id]; b.disabled = true;
+    const r = await act('/api/backup', { alert: +id, by: by() }, T('failBackup'));
+    if (!r.ok) { b.disabled = false; b.classList.remove('armed'); b.querySelector('span').textContent = T('backup'); }
+    tick();
+  }
+});
+document.addEventListener('keydown', (e) => {
+  const m = !$('sheet').hidden ? $('sheet') : !$('namebox').hidden ? $('namebox') : null;
+  if (!m) return;
+  if (e.key === 'Escape' && m === $('sheet')) { closeSheet(); return; }
+  if (e.key === 'Escape' && m === $('namebox')) { $('name-skip').click(); return; }
+  trapFocus(m, e);
+});
+
+/* ------------------------------------------------------------------ render */
+let LIVE = false;
+let lastKey = '', todoKey = '', lastState = null;
+function render(s) {
+  $('clock').textContent = s.clock.slice(0, 5);
+  $('mode').className = 'm ' + (s.night ? 'is-night' : 'is-day');
+  $('mode').innerHTML = s.night ? `${icon('moon')}${esc(T('night'))}` : `${icon('sun')}${esc(T('day'))}`;
+  $('net').textContent = T('net', s.facility);
+  LIVE = !!s.contacts_live;
+  const key = shift + LIVE + JSON.stringify(s.alerts.map((a) => [notesKey(a.notifications), a.id, a.level, a.acked_by, a.backup_by, a.history.length, a.escalates_in_s == null, a.title, contactsDone(a)]));
+  for (const a of s.alerts) { const el = document.querySelector(`[data-cd="${a.id}"]`); if (el) el.textContent = `${a.escalates_in_s} s`; }
+  const cnt = { 3: 0, 2: 0, 1: 0 }; s.alerts.forEach((a) => { cnt[a.level]++; });
+  $('summ').innerHTML = s.alerts.length > 1 ? `<nav class="summ" aria-label="${esc(T('alerts', s.alerts.length))}"><b>${esc(T('alerts', s.alerts.length))}</b>${s.alerts.map((a) =>
+    `<a class="nw-l${a.level}" href="#alert-${a.id}">${icon(LEVELS[a.level].icon)}${esc(T('L' + a.level))}${a.resident ? ` · ${esc(a.resident)}` : ''}${a.acked_by ? ' ✓' : ''}</a>`).join('')}</nav>` : '';
+  if (key !== lastKey && !Object.keys(armed).length) {   // never rebuild under a thumb mid-confirm
+    lastKey = key;
+    const open = new Set([...document.querySelectorAll('details[open]')].map((d) => d.closest('.card')?.dataset.id));
+    $('list').innerHTML = s.alerts.length ? s.alerts.map(card).join('')
+      : `<div class="quiet">${icon('shield')}<b>${esc(T('quiet'))}</b><p>${esc(T('quietSub', s.residents.filter((r) => r.in_bed).length, s.residents.length))}</p></div>`;
+    document.querySelectorAll('.card').forEach((c) => { if (open.has(c.dataset.id)) c.querySelector('details').open = true; });
+  }
+  const drafts = s.recent.filter((a) => a.record && a.record.status !== 'filed');
+  const tk = lang + drafts.map((a) => a.id).join(',');
+  if (tk !== todoKey) {
+    todoKey = tk;
+    $('todo').innerHTML = drafts.length ? `<section class="todo" aria-labelledby="todo-h"><h2 id="todo-h">${icon('note')}${esc(T('todo'))} (${drafts.length})</h2>
+      ${drafts.map((a) => `<div class="it"><span>${esc(a.title)}</span><button class="nw-btn" data-filenow="${a.id}">${esc(T('fileNow'))}</button></div>`).join('')}</section>` : '';
+  }
+}
+let down = false, firstTick = true;
+function showDown() {
+  $('list').innerHTML = `<div class="quiet is-down" role="alert">${icon('wifiOff')}<b>${esc(T('down'))}</b><p>${esc(T('downSub'))}</p></div>`;
+  $('summ').innerHTML = ''; $('clock').classList.add('is-stale'); lastKey = '';
+  if (!down) {   // M5: say it once, loudly, when contact is lost
+    down = true; announce(T('down'));
+    if (navigator.vibrate) { try { navigator.vibrate([600, 200, 600]); } catch {} }
+    const ctx = shift ? audio() : null;
+    if (ctx && ctx.state === 'running') { const o = ctx.createOscillator(), g = ctx.createGain(); o.frequency.value = 220; g.gain.value = 0.2; o.connect(g).connect(ctx.destination); o.start(); o.stop(ctx.currentTime + 0.6); }
+  }
+}
+async function tick() {
+  let s;
+  try {
+    const r = await fetch('/api/state', { cache: 'no-store' });
+    if (r.status === 401) return;   // not paired yet: auth.js shows the PIN prompt
+    if (!r.ok) throw new Error(r.status);
+    s = await r.json();
+    if (!s || !Array.isArray(s.alerts)) throw new Error('bad state');
+  } catch { showDown(); return; }
+  if (down) { down = false; $('clock').classList.remove('is-stale'); lastKey = ''; }
+  s.alerts = sortAlerts(s.alerts);
+  lastState = s; TAX = s.taxonomy || TAX;
+  const changes = track(s.alerts);
+  let interrupt = null;
+  for (const { a, kind } of changes) {
+    if (kind === 'new' || kind === 'rose') {
+      if (!a.acked_by) beep(a.level);
+      announce(`${T('L' + a.level)}: ${a.title}`);
+      if (!interrupt) interrupt = a;
+    }
+  }
+  if (interrupt && !$('sheet').hidden) closeSheet();   // H5: a new alert beats paperwork (the draft stays in "Records to file")
+  render(s);
+  if (!firstTick && interrupt && changes.some((c) => c.kind === 'new' && c.a === interrupt) && document.activeElement && !document.activeElement.closest('.card')) {
+    document.getElementById(`alert-${interrupt.id}`)?.focus({ preventScroll: false });
+  }
+  firstTick = false;
+  // Ask for a name only when nothing is happening: never block an alert (until then we act as "Night staff (phone)").
+  if (!myName && !nameSkipped && !s.alerts.length && $('namebox').hidden && $('sheet').hidden && !document.querySelector('[aria-labelledby="nw-pair-title"]')) askName();
+  if (s.alerts.length && !$('namebox').hidden && !myName) $('namebox').hidden = true;
+}
+applyLang();
+setInterval(tick, 1000); tick();
+</script>
+</body>
+</html>

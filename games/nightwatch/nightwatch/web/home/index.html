@@ -1,0 +1,377 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>NightWatch · Home</title>
+<script src="/assets/auth.js"></script>
+<script src="/assets/a11y.js"></script>
+<link rel="stylesheet" href="/assets/theme.css">
+<link rel="stylesheet" href="/assets/a11y.css">
+<link rel="icon" href="/assets/brand/favicon.svg" type="image/svg+xml">
+<link rel="apple-touch-icon" href="/assets/brand/apple-touch-icon.png">
+<style>
+  .nw-topbar { justify-content: space-between; }
+  .nw-brand-mark.img { background: none; border: 0; }
+  .nw-brand-mark.img img { width: 38px; height: 38px; display: block; }
+  .topright { display: flex; flex-wrap: wrap; gap: 8px 10px; align-items: center; justify-content: flex-end; }
+
+  /* tonight so far */
+  .tonight { grid-column: 1 / -1; display: grid; grid-template-columns: repeat(auto-fit, minmax(min(150px, 100%), 1fr)); gap: 10px; }
+  .tonight .t { padding: 12px 14px; border-radius: 14px; border: 1px solid var(--nw-line); background: var(--nw-bg-2); min-width: 0; text-decoration: none; color: inherit; display: block; }
+  .tonight a.t:hover { border-color: var(--nw-line-strong); background: var(--nw-surface-2); }
+  .tonight .k { font-size: 11.5px; font-weight: 700; letter-spacing: .08em; text-transform: uppercase; color: var(--nw-muted); display: flex; gap: 6px; align-items: center; }
+  .tonight .v { font: 750 30px/1.1 var(--nw-font-display); font-variant-numeric: tabular-nums; margin-top: 6px; }
+  .tonight .v small { font-size: 14px; color: var(--nw-muted); font-weight: 600; margin-left: 3px; }
+  .tonight .s { font-size: 12.5px; color: var(--nw-ink-2); margin-top: 2px; }
+  .tonight .t.is-warn { border-color: rgba(246,195,68,.5); } .tonight .t.is-warn .v { color: var(--nw-l1); }
+  .tonight .t.is-bad { border-color: rgba(255,82,99,.55); } .tonight .t.is-bad .v { color: var(--nw-l3); }
+  .tonight .t.is-good .v { color: var(--nw-ok); }
+  .tonight-head { grid-column: 1 / -1; display: flex; justify-content: space-between; align-items: baseline; gap: 10px; flex-wrap: wrap; margin-bottom: -8px; }
+
+  /* phone link + QR */
+  .phone-grid { display: grid; grid-template-columns: auto minmax(0, 1fr); gap: 16px; align-items: start; }
+  @media (max-width: 400px) { .phone-grid { grid-template-columns: minmax(0, 1fr); } }
+  .qr { width: 156px; padding: 10px; background: #fff; border-radius: 14px; box-shadow: 0 0 0 1px var(--nw-line-strong); }
+  .qr svg { display: block; width: 100%; height: auto; }
+  .qr-cap { margin-top: 6px; font-size: 12px; color: var(--nw-muted); text-align: center; width: 156px; }
+  .linkrow { margin-top: 16px; display: grid; gap: 8px; justify-items: start; padding-top: 14px; border-top: 1px solid var(--nw-line); }
+  .linkrow .k { font-size: 12px; font-weight: 700; letter-spacing: .1em; text-transform: uppercase; color: var(--nw-muted); }
+  .bigurl { font: 800 clamp(17px, 1.55vw, 23px)/1.25 var(--nw-mono); max-width: 100%; color: var(--nw-accent); overflow-wrap: anywhere; letter-spacing: -.01em; user-select: all; }
+  .bigurl .host { color: var(--nw-ink); }
+  main { max-width: 1240px; margin: 0 auto; padding: 20px 24px 48px; display: grid; gap: 18px;
+         grid-template-columns: minmax(0, 1.55fr) minmax(0, 1fr); align-items: start; }
+  main > * { min-width: 0; }
+  .col { display: grid; gap: 18px; min-width: 0; }
+  @media (max-width: 980px) { main { grid-template-columns: minmax(0, 1fr); } }
+  @media (max-width: 860px) { main { padding: 14px 16px 32px; } .nw-topbar { padding: 12px 16px; } }
+  .muted { color: var(--nw-muted); font-size: 13px; }
+  .lead { margin: 0; color: var(--nw-ink-2); font-size: 15px; max-width: 70ch; }
+
+  /* hero strip */
+  .hero { grid-column: 1 / -1; display: flex; flex-wrap: wrap; align-items: center; gap: 14px 22px; padding: 18px 20px;
+          border-radius: var(--nw-radius); border: 1px solid var(--nw-line);
+          background: linear-gradient(135deg, rgba(138,180,255,.10), rgba(61,220,151,.05) 60%, transparent); }
+  .hero h1 { margin: 0; font: 750 26px/1.15 var(--nw-font-display); letter-spacing: -.01em; overflow-wrap: anywhere; }
+  .hero .grow { flex: 1 1 320px; min-width: 0; display: grid; gap: 6px; }
+  .hero .clock { font: 750 34px/1 var(--nw-font-display); font-variant-numeric: tabular-nums; }
+
+  /* screen launcher */
+  .cards { display: grid; grid-template-columns: repeat(auto-fill, minmax(min(250px, 100%), 1fr)); gap: 12px; }
+  .card { position: relative; display: grid; grid-template-columns: auto 1fr; gap: 4px 14px; align-items: start; padding: 16px;
+          border-radius: 14px; border: 1px solid var(--nw-line); background: var(--nw-bg-2); color: var(--nw-ink); text-decoration: none;
+          transition: border-color .15s, background .15s, transform .12s var(--nw-ease); min-width: 0; }
+  .card:hover { border-color: var(--nw-line-strong); background: var(--nw-surface-2); transform: translateY(-1px); }
+  .card:focus-visible { outline-offset: 3px; }
+  .card .ic { grid-row: span 2; width: 42px; height: 42px; border-radius: 12px; display: grid; place-items: center;
+              background: var(--nw-raised); border: 1px solid var(--nw-line-strong); color: var(--nw-moon); }
+  .card .ic .nw-ico { width: 22px; height: 22px; }
+  .card b { font-size: 16px; display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
+  .card span.p { color: var(--nw-ink-2); font-size: 13.5px; }
+  .card .path { font: 600 11.5px/1 var(--nw-mono); color: var(--nw-faint); }
+  .card .tag { font: 800 11px/1 var(--nw-font); letter-spacing: .06em; padding: 4px 8px; border-radius: 999px; }
+  .tag.is-alert { background: var(--nw-l2-bg); color: var(--nw-l2); border: 1px solid rgba(255,143,63,.45); }
+  .tag.is-ok { background: rgba(61,220,151,.12); color: var(--nw-ok); border: 1px solid rgba(61,220,151,.35); }
+  .card.primary { border-color: #2c3f7a; background: linear-gradient(160deg, #142046, var(--nw-bg-2)); }
+
+  /* phone pairing */
+  .url { display: flex; flex-wrap: wrap; gap: 8px; align-items: stretch; }
+  .url output { flex: 1 1 220px; min-width: 0; padding: 12px 14px; border-radius: 12px; background: var(--nw-bg);
+                border: 1px solid var(--nw-line-strong); font: 700 clamp(18px, 2.4vw, 24px)/1.25 var(--nw-mono); color: var(--nw-accent);
+                overflow-wrap: anywhere; user-select: all; }
+  .pin { display: flex; align-items: center; gap: 14px; flex-wrap: wrap; margin-top: 14px; }
+  .pin .digits { font: 800 clamp(38px, 6vw, 54px)/1 var(--nw-mono); letter-spacing: .14em; font-variant-numeric: tabular-nums; color: var(--nw-ink); }
+  .pin .k { font-size: 12px; font-weight: 700; letter-spacing: .1em; text-transform: uppercase; color: var(--nw-muted); }
+  .steps { margin: 14px 0 0; padding-left: 20px; color: var(--nw-ink-2); font-size: 14px; display: grid; gap: 4px; }
+  .notice { padding: 12px 14px; border-radius: 12px; border: 1px dashed var(--nw-line-strong); background: var(--nw-bg); color: var(--nw-ink-2); font-size: 14px; }
+  .notice code, .steps code, .stat code { font-family: var(--nw-mono); font-size: 13px; color: var(--nw-ink); background: var(--nw-raised); padding: 1px 6px; border-radius: 6px; overflow-wrap: anywhere; }
+
+  /* status list */
+  .stat { list-style: none; margin: 0; padding: 0; display: grid; }
+  .stat li { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 4px 12px; align-items: center; padding: 10px 0; border-bottom: 1px solid var(--nw-line); }
+  .stat li:last-child { border-bottom: 0; }
+  .stat .k { font-weight: 650; min-width: 0; overflow-wrap: anywhere; }
+  .stat .s { grid-column: 1 / -1; color: var(--nw-muted); font-size: 13px; overflow-wrap: anywhere; }
+  .state { display: inline-flex; align-items: center; gap: 6px; font-size: 12px; font-weight: 800; letter-spacing: .06em; white-space: nowrap;
+           padding: 4px 9px 4px 7px; border-radius: 999px; border: 1px solid var(--nw-line-strong); }
+  .state .nw-ico { width: 14px; height: 14px; }
+  .state.is-ok { color: var(--nw-ok); border-color: rgba(61,220,151,.4); background: rgba(61,220,151,.08); }
+  .state.is-warn { color: var(--nw-l1); border-color: rgba(246,195,68,.45); background: var(--nw-l1-bg); }
+  .state.is-off { color: var(--nw-ink-2); }
+  .state.is-bad { color: var(--nw-l3); border-color: rgba(255,82,99,.5); background: var(--nw-l3-bg); }
+
+  /* quick actions */
+  .acts { display: grid; grid-template-columns: repeat(auto-fill, minmax(min(210px, 100%), 1fr)); gap: 10px; }
+  .act { display: grid; gap: 4px; text-align: left; padding: 12px 14px; min-height: 0; justify-content: stretch; align-items: start; line-height: 1.3; }
+  .act b { display: flex; align-items: center; gap: 8px; font-size: 15px; }
+  .act span { font: 400 12.5px/1.35 var(--nw-font); color: var(--nw-muted); }
+  .act[aria-busy="true"] { opacity: .65; cursor: progress; }
+  .act.danger b { color: #ffc2c8; }
+  .toast { min-height: 22px; margin-top: 10px; font-size: 14px; color: var(--nw-ink-2); }
+  .toast.is-ok { color: var(--nw-ok); } .toast.is-bad { color: var(--nw-l3); }
+
+  .err { grid-column: 1 / -1; display: none; padding: 12px 16px; border-radius: 12px; border: 1px solid var(--nw-l3); background: var(--nw-l3-bg); color: #ffd6da; }
+  .err.is-on { display: block; }
+
+  dialog { max-width: min(440px, calc(100vw - 32px)); padding: 0; border-radius: 16px; border: 1px solid var(--nw-line-strong);
+           background: var(--nw-surface); color: var(--nw-ink); box-shadow: var(--nw-shadow); }
+  dialog::backdrop { background: rgba(3, 6, 12, .75); }
+  dialog form { padding: 20px; display: grid; gap: 12px; }
+  dialog h2 { margin: 0; font-size: 19px; }
+  dialog p { margin: 0; color: var(--nw-ink-2); }
+  dialog .row { display: flex; justify-content: flex-end; gap: 8px; flex-wrap: wrap; }
+  footer { grid-column: 1 / -1; color: var(--nw-faint); font-size: 12.5px; text-align: center; }
+</style>
+</head>
+<body class="nw">
+<header class="nw-topbar">
+  <a class="nw-brand" href="/home/" aria-current="page" style="color:inherit;text-decoration:none"><div class="nw-brand-mark img"><img src="/assets/brand/logo.svg" alt="" width="38" height="38"></div><div><div class="nw-brand-name">NightWatch</div>
+    <div class="nw-brand-sub">On-device night elopement detection · everything runs on this laptop</div></div></a>
+  <div class="topright"><div class="nw-chips" id="topchips"></div><div data-nw-display></div></div>
+  <nav data-nw-nav style="flex-basis:100%"></nav>
+</header>
+
+<main>
+  <div class="err" id="err" role="alert"></div>
+
+  <section class="hero" aria-labelledby="fac">
+    <div class="grow">
+      <h1 id="fac">Loading…</h1>
+      <p class="lead" id="hero-sub">Hallway camera person detection and a small normal-pattern model run through ExecuTorch on this laptop. Alerts climb heads-up → urgent → emergency only when nobody responds. Nothing leaves the building.</p>
+    </div>
+    <span class="nw-mode" id="mode"></span>
+    <div class="clock" id="clock" aria-label="Facility clock">--:--</div>
+  </section>
+
+  <div class="tonight-head"><h2 class="nw-panel-title" id="t-tonight">Tonight so far</h2><a class="nw-link" href="/report/" style="font-size:13px">Full shift report →</a></div>
+  <section class="tonight" id="tonight" aria-labelledby="t-tonight" aria-live="off"></section>
+
+  <div class="col">
+    <section class="nw-panel" aria-labelledby="t-screens">
+      <div class="nw-panel-head"><h2 class="nw-panel-title" id="t-screens">Screens</h2><span class="muted">Open one on this laptop, a projector, or a phone</span></div>
+      <nav class="cards" id="cards" aria-labelledby="t-screens"></nav>
+    </section>
+
+    <section class="nw-panel" aria-labelledby="t-acts">
+      <div class="nw-panel-head"><h2 class="nw-panel-title" id="t-acts">Run a demo scenario</h2><span class="muted">Synthetic residents · each scenario restarts the night</span></div>
+      <div class="acts" id="acts"></div>
+      <div class="toast" id="toast" role="status" aria-live="polite"></div>
+    </section>
+  </div>
+
+  <div class="col">
+    <section class="nw-panel" aria-labelledby="t-phone">
+      <div class="nw-panel-head"><h2 class="nw-panel-title" id="t-phone">Connect a staff phone</h2><span class="muted" id="paired"></span></div>
+      <div id="phone"><p class="muted">Loading…</p></div>
+    </section>
+
+    <section class="nw-panel" aria-labelledby="t-status">
+      <div class="nw-panel-head"><h2 class="nw-panel-title" id="t-status">System status</h2><span class="muted" id="updated" aria-live="off"></span></div>
+      <ul class="stat" id="status"><li><span class="k">Loading…</span></li></ul>
+    </section>
+  </div>
+
+  <footer>Demo residents are synthetic. Video frames are analysed in memory and never stored. No cloud services.</footer>
+</main>
+
+<dialog id="confirm" aria-labelledby="c-title">
+  <form method="dialog">
+    <h2 id="c-title">Reset the night?</h2>
+    <p id="c-body">This clears every alert, care-record draft and event, and puts all residents back in bed. Paired phones stay paired.</p>
+    <div class="row"><button class="nw-btn nw-btn--ghost" value="cancel" autofocus>Cancel</button><button class="nw-btn nw-btn--primary" value="ok">Reset now</button></div>
+  </form>
+</dialog>
+
+<script src="/assets/nw.js"></script>
+<script src="/home/qr.js"></script>
+<script>
+const $ = (id) => document.getElementById(id);
+const { esc, icon } = NW;
+
+const SCREENS = [
+  { href: '/dashboard/', name: 'Nurse station', icon: 'bell', p: 'Live floor plan, open alerts and the escalation ladder. Put this on the big screen.', primary: true, key: 'dash' },
+  { href: '/staff/', name: 'Staff phone', icon: 'phone', p: 'What the night worker carries: acknowledge, ask for backup, file the care record.' },
+  { href: '/camera/', name: 'Hallway camera', icon: 'camera', p: 'Person detection on the doorway. Frames are analysed in memory, never saved.', key: 'cam' },
+  { href: '/sim/', name: 'Presenter', icon: 'play', p: 'Drive sensors, the clock and scripted scenarios during a demo.' },
+  { href: '/report/', name: 'Shift report', icon: 'report', p: 'Every alert tonight, response times and care-record drafts for handover.' },
+  { href: '/perf/', name: 'Performance', icon: 'chip', p: 'Measure NPU vs CPU on this laptop: ExecuTorch latency and energy, from a button.', key: 'perf' },
+  { href: '/help/', name: 'Help', icon: 'bulb', p: 'How NightWatch works, for night staff, managers and families.' },
+  { href: '/settings/', name: 'Settings', icon: 'user', p: 'Facility, night hours, escalation waits, residents, exits and cameras.' },
+];
+
+const SCENARIOS = [
+  { name: 'night_elopement', label: 'Night elopement', icon: 'walk', p: '02:08 · R-07 gets up and heads for the front door. Climbs if nobody answers.' },
+  { name: 'camera_walkout', label: 'Camera walk-out', icon: 'camera', p: '02:08 · simulated hallway camera sees a person leave room 12.' },
+  { name: 'night_bathroom', label: 'Night bathroom trip', icon: 'bed', p: '03:00 · R-15 makes a normal ensuite trip. Should stay quiet.' },
+  { name: 'day_visits', label: 'Daytime visits', icon: 'sun', p: '14:00 · visitors and open doors. Logged, no alarms.' },
+  { name: 'reset', label: 'Reset the night', icon: 'reset', p: 'Clear all alerts and events. Asks first.', danger: true },
+];
+
+let state = null;
+let speedup = null;   // from /api/bench, only once a run has both an NPU and a CPU row
+async function loadBench() {
+  try {
+    const b = await fetch('/api/bench').then((r) => r.json());
+    const best = [];
+    for (const run of b.runs || []) {
+      const npu = run.results.find((r) => r.label === 'NPU'), cpu = run.results.find((r) => r.label === 'CPU');
+      if (npu?.p50_ms && cpu?.p50_ms) best.push({ x: cpu.p50_ms / npu.p50_ms, what: run.kind === 'detector' ? 'person detector' : 'normal-pattern model',
+        npu: npu.p50_ms.toFixed(run.kind === 'detector' ? 1 : 3), cpu: cpu.p50_ms.toFixed(run.kind === 'detector' ? 1 : 3), kind: run.kind });
+    }
+    // newest run per kind comes first in /api/bench; prefer the camera model, it's the heavy one
+    speedup = best.find((r) => r.kind === 'detector') || best[0] || null;
+    renderCards();
+  } catch { /* the card keeps its "measure" wording */ }
+}
+// Only touch the DOM when the markup changed, so polling never steals keyboard focus.
+const last = new Map();
+const put = (el, html) => { if (last.get(el) === html) return false; last.set(el, html); el.innerHTML = html; return true; };
+function renderCards() {
+  const open = state ? state.alerts.length : 0;
+  const camLive = state ? state.cameras.some((c) => c.live) : false;
+  put($('cards'), SCREENS.map((s) => {
+    let tag = '';
+    if (s.key === 'dash' && state) tag = open ? `<span class="tag is-alert">${open} OPEN ALERT${open > 1 ? 'S' : ''}</span>` : '<span class="tag is-ok">ALL CLEAR</span>';
+    if (s.key === 'cam' && state) tag = camLive ? '<span class="tag is-ok">LIVE</span>' : '';
+    let p = s.p;
+    if (s.key === 'perf' && speedup) { p = `Measured on this laptop: the ${speedup.what} runs ${speedup.x.toFixed(1)}× faster on the NPU than the CPU (median ${speedup.npu} vs ${speedup.cpu} ms).`; tag = '<span class="tag is-ok">NPU MEASURED</span>'; }
+    return `<a class="card${s.primary ? ' primary' : ''}" href="${s.href}">
+      <span class="ic">${icon(s.icon)}</span><b>${esc(s.name)} ${tag}</b>
+      <span class="p">${esc(p)}<br><span class="path">${esc(s.href)}</span></span></a>`;
+  }).join(''));
+}
+
+$('acts').innerHTML = SCENARIOS.map((s) => `<button class="nw-btn act${s.danger ? ' danger' : ''}" data-scn="${esc(s.name)}">
+  <b>${icon(s.icon)}${esc(s.label)}</b><span>${esc(s.p)}</span></button>`).join('');
+
+function toast(msg, kind) { const t = $('toast'); t.className = 'toast' + (kind ? ' is-' + kind : ''); t.innerHTML = msg; }
+
+$('acts').addEventListener('click', async (e) => {
+  const b = e.target.closest('[data-scn]'); if (!b || b.getAttribute('aria-busy') === 'true') return;
+  const name = b.dataset.scn;
+  if (name === 'reset') {
+    const d = $('confirm'); d.returnValue = ''; d.showModal();
+    const ok = await new Promise((res) => d.addEventListener('close', () => res(d.returnValue === 'ok'), { once: true }));
+    if (!ok) return;
+  }
+  b.setAttribute('aria-busy', 'true');
+  try {
+    const r = await NW.post('/api/scenario', { name });
+    const out = await r.json().catch(() => ({}));
+    if (!r.ok || out.error) throw new Error(out.error || `HTTP ${r.status}`);
+    const s = SCENARIOS.find((x) => x.name === name);
+    toast(name === 'reset' ? `${icon('check')} Night reset. All residents back in bed.`
+      : `${icon('check')} ${esc(s.label)} started. <a class="nw-link" href="/dashboard/">Watch it on the nurse station →</a>`, 'ok');
+  } catch (err) { toast(`Could not start: ${esc(err.message)}`, 'bad'); }
+  finally { b.removeAttribute('aria-busy'); load(); }
+});
+
+function fmtUptime(s) {
+  const d = Math.floor(s / 86400), h = Math.floor(s % 86400 / 3600), m = Math.floor(s % 3600 / 60);
+  return d ? `${d} d ${h} h` : h ? `${h} h ${m} min` : m ? `${m} min` : `${s} s`;
+}
+const st = (kind, word, ic) => `<span class="state is-${kind}">${icon(ic)}${esc(word)}</span>`;
+
+function renderPhone(h) {
+  const ph = h.phones;
+  if (!ph) {
+    put($('phone'), '<div class="notice">The phone address and PIN are only shown on the nurse-station laptop itself. Open this page there.</div>');
+    $('paired').textContent = ''; return;
+  }
+  const pin = String(ph.pin || '').replace(/\D/g, '');
+  $('paired').textContent = `${ph.paired} phone${ph.paired === 1 ? '' : 's'} paired`;
+  const m = ph.url ? /^(https?:\/\/)([^/]+)(.*)$/.exec(ph.url) : null;
+  const qr = ph.url && window.NWQR ? NWQR.svg(ph.url, { title: `QR code for ${ph.url}` }) : null;
+  const pinHTML = `<div class="pin"><div><div class="k">Pairing PIN</div><div class="digits nw-num" aria-label="PIN ${pin.split('').join(' ')}">${esc(pin)}</div></div></div>`;
+  const steps = `<ol class="steps"><li>Join the phone to the facility Wi-Fi.</li><li>${ph.url ? 'Scan the code with its camera, or type the phone link.' : 'Once in --lan mode, scan the code shown here or type the link.'}</li><li>Enter the PIN once. The phone stays paired.</li></ol>`;
+  const body = ph.url ? `<div class="phone-grid">
+      ${qr ? `<div><div class="qr">${qr}</div><div class="qr-cap">Scan with the phone camera</div></div>` : ''}
+      <div style="min-width:0">${pinHTML.replace('class="pin"', 'class="pin" style="margin-top:0"')}${steps}</div></div>
+    <div class="linkrow"><div class="k">Phone link</div>
+      <output id="url" class="bigurl" aria-label="Staff phone address">${m ? `${esc(m[1])}<span class="host">${esc(m[2])}</span>${esc(m[3])}` : esc(ph.url)}</output>
+      <button class="nw-btn nw-btn--primary" id="copy" type="button">${icon('note')}Copy phone link</button></div>`
+    : `<div class="notice"><b>Phones can't connect yet.</b> The server is only listening on this laptop.
+       Restart it with <code>--lan</code> (or run <code>demo.ps1</code>) so phones on the facility Wi-Fi can open <code>/staff/</code>. It still never leaves the building.</div>${pinHTML}${steps}`;
+  if (!put($('phone'), body)) return;
+  const c = $('copy');
+  if (c) c.onclick = async () => {
+    try { await navigator.clipboard.writeText(ph.url); }
+    catch { const r = document.createRange(); r.selectNodeContents($('url')); const s = getSelection(); s.removeAllRanges(); s.addRange(r); document.execCommand('copy'); }
+    c.innerHTML = `${icon('check')}Copied`; setTimeout(() => { if (c.isConnected) c.innerHTML = `${icon('note')}Copy phone link`; }, 1800);
+  };
+}
+
+function renderStatus(h) {
+  const camById = Object.fromEntries((state?.cameras || []).map((c) => [c.id, c]));
+  const rows = [];
+  rows.push(`<li><span class="k">${icon('chip')} Normal-pattern model</span>${/rule/i.test(h.pattern_model.name) ? st('warn', 'RULE FALLBACK', 'bulb') : st('ok', 'RUNNING', 'check')}
+    <span class="s">${esc(h.pattern_model.name)} on <b>${esc(h.pattern_model.device)}</b></span></li>`);
+  rows.push(h.camera_model
+    ? `<li><span class="k">${icon('eye')} Person detector</span>${st('ok', 'LOADED', 'check')}<span class="s">${esc(h.camera_model.name)} on <b>${esc(h.camera_model.device)}</b></span></li>`
+    : `<li><span class="k">${icon('eye')} Person detector</span>${st('warn', 'NOT LOADED', 'bulb')}<span class="s">Start the server with --camera-model to analyse camera frames.</span></li>`);
+  for (const c of h.cameras) {
+    const full = { ...c, ...(camById[c.id] || {}) };
+    const s = NW.camState(full);
+    const kind = { on: 'ok', hit: 'ok', off: 'off', paused: 'off', idle: 'warn' }[s.key] || 'off';
+    const sched = c.schedule === 'night' ? 'Night only' : 'Always';
+    rows.push(`<li><span class="k">${icon('camera')} ${esc(c.label)}</span>${st(kind, s.word, s.key === 'off' ? 'eye' : s.key === 'idle' ? 'clock' : 'check')}
+      <span class="s">${s.sub ? esc(s.sub) : `${sched} · frames arriving, analysed in memory`}</span></li>`);
+  }
+  rows.push(`<li><span class="k">${icon('wifiOff')} Network</span>${h.lan ? st('ok', 'FACILITY WI-FI', 'check') : st('off', 'THIS LAPTOP ONLY', 'shield')}
+    <span class="s">${h.lan ? 'Phones on the local network can connect. Nothing is sent to the internet.' : 'Only this laptop can open the pages. Add --lan for phones.'}</span></li>`);
+  rows.push(`<li><span class="k">${icon('note')} Facility file</span>${h.settings_file === 'facility.json' ? st('ok', 'DEMO', 'check') : st('warn', 'EDITED', 'note')}
+    <span class="s">${esc(h.facility)} · loaded from <code>${esc(h.settings_file)}</code>${h.settings_file === 'facility.json' ? '' : ' (git-ignored data/, edited in Settings)'}</span></li>`);
+  rows.push(`<li><span class="k">${icon('clock')} Uptime</span><span class="state is-off nw-num">${esc(fmtUptime(h.uptime_s))}</span></li>`);
+  put($('status'), rows.join(''));
+  $('updated').textContent = 'live';
+}
+
+function renderTop(h) {
+  $('fac').textContent = h.facility;
+  if (state) {
+    $('clock').textContent = state.clock.slice(0, 5);
+    const m = $('mode'); m.className = 'nw-mode ' + (state.night ? 'is-night' : 'is-day');
+    m.innerHTML = `${icon(state.night ? 'moon' : 'sun')}${state.night ? 'NIGHT MODE' : 'DAY MODE'}`;
+  }
+  if (!$('topchips').firstChild) $('topchips').innerHTML = `<span class="nw-chip">${icon('user')}Night staff <b>${esc(state?.night_staff ?? '–')}</b></span>
+    <span class="nw-chip">${icon('thermo')}Outside <b>${esc(state?.outside_temp_c ?? '–')} °C</b></span>
+    <span class="nw-chip is-good">${icon('shield')}Cloud <b>none</b></span>`;
+  $('topchips').querySelectorAll('b')[0].textContent = state?.night_staff ?? '–';
+  $('topchips').querySelectorAll('b')[1].textContent = `${state?.outside_temp_c ?? '–'} °C`;
+  if (!$('topchips').querySelector('.nw-offline')) NW.offlineBadge($('topchips'));
+}
+
+function renderTonight(r) {
+  if (!r) return;
+  const t = r.totals, med = r.response_s?.median;
+  const tile = (k, ic, v, unit, sub, cls = '', href = '') => `<${href ? `a href="${href}"` : 'div'} class="t ${cls}"><div class="k">${icon(ic)}${k}</div>
+    <div class="v nw-num">${esc(v)}${unit ? `<small>${unit}</small>` : ''}</div><div class="s">${sub}</div></${href ? 'a' : 'div'}>`;
+  put($('tonight'), [
+    tile('Alerts', 'bell', t.alerts, '', t.open ? `<b>${t.open}</b> still open` : t.alerts ? 'all handled' : 'quiet night so far', t.open ? 'is-warn' : t.alerts ? '' : 'is-good', '/dashboard/'),
+    tile('Median response', 'clock', med == null ? '–' : Math.round(med), med == null ? '' : 'sec', r.response_s?.count ? `from ${r.response_s.count} acknowledgement${r.response_s.count > 1 ? 's' : ''}` : 'nobody had to respond yet'),
+    tile('Reached emergency', 'siren', t.reached_emergency, '', t.went_outside ? `<b>${t.went_outside}</b> went outside` : 'nobody went outside', t.reached_emergency ? 'is-bad' : ''),
+    tile('Records to file', 'note', t.records_draft, '', `${t.records_filed} filed in the care team's taxonomy`, t.records_draft ? 'is-warn' : '', '/report/'),
+    tile('Settled on their own', 'bed', t.settled_on_their_own, '', `${t.visits_logged} daytime visit${t.visits_logged === 1 ? '' : 's'} logged`),
+  ].join(''));
+}
+
+async function load() {
+  try {
+    const [hr, sr, rr] = await Promise.all([fetch('/api/health'), fetch('/api/state'), fetch('/api/report').catch(() => null)]);
+    if (!hr.ok) throw new Error(hr.status === 401 ? 'This device is not paired yet.' : `Server answered ${hr.status}`);
+    const h = await hr.json();
+    state = sr.ok ? await sr.json() : null;
+    $('err').classList.remove('is-on');
+    renderTop(h); renderCards(); renderPhone(h); renderStatus(h);
+    if (rr && rr.ok) renderTonight(await rr.json());
+  } catch (e) {
+    const el = $('err'); el.classList.add('is-on');
+    el.textContent = `Can't reach the NightWatch server on this laptop (${e.message}). Is nightwatch/server.py running?`;
+    $('updated').textContent = 'not updating';
+  }
+}
+renderCards(); load(); setInterval(load, 3000);
+loadBench(); setInterval(loadBench, 20000);
+</script>
+</body>
+</html>

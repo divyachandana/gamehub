@@ -1,0 +1,977 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>NightWatch · Nurse station</title>
+<script src="/assets/auth.js"></script>
+<link rel="stylesheet" href="/assets/theme.css">
+<style>
+  .top-mid { flex: 1 1 320px; display: flex; justify-content: center; min-width: 0; }
+  .summary { display: flex; align-items: center; gap: 12px; padding: 8px 16px; border-radius: var(--nw-radius-pill);
+             border: 1px solid var(--nw-line); background: rgba(14, 22, 40, .7); min-width: 0; }
+  .summary .nw-ico { width: 22px; height: 22px; color: var(--nw-ok); }
+  .summary b { font-size: 16px; } .summary span { color: var(--nw-ink-2); font-size: 13px; white-space: normal; line-height: 1.3; }
+  .summary .cd { font-weight: 800; color: var(--nw-ink); font-variant-numeric: tabular-nums; }
+  .summary.has-alert { border-color: color-mix(in srgb, var(--lvl) 55%, transparent); background: var(--lvl-bg); }
+  .top-right { display: flex; align-items: center; gap: 12px; }
+  .top-right .nw-btn, .nw-mode, .nw-chipbtn { white-space: nowrap; }
+  .top-right .nw-btn, .nw-chipbtn { min-height: 40px; }
+  .screens { position: relative; }
+  .screens summary { list-style: none; cursor: pointer; } .screens summary::-webkit-details-marker { display: none; }
+  .screens summary::after { content: "▾"; font-size: 11px; color: var(--nw-faint); margin-left: 2px; }
+  .screens .menu { position: absolute; right: 0; top: calc(100% + 6px); z-index: 60; min-width: 220px; padding: 8px; border-radius: 14px;
+                   background: var(--nw-surface); border: 1px solid var(--nw-line-strong); box-shadow: var(--nw-shadow); }
+  .screens .menu .nw-nav { flex-direction: column; } .screens .menu .nw-nav a { width: 100%; }
+  /* lost contact (H1) */
+  .lost { margin: 0; padding: 14px 24px; background: #3a0d16; border-bottom: 3px solid var(--nw-l3); color: #ffd6da; font-weight: 750; font-size: 18px;
+          display: flex; align-items: center; gap: 12px; }
+  .lost[hidden] { display: none; }
+  .lost .nw-ico { width: 26px; height: 26px; color: var(--nw-l3); }
+  body.nw-stale main, body.nw-stale .takeover, body.nw-stale .sysbar, body.nw-stale .top-mid { opacity: .35; filter: grayscale(1); pointer-events: none; }
+  body.nw-stale .nw-clock { color: var(--nw-l3); text-decoration: line-through; }
+  body.nw-stale .nw-offline { display: none !important; }
+  /* sound unlock (H8) */
+  .unlock { display: block; width: 100%; border: 0; cursor: pointer; padding: 10px 24px; background: var(--nw-l1); color: #1a1200; font: 800 15px/1.2 var(--nw-font); text-align: center; }
+  .unlock[hidden] { display: none; }
+  .sysbar { padding: 10px 24px; border-bottom: 1px solid var(--nw-line); background: rgba(7, 11, 20, .5); }
+  .sysbar .lbl { font-size: 11px; font-weight: 700; letter-spacing: .1em; text-transform: uppercase; color: var(--nw-faint); margin-right: 4px; align-self: center; }
+
+  main { display: grid; grid-template-columns: minmax(0, 1.65fr) minmax(360px, 1fr); gap: 18px; padding: 18px 24px 28px; }
+  .col { display: flex; flex-direction: column; gap: 18px; min-width: 0; }
+  @media (max-width: 1000px) {
+    body.nw { display: flex; flex-direction: column; }
+    body.nw > .sysbar { order: 9; border-top: 1px solid var(--nw-line); }
+    main { grid-template-columns: 1fr; padding: 14px 16px 24px; gap: 14px; }
+    .alert.in-takeover { display: none; }
+    .shown-above { display: flex !important; }
+    .col-side { order: -1; }
+    .nw-topbar, .sysbar { padding-left: 16px; padding-right: 16px; }
+    .nw-clock { font-size: 34px; }
+  }
+
+  /* floor plan */
+  .legend { display: flex; flex-wrap: wrap; gap: 6px 14px; font-size: 12px; color: var(--nw-muted); }
+  .legend i { display: inline-block; width: 10px; height: 10px; border-radius: 50%; margin-right: 6px; vertical-align: -1px; }
+  #map { width: 100%; height: auto; display: block; }
+  #map text { font-family: var(--nw-font); }
+  .res { transition: transform 1.6s var(--nw-ease); }
+  .res .core { transition: fill .4s, r .4s; }
+  .res .halo { opacity: 0; transition: opacity .3s; }
+  .res.alerting .halo { opacity: 1; }
+  .res.l3 .halo { animation: halo 1.2s ease-in-out infinite; transform-box: fill-box; transform-origin: center; }
+  @keyframes halo { 50% { transform: scale(1.35); opacity: .35; } }
+  .exit .ping { opacity: 0; }
+  .exit.open .ping { opacity: 1; animation: nw-ping 1.6s ease-out infinite; transform-box: fill-box; transform-origin: center; }
+  .room-hl { transition: stroke .3s, fill .3s; }
+
+  /* resident strip */
+  .residents { display: grid; grid-template-columns: repeat(auto-fit, minmax(210px, 1fr)); gap: 10px; }
+  .rcard { border: 1px solid var(--nw-line); border-radius: 12px; padding: 11px 13px; background: var(--nw-surface); }
+  .rcard.alerting { border-color: color-mix(in srgb, var(--lvl) 60%, transparent); background: var(--lvl-bg); }
+  .rcard .r1 { display: flex; align-items: center; justify-content: space-between; gap: 8px; }
+  .rcard .id { font-weight: 750; font-size: 15px; }
+  .rcard .where { display: inline-flex; align-items: center; gap: 6px; font-size: 12.5px; color: var(--nw-ink-2); }
+  .rcard .tag { font-size: 11px; font-weight: 800; letter-spacing: .06em; color: var(--lvl); }
+  .rcard .r2 { display: flex; gap: 14px; margin: 8px 0 6px; font-size: 12.5px; color: var(--nw-muted); }
+  .rcard .r2 b { color: var(--nw-ink); font-variant-numeric: tabular-nums; }
+  .bar { height: 6px; border-radius: 3px; background: var(--nw-line); overflow: hidden; }
+  .bar div { height: 100%; border-radius: 3px; transition: width .6s var(--nw-ease), background .4s; }
+  .unus { display: flex; justify-content: space-between; font-size: 11.5px; color: var(--nw-muted); margin-bottom: 4px; }
+  .unus b { color: var(--nw-ink); font-variant-numeric: tabular-nums; }
+
+  /* alerts */
+  .alert { border: 1px solid var(--nw-line-strong); border-left: 6px solid var(--lvl); border-radius: 14px;
+           background: linear-gradient(180deg, var(--lvl-bg), rgba(14, 22, 40, .6)); padding: 14px 16px; margin-bottom: 12px; }
+  .alert:last-child { margin-bottom: 0; }
+  .alert.nw-l3 { background: linear-gradient(180deg, rgba(255, 82, 99, .22), rgba(60, 14, 22, .55)); border-color: var(--nw-l3); }
+  .a-head { display: flex; justify-content: space-between; gap: 12px; align-items: flex-start; }
+  .a-tags { display: flex; flex-direction: column; gap: 8px; }
+  .a-tags .row { display: flex; align-items: center; gap: 10px; }
+  .a-meta { font-size: 12px; color: var(--nw-muted); }
+  .a-timer { display: flex; align-items: center; gap: 10px; text-align: right; }
+  .a-timer .cap { font-size: 11.5px; color: var(--nw-muted); max-width: 90px; line-height: 1.25; }
+  .a-ack { display: inline-flex; align-items: center; gap: 8px; padding: 7px 11px; border-radius: 10px; font-size: 13px;
+           background: rgba(61, 220, 151, .12); border: 1px solid rgba(61, 220, 151, .35); color: var(--nw-ok); font-weight: 650; }
+  .a-title { font: 700 21px/1.25 var(--nw-font-display); margin: 12px 0 8px; letter-spacing: -.01em; }
+  .a-who { display: flex; flex-wrap: wrap; gap: 6px 16px; font-size: 13.5px; color: var(--nw-ink-2); margin-bottom: 12px; }
+  .a-who span { display: inline-flex; gap: 6px; align-items: center; }
+  .a-who .nw-ico { color: var(--nw-faint); }
+  .a-sec { font-size: 11px; font-weight: 700; letter-spacing: .1em; text-transform: uppercase; color: var(--nw-faint); margin: 14px 0 8px; }
+  .a-btns { display: flex; gap: 10px; flex-wrap: wrap; margin-top: 12px; }
+  .a-btns .nw-btn { flex: 1 1 140px; }
+
+  /* care records */
+  .rec { border: 1px solid var(--nw-line); border-radius: 12px; padding: 12px 14px; background: var(--nw-surface); margin-bottom: 10px; }
+  .rec:last-child { margin-bottom: 0; }
+  .rec .r1 { display: flex; justify-content: space-between; align-items: center; gap: 8px; }
+  .rec .draft { font-size: 11px; font-weight: 700; letter-spacing: .08em; text-transform: uppercase; color: var(--nw-faint);
+                border: 1px dashed var(--nw-line-strong); border-radius: 6px; padding: 2px 7px; }
+  .rec .t { font-weight: 650; margin: 8px 0 2px; } .rec .o { color: var(--nw-muted); font-size: 13px; }
+  .rec dl { display: grid; grid-template-columns: max-content 1fr; gap: 3px 12px; margin: 10px 0 0; font-size: 12.5px; }
+  .rec dt { color: var(--nw-faint); } .rec dt::first-letter { text-transform: uppercase; } .rec dd { margin: 0; color: var(--nw-ink-2); }
+  .rec dd.tbc { color: var(--nw-l1); font-style: italic; }
+  .rec .by { margin-top: 8px; font-size: 12px; color: var(--nw-muted); }
+
+  /* event log */
+  .log { list-style: none; margin: 0; padding: 0; max-height: 260px; overflow: auto; font-size: 13px; }
+  .log li { display: grid; grid-template-columns: 70px 92px 1fr; gap: 10px; padding: 6px 2px; border-bottom: 1px solid var(--nw-line); }
+  .log li:last-child { border-bottom: 0; }
+  .log time { color: var(--nw-faint); font-family: var(--nw-mono); font-size: 12px; }
+  .log .k { font-size: 11px; font-weight: 750; letter-spacing: .06em; text-transform: uppercase; color: var(--nw-faint); }
+  .log .k-L1 { color: var(--nw-l1); } .log .k-L2 { color: var(--nw-l2); } .log .k-L3, .log .k-contact { color: var(--nw-l3); }
+  .log .k-ack, .log .k-resolved { color: var(--nw-ok); } .log .k-camera { color: var(--nw-accent); }
+  /* level-3 takeover: impossible to miss on a projector */
+  .takeover { margin: 18px 24px 0; border: 3px solid var(--nw-l3); border-radius: 22px; color: #fff;
+              background: repeating-linear-gradient(-45deg, rgba(255, 82, 99, .26) 0 26px, rgba(255, 82, 99, .12) 26px 52px), #2b0b13;
+              background-size: 200% 200%; display: grid; grid-template-columns: auto minmax(0, 1fr) auto; gap: 22px; align-items: center;
+              padding: 20px 24px; animation: nw-l3-pulse 1.2s ease-in-out infinite, stripes 6s linear infinite; }
+  .takeover[hidden] { display: none; }
+  @keyframes stripes { to { background-position: 148px 0; } }
+  .to-sign { display: grid; justify-items: center; gap: 6px; min-width: 120px; }
+  .to-sign .disc { width: 74px; height: 74px; border-radius: 50%; display: grid; place-items: center; background: var(--nw-l3); box-shadow: 0 0 0 8px rgba(255, 82, 99, .25); }
+  .to-sign .disc .nw-ico { width: 40px; height: 40px; color: #fff; }
+  .to-sign b { font-size: 15px; letter-spacing: .16em; }
+  .to-title { font: 800 30px/1.15 var(--nw-font-display); margin: 0 0 12px; letter-spacing: -.01em; }
+  .to-facts { display: flex; flex-wrap: wrap; gap: 8px 22px; font-size: 16px; color: #ffe3e6; margin-bottom: 12px; }
+  .to-facts span { display: inline-flex; align-items: center; gap: 7px; } .to-facts b { color: #fff; font-variant-numeric: tabular-nums; }
+  .to-facts .nw-ico { color: #ff9aa4; }
+  .takeover .nw-tip { background: rgba(7, 11, 20, .55); }
+  .to-act { display: grid; gap: 10px; min-width: 220px; }
+  .to-act .nw-btn { min-height: 64px; font-size: 20px; }
+  .to-act .resp { display: flex; align-items: center; gap: 8px; color: var(--nw-ok); font-weight: 750; background: rgba(7, 11, 20, .6);
+                  border: 1px solid rgba(61, 220, 151, .5); border-radius: 12px; padding: 10px 12px; }
+  .to-more { font-size: 13px; color: #ffc2c8; }
+  @media (max-width: 1000px) { .takeover { grid-template-columns: 1fr; margin: 14px 16px 0; padding: 16px; gap: 14px; } .to-sign { grid-auto-flow: column; justify-content: start; align-items: center; }
+    .to-sign .disc { width: 48px; height: 48px; } .to-sign .disc .nw-ico { width: 26px; height: 26px; } .to-title { font-size: 22px; } .to-facts { font-size: 14px; display: grid; gap: 6px; } .to-facts span { display: block; } .to-facts .nw-ico { vertical-align: -.25em; margin-right: 4px; } }
+
+  /* camera radar: positions only, never pixels */
+  .radar { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 12px; }
+  .cam-card { border: 1px solid var(--nw-line); border-radius: 12px; background: var(--nw-bg-2); padding: 8px; }
+  .cam-card .ch { display: flex; justify-content: space-between; align-items: center; gap: 6px; font-size: 12px; margin: 0 2px 6px; }
+  .cam-card .ch b { font-weight: 650; color: var(--nw-ink-2); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .cam-card .st { display: inline-flex; align-items: center; gap: 5px; font-size: 11px; font-weight: 750; letter-spacing: .06em; color: var(--nw-faint); flex: none; }
+  .cam-card svg { width: 100%; height: auto; display: block; border-radius: 8px; }
+  .cam-card .nw-camctl { margin-top: 8px; } .cam-card.is-off, .cam-card.is-paused { border-style: dashed; }
+  .cam-card.is-sim { border-color: var(--nw-l1); border-style: dashed; }
+  .sim-tag { display: flex; align-items: center; gap: 6px; margin-top: 6px; padding: 4px 8px; border-radius: 7px; font-size: 11px; font-weight: 800;
+             letter-spacing: .06em; color: #1a1200; background: var(--nw-l1); }
+  .sim-tag .nw-ico { width: 13px; height: 13px; }
+  .radar-legend { display: flex; flex-wrap: wrap; gap: 6px 14px; font-size: 12px; color: var(--nw-muted); margin-top: 10px; }
+  .radar-legend i { display: inline-block; width: 10px; height: 10px; border-radius: 50%; margin-right: 6px; vertical-align: -1px; }
+  .nw-chip.pair { border-color: rgba(138, 180, 255, .45); color: var(--nw-ink-2); }
+  .nw-chip.pair .pin { font-family: var(--nw-mono); font-size: 14px; letter-spacing: .14em; color: var(--nw-accent); }
+  .top-right .nw-btn { font-size: 13.5px; }
+
+  .shown-above { display: none; align-items: center; gap: 8px; padding: 10px 12px; margin-bottom: 12px; border: 1px dashed var(--nw-l3); border-radius: 12px; color: #ffc2c8; font-size: 13.5px; font-weight: 650; }
+  .alert.nw-l3 .nw-timeline time { color: var(--nw-muted); }
+  .alert.compact { padding: 10px 14px; }
+  .alert.compact .a-title { font-size: 16px; margin: 8px 0 6px; }
+  .alert.compact .nw-ring { width: 48px; height: 48px; } .alert.compact .nw-ring .val b { font-size: 15px; }
+  .alert details { margin-top: 6px; } .alert details summary { cursor: pointer; color: var(--nw-muted); font-size: 13px; padding: 4px 0; }
+  .alert .sim-tag { margin: 0 0 10px; }
+  .takeover.is-acked { animation: none; background: #2b0b13; padding: 12px 20px; grid-template-columns: auto minmax(0, 1fr) auto; }
+  .takeover.is-acked .to-sign .disc { width: 44px; height: 44px; box-shadow: none; } .takeover.is-acked .to-sign .disc .nw-ico { width: 24px; height: 24px; }
+  .takeover.is-acked .to-sign b, .takeover.is-acked .to-sign .nw-ladder, .takeover.is-acked .to-facts, .takeover.is-acked .nw-tip { display: none; }
+  .takeover.is-acked .to-title { font-size: 18px; margin: 0; }
+  .takeover.is-acked .to-act { grid-auto-flow: column; } .takeover.is-acked .to-act .nw-btn { min-height: 44px; font-size: 15px; }
+  .nw-btn--help { background: transparent; border: 2px solid var(--nw-l2); color: #ffc79e; }
+  .nw-btn--help.armed { background: var(--nw-l2); color: #1a0d00; }
+  .takeover .nw-btn--help { min-height: 52px; font-size: 16px; }
+  .to-contacts { margin-top: 10px; } .to-contacts .nw-contacts { grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); } .to-contacts .nw-contacts li { background: rgba(7, 11, 20, .6); padding: 6px 10px; }
+  /* backup + records */
+  .a-backup { display: flex; align-items: center; gap: 8px; margin: 0 0 12px; padding: 8px 12px; border-radius: 10px; font-size: 14px; font-weight: 650;
+              color: #ffd0a8; background: var(--nw-l2-bg); border: 1px solid rgba(255, 143, 63, .45); }
+  .a-backup .nw-ico { color: var(--nw-l2); }
+  .rec.is-filed { border-color: rgba(61, 220, 151, .35); }
+  .rec dd.filled { color: var(--nw-ok); font-weight: 650; }
+  .rec-counts { font-size: 12px; color: var(--nw-muted); }
+
+  /* clickable residents */
+  .rcard { cursor: pointer; text-align: left; font: inherit; color: inherit; width: 100%; transition: border-color .15s, transform .08s; }
+  .rcard:hover { border-color: var(--nw-accent); }
+  .rcard .more { font-size: 11.5px; color: var(--nw-accent); margin-top: 6px; display: inline-flex; align-items: center; gap: 4px; }
+  #map .res { cursor: pointer; }
+  #map .res:focus { outline: none; } #map .res:focus-visible .core { stroke: var(--nw-accent); stroke-width: 4; }
+
+  /* drawer content */
+  .dr-head { display: flex; align-items: flex-start; justify-content: space-between; gap: 12px; margin-bottom: 14px; }
+  .dr-head h2 { margin: 0; font: 800 24px/1.15 var(--nw-font-display); }
+  .dr-head .sub { color: var(--nw-muted); font-size: 13.5px; margin-top: 4px; }
+  .dr-now { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px; margin-bottom: 14px; }
+  .dr-now > div { border: 1px solid var(--nw-line); border-radius: 12px; padding: 9px 11px; background: var(--nw-bg-2); }
+  .dr-now .k { font-size: 11px; font-weight: 750; letter-spacing: .08em; text-transform: uppercase; color: var(--nw-faint); }
+  .dr-now .v { font: 750 18px/1.2 var(--nw-font-display); margin-top: 3px; font-variant-numeric: tabular-nums; }
+  .dr-sec { font-size: 11.5px; font-weight: 750; letter-spacing: .1em; text-transform: uppercase; color: var(--nw-faint); margin: 18px 0 8px; }
+  .spark { border: 1px solid var(--nw-line); border-radius: 12px; background: var(--nw-bg-2); padding: 8px 10px 6px; margin-bottom: 10px; }
+  .spark .h { display: flex; justify-content: space-between; font-size: 12.5px; color: var(--nw-muted); margin-bottom: 4px; }
+  .spark .h b { color: var(--nw-ink); font-variant-numeric: tabular-nums; }
+  .spark svg { width: 100%; height: 80px; display: block; }
+  .spark .ax { display: flex; justify-content: space-between; font: 11px var(--nw-mono); color: var(--nw-faint); }
+  .zlegend { display: flex; flex-wrap: wrap; gap: 4px 12px; font-size: 11.5px; color: var(--nw-muted); }
+  .zlegend i { display: inline-block; width: 10px; height: 10px; border-radius: 3px; margin-right: 5px; vertical-align: -1px; }
+  .dr-alert { border: 1px solid var(--nw-line); border-left: 5px solid var(--lvl); border-radius: 12px; padding: 10px 12px; margin-bottom: 8px; background: var(--nw-bg-2); }
+  .dr-alert .t { font-weight: 650; margin: 6px 0 2px; } .dr-alert .o { font-size: 12.5px; color: var(--nw-muted); }
+
+  /* event log filters */
+  .logbar { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; margin-bottom: 10px; }
+  .logbar .nw-input { flex: 1 1 180px; min-height: 34px; padding: 6px 10px; font-size: 13.5px; width: auto; }
+  .log .rel { display: block; font-size: 10.5px; color: var(--nw-faint); }
+
+  /* sound toggle + help */
+  #sound[aria-pressed="true"] { background: transparent; border-color: var(--nw-ok); color: var(--nw-ok); }
+  .keys { display: grid; grid-template-columns: max-content 1fr; gap: 10px 16px; align-items: center; margin: 14px 0 4px; font-size: 15px; }
+  .hint-keys { font-size: 12px; color: var(--nw-faint); }
+
+  @media (max-width: 640px) {
+    .top-mid { order: 3; flex-basis: 100%; } .summary { width: 100%; border-radius: 14px; }
+    .top-right { margin-left: auto; flex-wrap: wrap; justify-content: flex-end; gap: 8px 10px; } .top-right .nw-offline.is-on { order: 9; width: 100%; justify-content: center; } #report-link { padding: 0 10px; } .nw-clock { font-size: 30px; } .nw-chip { white-space: normal; display: inline-block; } .nw-chip .nw-ico { margin-right: 4px; } .nw-chip .nw-dot { display: inline-block; margin-right: 4px; }
+    .summary { flex-wrap: wrap; gap: 6px 10px; } .summary span { white-space: normal; } .sysbar .lbl { width: 100%; }
+    .residents { grid-template-columns: 1fr 1fr; gap: 8px; } .rcard { padding: 10px; }
+    .rcard .r1 { flex-direction: column; align-items: flex-start; gap: 2px; } .rcard .r2 { flex-direction: column; gap: 2px; }
+    .nw-panel { padding: 14px; } .legend { display: none; }
+    .a-head { flex-wrap: wrap; } .a-timer { flex-direction: row-reverse; text-align: left; } .a-timer .cap { max-width: none; }
+  }
+  @media (max-width: 520px) { .log li { grid-template-columns: 62px 1fr; } .log .k { display: none; } .a-title { font-size: 19px; } }
+</style>
+</head>
+<body class="nw">
+<header class="nw-topbar">
+  <a class="nw-brand" href="/home/" title="NightWatch home">
+    <div class="nw-brand-mark" id="logo"></div>
+    <div style="min-width:0"><h1 class="nw-brand-name">NightWatch</h1><div class="nw-brand-sub" id="facility">Nurse station</div></div>
+  </a>
+  <div class="top-mid"><div class="summary" id="summary"></div></div>
+  <div class="top-right">
+    <span id="offline-host"></span>
+    <button class="nw-btn nw-btn--ghost" id="sound" aria-pressed="false" title="Alert sound (M)">Sound off</button>
+    <button class="nw-btn nw-btn--ghost" id="help-btn" title="Keyboard shortcuts (?)" aria-label="Keyboard shortcuts"><span class="nw-kbd">?</span></button>
+    <details class="screens"><summary class="nw-btn nw-btn--ghost" id="screens-btn">Screens</summary><div class="menu" id="screens"></div></details>
+    <span class="nw-mode" id="mode">–</span>
+    <div class="nw-clock" id="clock" aria-label="Facility clock">--:--</div>
+  </div>
+</header>
+<div class="sysbar nw-chips" id="chips" aria-label="System status">
+  <span class="lbl">On this laptop</span>
+  <span class="nw-chip" id="c-model"></span>
+  <span class="nw-chip" id="c-cam"></span>
+  <span class="nw-chip is-good" id="c-net"></span>
+  <span class="nw-chip" id="c-staff"></span>
+  <span class="nw-chip" id="c-temp"></span>
+  <span class="nw-chip" id="c-visits"></span>
+  <span class="nw-chip" id="c-ack"></span>
+  <span class="nw-chip pair" id="c-pair" hidden></span>
+  <span class="nw-chip" id="c-calls" hidden></span>
+</div>
+<div class="lost" id="lost" hidden role="alert"></div>
+<button class="unlock" id="unlock" hidden>Click anywhere to enable alarm sound</button>
+<section class="takeover" id="takeover" hidden aria-label="Emergency"></section>
+<main>
+  <div class="col">
+    <section class="nw-panel" aria-labelledby="h-map">
+      <div class="nw-panel-head">
+        <h2 class="nw-panel-title" id="h-map">Floor plan · live</h2>
+        <div class="legend" aria-hidden="true">
+          <span><i style="background:transparent;border:2px solid #7d8fc4;box-sizing:border-box"></i>In bed</span>
+          <span><i style="background:var(--nw-accent)"></i>Up</span>
+          <span><i style="background:var(--nw-l2)"></i>In an alert</span>
+          <span><i style="background:var(--nw-l3)"></i>Exit open at night</span>
+        </div>
+      </div>
+      <svg id="map" viewBox="0 0 564 290" role="group" aria-label="Floor plan: residents (select one for details) and exits" aria-describedby="map-desc"></svg>
+      <p class="nw-sr-only" id="map-desc"></p>
+    </section>
+    <section class="nw-panel" aria-labelledby="h-res">
+      <div class="nw-panel-head"><h2 class="nw-panel-title" id="h-res">Residents · checked every second</h2></div>
+      <div class="residents" id="residents"></div>
+    </section>
+    <section class="nw-panel" aria-labelledby="h-log">
+      <div class="nw-panel-head"><h2 class="nw-panel-title" id="h-log">Event log</h2><span class="hint-keys">newest first · <span class="nw-kbd">/</span> to search</span></div>
+      <div class="logbar" role="group" aria-label="Filter the event log">
+        <div id="logchips" style="display:contents"></div>
+        <input class="nw-input" id="logq" type="search" placeholder="Filter text…" aria-label="Filter event log text">
+      </div>
+      <ul class="log" id="log" aria-live="off"></ul>
+    </section>
+  </div>
+  <div class="col col-side">
+    <section class="nw-panel" aria-labelledby="h-alerts">
+      <div class="nw-panel-head"><h2 class="nw-panel-title" id="h-alerts">Active alerts <span class="nw-count" id="n-alerts">0</span></h2></div>
+      <div id="alerts"></div>
+    </section>
+    <section class="nw-panel" aria-labelledby="h-radar">
+      <div class="nw-panel-head"><h2 class="nw-panel-title" id="h-radar">Camera radar · positions only</h2><span class="nw-chip" id="radar-ms"></span></div>
+      <div class="radar" id="radar"></div>
+      <div class="radar-legend" aria-hidden="true"><span><i style="background:var(--nw-room)"></i>Room side</span><span><i style="background:var(--nw-hall)"></i>Hallway side</span><span><i style="background:var(--nw-ink-2)"></i>Not sure yet</span><span>No video is shown or stored</span></div>
+    </section>
+    <section class="nw-panel" aria-labelledby="h-rec">
+      <div class="nw-panel-head"><h2 class="nw-panel-title" id="h-rec">Care records</h2><span class="rec-counts" id="rec-counts"></span></div>
+      <div id="records"></div>
+    </section>
+  </div>
+</main>
+<div class="nw-scrim" id="scrim" hidden></div>
+<aside class="nw-drawer" id="drawer" hidden role="dialog" aria-modal="true" aria-labelledby="dr-title"><div id="dr-body"></div></aside>
+<div class="nw-modal" id="confirm" hidden role="alertdialog" aria-modal="true" aria-labelledby="cf-title" aria-describedby="cf-text"><div class="box">
+  <h2 id="cf-title" style="margin:0 0 8px;font:800 22px/1.2 var(--nw-font-display)">Close this alert?</h2>
+  <p id="cf-text" style="margin:0 0 16px;color:var(--nw-ink-2)"></p>
+  <div style="display:flex;flex-wrap:wrap;gap:10px;justify-content:flex-end"><button class="nw-btn" data-close>Cancel</button><button class="nw-btn nw-btn--safe" id="cf-yes">Yes, found safe</button></div>
+</div></div>
+<div class="nw-modal" id="help" hidden role="dialog" aria-modal="true" aria-labelledby="help-title"><div class="box">
+  <div class="dr-head"><h2 id="help-title">Keyboard shortcuts</h2><button class="nw-x" data-close aria-label="Close">✕</button></div>
+  <div class="keys">
+    <span><span class="nw-kbd">Shift</span> + <span class="nw-kbd">A</span></span><span>Acknowledge the top unacknowledged alert</span>
+    <span><span class="nw-kbd">Shift</span> + <span class="nw-kbd">F</span></span><span>Found safe: close the top alert (asks to confirm)</span>
+    <span class="nw-kbd">R</span><span>Open the top alert's resident</span>
+    <span class="nw-kbd">M</span><span>Alarm sound on / off</span>
+    <span class="nw-kbd">/</span><span>Search the event log</span>
+    <span class="nw-kbd">?</span><span>This help</span>
+    <span class="nw-kbd">Esc</span><span>Close a drawer or this help</span>
+  </div></div></div>
+<script src="/assets/nw.js"></script>
+<script>
+const { arm, anyArmed, contactsList, notesKey, toast, act, sortAlerts, tracker, announce, nav, nightBand, recordForm, bindRecordForms, filedBadge, isDirty, audio, tone, trapFocus, typing, camState, camStateHTML, cameraControls, syncCameraControls, handleCameraClick, offlineBadge, esc, icon, paths, LEVELS, SEVERITY, badge, ladder, ring, updateRing, timeline, limitFor, contactsDone, post } = NW;
+const $ = (id) => document.getElementById(id);
+$('logo').innerHTML = icon('logo');
+$('screens').innerHTML = nav('/dashboard/', { newTab: true });
+document.addEventListener('click', (e) => { const d = document.querySelector('details.screens'); if (d.open && !d.contains(e.target)) d.open = false; });
+offlineBadge($('offline-host'));
+
+const heat = (u) => (u >= 0.9 ? 'var(--nw-l3)' : u >= 0.6 ? 'var(--nw-l2)' : u >= 0.35 ? 'var(--nw-l1)' : 'var(--nw-ok)');
+const ZONE = { room: 'In room', corridor: 'Corridor', common: 'Common room', exit: 'At the exit', outside: 'OUTSIDE' };
+const svgIcon = (name, x, y, size, color) =>
+  `<g transform="translate(${x - size / 2} ${y - size / 2}) scale(${size / 24})" fill="none" stroke="${color}" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">${paths[name]}</g>`;
+
+/* ------------------------------------------------------------------ floor plan */
+const CAM_POS = { hall12: (s) => { const r = s.residents.find((x) => x.room === '12'); return [r ? r.x + 24 : 352, 134]; }, front: (s) => { const f = s.exits.find((e) => e.id === 'front') || { x: 470, y: 250 }; return [f.x, f.y - 30]; } };
+
+function residentXY(r, s, i) {
+  const front = s.exits.find((e) => e.id === 'front') || { x: 470, y: 250 };
+  if (r.zone === 'room') return [r.x, 90];
+  if (r.zone === 'corridor') return [r.x, 150];
+  if (r.zone === 'common') return [196 + i * 32, 236];
+  if (r.zone === 'exit') return [front.x - 38, front.y - 20];
+  return [529, front.y - 14 - i * 4];
+}
+function exitLabel(e) {
+  if (e.y < 40) return [e.x - 16, e.y + 4, 'end'];
+  if (e.x > 400) return [e.x + 11, e.y + 26, 'end'];
+  if (e.x < 60) return [e.x + 16, e.y + 4, 'start'];
+  return [e.x, e.y + 28, 'middle'];
+}
+
+let mapBuilt = false;
+function buildMap(s) {
+  const rooms = s.residents.map((r) => `
+    <rect class="room-hl" id="room-${esc(r.id)}" x="${r.x - 36}" y="30" width="72" height="88" rx="7" fill="#111b31" stroke="var(--nw-line-strong)"/>
+    <text x="${r.x}" y="47" fill="var(--nw-muted)" font-size="10" font-weight="600" text-anchor="middle" letter-spacing=".04em">ROOM ${esc(r.room)}</text>
+    <rect x="${r.x - 14}" y="100" width="28" height="12" rx="3" fill="none" stroke="var(--nw-line-strong)"/>`).join('');
+  const exits = s.exits.map((e) => {
+    const [lx, ly, anchor] = exitLabel(e);
+    return `<g class="exit" id="exit-${esc(e.id)}">
+      <circle class="ping" cx="${e.x}" cy="${e.y}" r="13" fill="none" stroke="var(--nw-l3)" stroke-width="2"/>
+      <rect class="box" x="${e.x - 11}" y="${e.y - 11}" width="22" height="22" rx="6" fill="#0a1222" stroke="var(--nw-muted)" stroke-width="1.5"/>
+      <g class="glyph">${svgIcon(e.kind === 'window' ? 'window' : 'door', e.x, e.y, 13, 'var(--nw-muted)')}</g>
+      <text class="lbl" x="${lx}" y="${ly}" text-anchor="${anchor}" font-size="10.5" fill="var(--nw-muted)">${esc(e.short || e.label)}</text></g>`;
+  }).join('');
+  const cams = (s.cameras || []).filter((c) => CAM_POS[c.id]).map((c) => {
+    const [x, y] = CAM_POS[c.id](s);
+    return `<g class="cam" id="cam-${esc(c.id)}"><title>${esc(c.label)}</title>
+      <rect x="${x - 9}" y="${y - 7}" width="18" height="14" rx="4" fill="#0a1222" stroke="var(--nw-line-strong)"/>
+      ${svgIcon('camera', x, y, 10, 'var(--nw-accent)')}<circle class="cdot" cx="${x + 9}" cy="${y - 7}" r="3" fill="var(--nw-faint)"/></g>`;
+  }).join('');
+  const people = s.residents.map((r) => `
+    <g class="res" id="res-${esc(r.id)}" tabindex="0" role="button" aria-label="Open ${esc(r.id)} details">
+      <circle class="halo" r="17" fill="none" stroke-width="3"/>
+      <circle class="core" r="10" stroke="#070b14" stroke-width="2.5"/>
+      <text class="rid" y="25" fill="var(--nw-ink)" font-size="10.5" font-weight="700" text-anchor="middle">${esc(r.id)}</text>
+      <g class="tag" style="display:none"><rect x="-15" y="-34" width="30" height="15" rx="7.5"/><text y="-23.5" font-size="9.5" font-weight="800" fill="#070b14" text-anchor="middle"></text></g>
+    </g>`).join('');
+  $('map').innerHTML = `
+    <defs><pattern id="hatch" width="6" height="6" patternUnits="userSpaceOnUse" patternTransform="rotate(45)"><line x1="0" y1="0" x2="0" y2="6" stroke="#16223d" stroke-width="2"/></pattern></defs>
+    <rect x="10" y="10" width="480" height="270" rx="14" fill="#0a1120" stroke="var(--nw-line-strong)" stroke-width="1.5"/>
+    <rect x="500" y="10" width="58" height="270" rx="12" fill="url(#hatch)" stroke="var(--nw-line-strong)" stroke-dasharray="4 4"/>
+    <text x="529" y="28" fill="var(--nw-muted)" font-size="10" font-weight="600" text-anchor="middle" letter-spacing=".06em">OUTSIDE</text>
+    <text x="529" y="42" fill="var(--nw-faint)" font-size="10" text-anchor="middle">${esc(s.outside_temp_c)} °C</text>
+    ${rooms}
+    <rect x="20" y="128" width="460" height="44" rx="4" fill="#0f1830"/>
+    <text x="260" y="167" fill="var(--nw-faint)" font-size="10" font-weight="600" text-anchor="middle" letter-spacing=".06em">CORRIDOR</text>
+    <rect x="22" y="190" width="124" height="80" rx="7" fill="#0e1729" stroke="var(--nw-line)"/>
+    <text x="84" y="226" fill="var(--nw-faint)" font-size="10" font-weight="600" text-anchor="middle" letter-spacing=".04em">NURSE STATION</text>
+    <text x="84" y="241" fill="var(--nw-faint)" font-size="9.5" text-anchor="middle">this laptop</text>
+    <rect x="160" y="190" width="172" height="80" rx="7" fill="#111b31" stroke="var(--nw-line-strong)"/>
+    <text x="246" y="206" fill="var(--nw-muted)" font-size="10" font-weight="600" text-anchor="middle" letter-spacing=".04em">COMMON ROOM</text>
+    <rect x="346" y="190" width="134" height="80" rx="7" fill="#0e1729" stroke="var(--nw-line)"/>
+    <text x="378" y="206" fill="var(--nw-faint)" font-size="10" font-weight="600" text-anchor="middle" letter-spacing=".04em">ENTRANCE</text>
+    ${cams}${exits}${people}`;
+  // place everyone without animating the first frame
+  s.residents.forEach((r, i) => { const g = $('res-' + r.id); const [x, y] = residentXY(r, s, i); g.style.transition = 'none'; g.style.transform = `translate(${x}px, ${y}px)`; });
+  requestAnimationFrame(() => document.querySelectorAll('.res').forEach((g) => { g.style.transition = ''; }));
+  mapBuilt = true;
+}
+
+function updateMap(s) {
+  if (!mapBuilt || !$('res-' + s.residents[0]?.id)) buildMap(s);
+  const alertOf = {};
+  for (const a of s.alerts) if (a.resident && !alertOf[a.resident]) alertOf[a.resident] = a;
+  const desc = [];
+  s.residents.forEach((r, i) => {
+    const g = $('res-' + r.id); if (!g) return;
+    const [x, y] = residentXY(r, s, i);
+    g.style.transform = `translate(${x}px, ${y}px)`;
+    const a = alertOf[r.id];
+    g.setAttribute('class', `res${a ? ' alerting l' + a.level : ''}`);
+    const color = a ? `var(--nw-l${a.level})` : r.in_bed ? '#7d8fc4' : 'var(--nw-accent)';
+    g.querySelector('.core').setAttribute('fill', a || !r.in_bed ? color : '#0a1120');   // in bed = hollow ring
+    g.querySelector('.core').setAttribute('stroke', a || !r.in_bed ? '#070b14' : color);
+    g.querySelector('.core').setAttribute('r', a ? 12 : r.in_bed ? 8 : 10);
+    g.querySelector('.halo').setAttribute('stroke', a ? `var(--nw-l${a.level})` : 'none');
+    const tag = g.querySelector('.tag');
+    tag.style.display = a ? '' : 'none';
+    if (a) { tag.querySelector('rect').setAttribute('fill', `var(--nw-l${a.level})`); tag.querySelector('text').textContent = 'L' + a.level; }
+    g.querySelector('.rid').textContent = r.id + (r.in_bed ? ' · bed' : '');
+    const room = $('room-' + r.id);
+    if (room) { room.setAttribute('stroke', a && r.zone === 'room' ? `var(--nw-l${a.level})` : 'var(--nw-line-strong)'); }
+    desc.push(`${r.id} ${r.in_bed ? 'in bed' : ZONE[r.zone] || r.zone}${a ? `, level ${a.level} alert` : ''}`);
+  });
+  for (const e of s.exits) {
+    const g = $('exit-' + e.id); if (!g) continue;
+    // At night an open exit is an alarm (red, pulsing); by day it is a logged visit (amber, still).
+    const oc = s.night ? 'var(--nw-l3)' : 'var(--nw-l1)';
+    g.setAttribute('class', 'exit' + (e.open && s.night ? ' open' : ''));
+    g.querySelector('.box').setAttribute('fill', e.open ? oc : '#0a1222');
+    g.querySelector('.box').setAttribute('stroke', e.open ? oc : 'var(--nw-muted)');
+    g.querySelector('.glyph g').setAttribute('stroke', e.open ? '#120a02' : 'var(--nw-muted)');
+    const lbl = g.querySelector('.lbl');
+    lbl.textContent = (e.short || e.label) + (e.open ? (s.night ? ' · OPEN' : ' · open (visit)') : '');
+    lbl.setAttribute('fill', e.open ? oc : 'var(--nw-muted)');
+    lbl.setAttribute('font-weight', e.open ? 800 : 400);
+    if (e.open) desc.push(`${e.label} is open`);
+  }
+  for (const c of s.cameras || []) {
+    const d = document.querySelector(`#cam-${CSS.escape(c.id)} .cdot`);
+    if (d) d.setAttribute('fill', !c.live ? 'var(--nw-faint)' : c.persons ? 'var(--nw-l2)' : 'var(--nw-ok)');
+  }
+  $('map-desc').textContent = desc.join('; ');
+}
+
+/* ------------------------------------------------------------------ alerts */
+function timerHTML(a, s) {
+  if (a.acked_by) return `<div class="a-ack">${icon('check')}<span>${esc(a.acked_by)} responding<br><small style="font-weight:500;color:var(--nw-muted)">escalation paused</small></span></div>`;
+  if (a.escalates_in_s == null) return '';
+  if (a.level === 3 && contactsDone(a)) return `<div class="a-timer"><span class="cap">All contact steps done</span></div>`;
+  const cap = a.level < 3 ? `Level ${a.level + 1} if nobody responds` : 'Next contact step';
+  return `<div class="a-timer"><span class="cap">${cap}</span>${ring(a.escalates_in_s, a.escalates_in_s / limitFor(a, s), cap)}</div>`;
+}
+let LIVE = false;
+const helpBtn = (a) => `<button class="nw-btn nw-btn--help" data-notify="${a.id}">${icon('phone')}<span class="lbl">${LIVE ? 'Call for help (REAL)' : 'Call for help'}</span></button>`;
+const contactsHTML = (a) => ((a.notifications || []).length ? `<div class="a-sec">Who's been contacted</div>${contactsList(a.notifications)}` : '');
+function alertKey(a) { return [LIVE, notesKey(a.notifications), a.level, a.acked_by, a.backup_by, a.history.length, a.title, a.escalates_in_s == null, contactsDone(a)].join('|'); }
+function alertHTML(a, s, compact) {
+  if (compact) return compactHTML(a, s);
+  const L = LEVELS[a.level];
+  const [tip, ...more] = a.suggestions;
+  return `<article class="alert nw-l${a.level}${a.level === 3 && !a.acked_by ? ' nw-attn' : ''}" data-id="${a.id}" data-key="${esc(alertKey(a))}" aria-label="Level ${a.level} ${L.name}: ${esc(a.title)}">
+    <div class="a-head">
+      <div class="a-tags"><div class="row">${badge(a.level)}${ladder(a.level)}</div>
+        <div class="a-meta nw-num">Alert #${a.id} · <span class="age">${fmtAge(a.age_s)}</span></div></div>
+      ${timerHTML(a, s)}
+    </div>
+    <h3 class="a-title">${esc(a.title)}</h3>
+    ${simTag(a)}
+    ${a.resident ? `<button class="nw-btn nw-btn--ghost" data-open-res="${esc(a.resident)}" style="min-height:32px;font-size:13px;margin:-2px 0 10px">${icon('user')}Open ${esc(a.resident)}</button>` : ''}
+    ${a.resident ? `<div class="a-who"><span>${icon('user')}${esc(a.resident)}${a.room ? ` · Room ${esc(a.room)}` : ''}</span>${a.description ? `<span>${icon('eye')}${esc(a.description)}</span>` : ''}</div>` : ''}
+    ${a.backup_by ? `<div class="a-backup" role="status">${icon('phone')}Backup requested by <b>${esc(a.backup_by)}</b> · all staff phones alerted</div>` : ''}
+    ${tip ? `<div class="nw-tip">${icon('bulb')}<div><div class="nw-tip-k">What has worked before</div><div class="nw-tip-v">${esc(tip)}</div>${more.map((m) => `<div class="nw-tip-more">${esc(m)}</div>`).join('')}</div></div>` : ''}
+    ${contactsHTML(a)}
+    <div class="a-sec">Escalation history</div>
+    ${timeline(a.history)}
+    <div class="a-btns">${a.acked_by ? '' : `<button class="nw-btn nw-btn--primary" data-ack="${a.id}">${icon('walk')}Acknowledge</button>`}
+      <button class="nw-btn nw-btn--safe" data-res="${a.id}">${icon('check')}Found safe</button>${helpBtn(a)}</div>
+  </article>`;
+}
+const simTag = (a) => (/simulated camera/i.test(a.title + ' ' + a.history.map((h) => h[1]).join(' ')) ? `<div class="sim-tag" role="note">${icon('play')}SIMULATED camera · demo data</div>` : '');
+function compactHTML(a, s) {
+  const [tip] = a.suggestions;
+  return `<article class="alert compact nw-l${a.level}" data-id="${a.id}" data-key="${esc('c|' + alertKey(a))}" aria-label="Level ${a.level} ${LEVELS[a.level].name}: ${esc(a.title)}">
+    <div class="a-head"><div class="a-tags"><div class="row">${badge(a.level)}</div><div class="a-meta nw-num">Alert #${a.id} · <span class="age">${fmtAge(a.age_s)}</span></div></div>${timerHTML(a, s)}</div>
+    <h3 class="a-title">${esc(a.title)}</h3>${simTag(a)}
+    ${a.backup_by ? `<div class="a-backup">${icon('phone')}Backup requested by <b>${esc(a.backup_by)}</b></div>` : ''}
+    <div class="a-btns">${a.acked_by ? '' : `<button class="nw-btn nw-btn--primary" data-ack="${a.id}">${icon('walk')}Acknowledge</button>`}
+      <button class="nw-btn nw-btn--safe" data-res="${a.id}">${icon('check')}Found safe</button>${helpBtn(a)}</div>
+    ${contactsHTML(a)}
+    <details><summary>Details, what has worked and history</summary>
+      ${a.resident ? `<div class="a-who" style="margin-top:8px"><span>${icon('user')}${esc(a.resident)}${a.room ? ` · Room ${esc(a.room)}` : ''}</span>${a.description ? `<span>${icon('eye')}${esc(a.description)}</span>` : ''}</div>` : ''}
+      ${tip ? `<div class="nw-tip">${icon('bulb')}<div><div class="nw-tip-k">What has worked before</div><div class="nw-tip-v">${esc(tip)}</div></div></div>` : ''}
+      <div class="a-sec">Escalation history</div>${timeline(a.history)}
+      ${a.resident ? `<button class="nw-btn nw-btn--ghost" data-open-res="${esc(a.resident)}" style="min-height:36px;font-size:13px;margin-top:8px">${icon('user')}Open ${esc(a.resident)}</button>` : ''}
+    </details>
+  </article>`;
+}
+const fmtAge = (s) => (s < 60 ? `${s} s ago` : `${Math.floor(s / 60)} min ${s % 60} s ago`);
+
+function renderAlerts(s) {
+  const box = $('alerts');
+  $('n-alerts').textContent = s.alerts.length;
+  if (!s.alerts.length) {
+    if (!box.querySelector('.nw-empty')) box.innerHTML = `<div class="nw-empty">${icon('shield')}<div><b>No active alerts</b>Every resident is checked every second, on this laptop.</div></div>`;
+    return;
+  }
+  box.querySelector('.nw-empty')?.remove();
+  const keep = new Set(s.alerts.map((a) => String(a.id)));
+  box.querySelectorAll('.alert').forEach((el) => { if (!keep.has(el.dataset.id)) el.remove(); });
+  box.querySelector('.shown-above')?.remove();
+  s.alerts.forEach((a, i) => {
+    let el = box.querySelector(`.alert[data-id="${a.id}"]`);
+    const compact = i >= 2, key = (compact ? 'c|' : '') + alertKey(a);
+    if (!el || (el.dataset.key !== key && !el.querySelector('.armed'))) {
+      const tmp = document.createElement('div'); tmp.innerHTML = alertHTML(a, s, compact);
+      const fresh = tmp.firstElementChild;
+      el ? el.replaceWith(fresh) : box.appendChild(fresh);
+      el = fresh;
+    } else {
+      el.querySelector('.age').textContent = fmtAge(a.age_s);
+      const r = el.querySelector('.nw-ring');
+      if (r && a.escalates_in_s != null) updateRing(r, a.escalates_in_s, a.escalates_in_s / limitFor(a, s), el.querySelector('.a-timer .cap')?.textContent || '');
+    }
+    el.classList.toggle('in-takeover', a.id === takeoverId);
+    if (box.children[i] !== el) box.insertBefore(el, box.children[i]);
+  });
+  // narrow screens hide the card already shown in the emergency banner (M12)
+  let note = box.querySelector('.shown-above');
+  if (takeoverId != null && s.alerts.some((a) => a.id === takeoverId)) {
+    if (!note) { note = document.createElement('div'); note.className = 'shown-above'; box.appendChild(note); }
+    note.innerHTML = `${icon('siren')}Alert #${takeoverId} is shown in the emergency banner above.`;
+    box.insertBefore(note, box.firstChild);
+  } else if (note) note.remove();
+}
+
+/* ------------------------------------------------------------------ care records */
+const REC_FIELDS = ['behaviour', 'affect', 'frequency', 'time_of_day', 'night_band', 'location_type', 'trigger', 'intervention', 'nondrug_alt', 'outcome', 'note'];
+let TAX = null;
+function recHTML(a) {
+  const r = a.record || {}, filed = r.status === 'filed';
+  return `<article class="rec${filed ? ' is-filed' : ''}" data-id="${a.id}" data-key="${esc(a.id + '|' + (r.status || ''))}">
+    <div class="r1"><span class="nw-sev nw-sev--${r.severity}"><span class="n" aria-hidden="true">${r.severity ?? '–'}</span>Severity ${r.severity ?? '–'} · ${esc(r.severity_label || SEVERITY[r.severity] || '')}</span>
+      ${filed ? filedBadge(r) : `<span class="nw-draftbadge">${icon('note')}Draft · to file</span>`}</div>
+    <div class="t">${esc(a.title)}</div>
+    <div class="o">${esc(a.resident || '')}${a.resident ? ' · ' : ''}${esc(a.resolved)} · reached level ${a.max_level}</div>
+    <dl>${REC_FIELDS.filter((k) => r[k]).map((k) => `<dt>${k === 'nondrug_alt' ? 'non-drug alternative' : k.replace(/_/g, ' ')}</dt><dd class="${/staff to confirm/.test(r[k]) ? 'tbc' : filed && (k === 'affect' || k === 'intervention') ? 'filled' : ''}">${esc(r[k])}</dd>`).join('')}</dl>
+    ${filed ? '' : recordForm(a, TAX)}
+  </article>`;
+}
+function renderRecords(s) {
+  TAX = s.taxonomy || TAX;
+  const box = $('records');
+  const recs = s.recent.filter((a) => a.record).slice().reverse();
+  const nDraft = recs.filter((a) => a.record.status !== 'filed').length;
+  $('rec-counts').textContent = recs.length ? `${nDraft} to file · ${recs.length - nDraft} filed` : '';
+  if (!recs.length) {
+    if (!box.querySelector('.nw-empty')) box.innerHTML = `<div class="nw-empty" style="padding:8px 4px">${icon('note')}<div><b>Nothing to file yet</b>Closed alerts become draft entries in the care team's record format.</div></div>`;
+    return;
+  }
+  box.querySelector('.nw-empty')?.remove();
+  const keep = new Set(recs.map((a) => String(a.id)));
+  box.querySelectorAll('.rec').forEach((el) => { if (!keep.has(el.dataset.id)) el.remove(); });
+  recs.forEach((a, i) => {   // keyed: a half-filled form is never wiped by the next poll
+    let el = box.querySelector(`.rec[data-id="${a.id}"]`);
+    const key = a.id + '|' + (a.record.status || '');
+    if (!el || el.dataset.key !== key) {
+      const tmp = document.createElement('div'); tmp.innerHTML = recHTML(a);
+      const fresh = tmp.firstElementChild; el ? el.replaceWith(fresh) : box.appendChild(fresh); el = fresh;
+    }
+    if (box.children[i] !== el) box.insertBefore(el, box.children[i]);
+  });
+}
+bindRecordForms(() => 'Nurse station', () => tick());
+
+/* ------------------------------------------------------------------ residents + log + header */
+function renderResidents(s) {
+  const alertOf = {};
+  for (const a of s.alerts) if (a.resident && !alertOf[a.resident]) alertOf[a.resident] = a;
+  const box = $('residents');
+  if (box.dataset.ids !== s.residents.map((r) => r.id).join(',')) {
+    box.dataset.ids = s.residents.map((r) => r.id).join(',');
+    box.innerHTML = s.residents.map((r) => `<button type="button" class="rcard" data-open-res="${esc(r.id)}" aria-label="Open ${esc(r.id)} details"><span class="inner" style="display:block"></span></button>`).join('');
+  }
+  for (const r of s.residents) {
+    const el = box.querySelector(`[data-open-res="${CSS.escape(r.id)}"]`); if (!el) continue;
+    const a = alertOf[r.id];
+    el.className = `rcard${a ? ` alerting nw-l${a.level}` : ''}`;
+    const where = r.in_bed ? `${icon('bed')}In bed · Room ${esc(r.room)}` : `${icon('walk')}${esc(ZONE[r.zone] || r.zone)}`;
+    el.querySelector('.inner').innerHTML = `
+      <span class="r1"><span class="id">${esc(r.id)}</span>${a ? `<span class="tag">LEVEL ${a.level} · ${LEVELS[a.level].word}</span>` : `<span class="where">${where}</span>`}</span>
+      ${a ? `<span class="where" style="margin-top:4px;display:flex">${where}</span>` : ''}
+      <span class="r2"><span>${icon('heart')} <b>${r.hr ? Math.round(r.hr) : '–'}</b> bpm</span><span>Wander risk <b>${Math.round(r.risk * 100)}%</b></span></span>
+      <span class="unus"><span>Unusual for right now</span><b>${Math.round(r.unusual * 100)}%</b></span>
+      <span class="bar" style="display:block" role="meter" aria-valuemin="0" aria-valuemax="100" aria-valuenow="${Math.round(r.unusual * 100)}" aria-label="${esc(r.id)} unusual for right now"><span style="display:block;height:100%;border-radius:3px;width:${Math.max(2, r.unusual * 100)}%;background:${heat(r.unusual)}"></span></span>
+      <span class="more">Details, last 30 min ${icon('next')}</span>`;
+  }
+}
+const LOGK = { L1: 'Level 1', L2: 'Level 2', L3: 'Level 3', ack: 'Ack', resolved: 'Resolved', contact: 'Contact', sensor: 'Sensor', door: 'Door', clock: 'Clock', camera: 'Camera', pairing: 'Pairing', record: 'Record', settings: 'Settings' };
+const LOG_GROUPS = [
+  ['alerts', 'Alerts', ['L1', 'L2', 'L3', 'ack', 'resolved']],
+  ['sensors', 'Sensors', ['sensor', 'door']],
+  ['camera', 'Camera', ['camera']],
+  ['contact', 'Contact', ['contact']],
+  ['records', 'Records', ['record']],
+  ['settings', 'Settings', ['settings', 'clock', 'pairing']],
+];
+const logOn = new Set(LOG_GROUPS.map((g) => g[0]));
+const groupOf = (kind) => (LOG_GROUPS.find((g) => g[2].includes(kind)) || ['settings'])[0];
+const secs = (t) => { const [h, m, x] = String(t).split(':').map(Number); return h * 3600 + m * 60 + (x || 0); };
+function rel(t, now) {
+  let d = secs(now) - secs(t); if (d < 0) d += 86400;
+  return d < 5 ? 'just now' : d < 60 ? `${d} s ago` : d < 3600 ? `${Math.floor(d / 60)} min ago` : `${Math.floor(d / 3600)} h ${Math.floor((d % 3600) / 60)} min ago`;
+}
+function renderLog(s) {
+  const counts = {};
+  for (const e of s.events) { const g = groupOf(e.kind); counts[g] = (counts[g] || 0) + 1; }
+  if (!$('logchips').children.length) {
+    $('logchips').innerHTML = LOG_GROUPS.map(([id, label]) => `<button type="button" class="nw-chipbtn" data-logg="${id}" aria-pressed="true">${label} <span class="n"></span></button>`).join('');
+  }
+  $('logchips').querySelectorAll('[data-logg]').forEach((b) => { b.setAttribute('aria-pressed', String(logOn.has(b.dataset.logg))); b.querySelector('.n').textContent = counts[b.dataset.logg] || 0; });
+  const q = $('logq').value.trim().toLowerCase();
+  const rows = s.events.filter((e) => logOn.has(groupOf(e.kind)) && (!q || `${e.text} ${e.kind}`.toLowerCase().includes(q)));
+  $('log').innerHTML = rows.length ? rows.map((e) => `<li><time title="${esc(e.t)}">${esc(e.t)}<span class="rel">${esc(rel(e.t, s.clock))}</span></time><span class="k k-${esc(e.kind)}">${esc(LOGK[e.kind] || e.kind)}</span><span>${esc(e.text)}</span></li>`).join('')
+    : `<li><span></span><span></span><span style="color:var(--nw-muted)">${s.events.length ? 'Nothing matches the filter.' : 'Quiet so far.'}</span></li>`;
+}
+document.addEventListener('click', (e) => {
+  const b = e.target.closest('[data-logg]'); if (!b) return;
+  logOn.has(b.dataset.logg) ? logOn.delete(b.dataset.logg) : logOn.add(b.dataset.logg);
+  if (last) renderLog(last);
+});
+function renderHeader(s) {
+  $('facility').textContent = `${s.facility} · Nurse station`;
+  const [hh, mm, ss] = s.clock.split(':');
+  $('clock').innerHTML = `${esc(hh)}:${esc(mm)}<small>:${esc(ss)}</small>`;
+  const m = $('mode');
+  m.className = 'nw-mode ' + (s.night ? 'is-night' : 'is-day');
+  m.innerHTML = s.night ? `${icon('moon')}NIGHT` : `${icon('sun')}DAY`;
+  const sum = $('summary');
+  if (s.alerts.length) {
+    const a = s.alerts[0];   // sorted: top unacknowledged first
+    const cd = !a.acked_by && a.escalates_in_s != null && !(a.level === 3 && contactsDone(a)) ? `<span class="cd">next step in ${a.escalates_in_s} s</span> · ` : '';
+    sum.className = `summary has-alert nw-l${a.level}`;
+    sum.innerHTML = `${badge(a.level)}<span>${cd}${esc(a.resident || a.title)} · ${a.acked_by ? `${esc(a.acked_by)} responding` : '<b style="font-size:13px">nobody responding yet</b>'}${s.alerts.length > 1 ? ` · ${s.alerts.length} active` : ''}</span>`;
+  } else {
+    const inBed = s.residents.filter((r) => r.in_bed).length;
+    sum.className = 'summary';
+    sum.innerHTML = `${icon('shield')}<b>All quiet</b><span>${inBed} of ${s.residents.length} residents in bed · ${s.night ? `doors are watched until ${nightBand(s).end}` : `doors logged as visits until ${nightBand(s).start}`}</span>`;
+  }
+  const ms = s.scorer.p50_ms;
+  $('c-model').innerHTML = `${icon('chip')}<b>${esc(s.scorer.name)}</b> on <b>${esc(s.scorer.device)}</b> · <b>${ms == null ? '–' : ms.toFixed(2) + ' ms'}</b> per check`;
+  const cams = s.cameras || [], nOn = cams.filter((c) => c.enabled !== false && c.active !== false).length, live = cams.filter((c) => c.live && c.active !== false);
+  const seen = live.some((c) => (c.tracks || []).length || c.persons);
+  $('c-cam').innerHTML = `<span class="nw-dot ${seen ? 'is-hit' : live.length ? 'is-live' : ''}"></span>Cameras <b>${nOn} on · ${cams.filter((c) => c.enabled === false).length} off${cams.some((c) => c.enabled !== false && c.active === false) ? ` · ${cams.filter((c) => c.enabled !== false && c.active === false).length} paused` : ''}</b>${live.length
+    ? ` · <b>${seen ? 'person seen' : 'clear'}${s.camera_p50_ms != null ? ` · ${esc(s.camera_p50_ms)} ms/frame` : ''}</b>` : ''}`;
+  // Phone pairing PIN: only the laptop itself receives state.pairing. Digits only.
+  const pair = s.pairing;
+  $('c-pair').hidden = !pair;
+  if (pair) $('c-pair').innerHTML = `${icon('phone')}Pair a phone · PIN <b class="pin">${String(pair.pin).replace(/\D/g, '')}</b> · <b>${Number(pair.devices) || 0}</b> paired`;
+  LIVE = !!s.contacts_live;
+  $('c-calls').hidden = s.contacts_live == null;
+  const chs = s.channels ? Object.entries(s.channels).filter(([, v]) => v).map(([k]) => ({ call: 'call', sms: 'SMS', push: 'push', imessage: 'iMessage' }[k] || k)) : [];
+  $('c-calls').innerHTML = s.contacts_live ? `<span class="nw-live-calls">${icon('phone')}REAL sending ON</span>${chs.length ? ` · ${esc(chs.join(', '))}` : ''}`
+    : `${icon('phone')}Contacts <b>dry run</b>${chs.length ? ` · ready: ${esc(chs.join(', '))}` : s.twilio_configured ? '' : ' · no sender set up'}`;
+  // Honest: watching never needs the internet; real calls/SMS do.
+  $('c-net').innerHTML = s.contacts_live ? `${icon('wifiOff')}Internet needed <b>only to notify contacts</b>` : `${icon('wifiOff')}Internet needed <b>No</b>`;
+  $('c-staff').innerHTML = `${icon('user')}Night staff on duty <b>${esc(s.night_staff)}</b>`;
+  $('c-temp').innerHTML = `${icon('thermo')}Outside <b>${esc(s.outside_temp_c)} °C</b>`;
+  $('c-visits').innerHTML = `${icon('door')}Visits today <b>${esc(s.stats.visits_today)}</b>`;
+  $('c-ack').innerHTML = `${icon('clock')}Median time to acknowledge <b>${s.stats.median_ack_s == null ? '–' : esc(s.stats.median_ack_s) + ' s'}</b>`;
+}
+
+/* ------------------------------------------------------------------ level-3 takeover */
+function whereNow(a, s) {
+  const r = s.residents.find((x) => x.id === a.resident);
+  const ex = s.exits.find((e) => e.id === a.exit);
+  if (r && r.zone === 'outside') return `OUTSIDE${ex ? ` via ${ex.label}` : ''}`;
+  if (r && !r.in_bed) return ZONE[r.zone] + (r.zone === 'exit' && ex ? ` · ${ex.label}` : '');
+  return ex ? ex.label : r ? `Room ${r.room}` : '–';
+}
+let toKey = null, takeoverId = null;
+function renderTakeover(s) {
+  const l3 = s.alerts.filter((a) => a.level === 3);   // already sorted: unacknowledged first
+  const box = $('takeover');
+  if (!l3.length) { box.hidden = true; toKey = null; takeoverId = null; return; }
+  const a = l3[0];
+  takeoverId = a.id;
+  box.classList.toggle('is-acked', !!a.acked_by);
+  const key = [LIVE, notesKey(a.notifications), a.id, a.acked_by, a.backup_by, a.title, a.suggestions[0], l3.length].join('|');
+  box.hidden = false;
+  if (key !== toKey && !box.querySelector('.armed')) {
+    toKey = key;
+    box.innerHTML = `
+      <div class="to-sign"><div class="disc">${icon('siren')}</div><b>EMERGENCY</b><span class="nw-ladder nw-l3" aria-hidden="true"><i class="on"></i><i class="on"></i><i class="on"></i></span></div>
+      <div style="min-width:0">
+        <h2 class="to-title">${esc(a.title)}</h2>
+        <div class="to-facts">
+          ${a.resident ? `<span>${icon('user')}<b>${esc(a.resident)}</b>${a.description ? ` · ${esc(a.description)}` : ''}</span>` : ''}
+          <span>${icon('pin')}<b class="to-where"></b></span>
+          <span>${icon('thermo')}Outside <b>${esc(s.outside_temp_c)} °C</b></span>
+          <span>${icon('clock')}First alert <b class="to-age"></b></span>
+          ${a.backup_by ? `<span>${icon('phone')}Backup requested by <b>${esc(a.backup_by)}</b></span>` : ''}
+        </div>
+        ${a.suggestions[0] ? `<div class="nw-tip">${icon('bulb')}<div><div class="nw-tip-k">What has worked before</div><div class="nw-tip-v">${esc(a.suggestions[0])}</div></div></div>` : ''}
+        ${(a.notifications || []).length ? `<div class="to-contacts"><div class="a-sec" style="color:#ffc2c8">Who's been contacted</div>${contactsList(a.notifications)}</div>` : ''}
+        ${l3.length > 1 ? `<div class="to-more" style="margin-top:8px">+ ${l3.length - 1} more emergency alert${l3.length > 2 ? 's' : ''} below</div>` : ''}
+      </div>
+      <div class="to-act">
+        ${a.acked_by ? `<div class="resp">${icon('walk')}${esc(a.acked_by)} responding</div>`
+          : `<button class="nw-btn nw-btn--primary" data-ack="${a.id}">${icon('walk')}Acknowledge</button>`}
+        <button class="nw-btn nw-btn--safe" data-res="${a.id}">${icon('check')}Found safe</button>
+        ${helpBtn(a)}
+      </div>`;
+  }
+  box.querySelector('.to-where').textContent = whereNow(a, s);
+  box.querySelector('.to-age').textContent = fmtAge(a.age_s);
+}
+
+/* ------------------------------------------------------------------ camera radar */
+const SIDE = { 1: ['var(--nw-room)', 'room'], '-1': ['var(--nw-hall)', 'hallway'], 0: ['var(--nw-ink-2)', '?'] };
+function radarSVG(c) {
+  const d = c.doorway && c.doorway.line;
+  let door = '';
+  if (d) {
+    const [x1, y1, x2, y2] = d.map((v) => v * 100);
+    const dx = x2 - x1, dy = y2 - y1, len = Math.hypot(dx, dy) || 1, ux = dx / len, uy = dy / len;
+    const nx = -uy * c.doorway.inside, ny = ux * c.doorway.inside;   // towards the room side
+    const ax = x1 - ux * 300, ay = y1 - uy * 300, bx = x2 + ux * 300, by = y2 + uy * 300;
+    const mx = (x1 + x2) / 2, my = (y1 + y2) / 2, cl = (v) => Math.max(8, Math.min(94, v));
+    // keep side labels inside the card: anchor by where they land
+    const lab = (x, y, col, word) => { const cx = cl(x), anchor = cx < 30 ? 'start' : cx > 70 ? 'end' : 'middle';
+      return `<text x="${anchor === 'start' ? Math.max(4, cx - 10) : anchor === 'end' ? Math.min(96, cx + 10) : cx}" y="${cl(y)}" fill="${col}" font-size="6" font-weight="800" text-anchor="${anchor}" letter-spacing=".08em" opacity=".85">${word}</text>`; };
+    door = `<polygon points="${ax},${ay} ${bx},${by} ${bx + nx * 300},${by + ny * 300} ${ax + nx * 300},${ay + ny * 300}" fill="var(--nw-room)" fill-opacity=".1"/>
+      <line x1="${x1}" y1="${y1}" x2="${x2}" y2="${y2}" stroke="var(--nw-accent)" stroke-width="1.6" stroke-dasharray="4 3"/>
+      ${lab(mx + nx * 34, my + ny * 34, 'var(--nw-room)', 'ROOM')}${lab(mx - nx * 34, my - ny * 34, 'var(--nw-hall)', 'HALLWAY')}`;
+  }
+  const tracks = (c.tracks || []).map((t) => {
+    const [col, word] = SIDE[t.side] || SIDE[0];
+    const fx = (t.x1 + t.x2) * 50, fy = t.y2 * 100;
+    const trail = (t.trail || []).map(([x, y]) => `${(x * 100).toFixed(1)},${(y * 100).toFixed(1)}`).join(' ');
+    return `<g opacity="${t.confirmed ? 1 : .55}">
+      <rect x="${t.x1 * 100}" y="${t.y1 * 100}" width="${(t.x2 - t.x1) * 100}" height="${(t.y2 - t.y1) * 100}" rx="3" fill="none" stroke="${col}" stroke-width=".8" stroke-opacity=".5" ${t.confirmed ? '' : 'stroke-dasharray="2 2"'}/>
+      ${trail ? `<polyline points="${trail}" fill="none" stroke="${col}" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round" stroke-opacity=".6"/>` : ''}
+      <circle cx="${fx}" cy="${fy}" r="3.2" fill="${col}" stroke="#070b14" stroke-width="1"/>
+      <text x="${fx}" y="${Math.max(7, t.y1 * 100 - 2)}" fill="${col}" font-size="5.5" font-weight="800" text-anchor="middle">#${esc(t.id)} · ${word}</text></g>`;
+  }).join('');
+  const st = camState(c), watching = st.key === 'on' || st.key === 'hit';
+  const glyph = st.key === 'paused' ? 'moon' : st.key === 'off' ? 'wifiOff' : 'camera';
+  const sub = st.key === 'off' ? ['Turned off by staff', 'nothing is analysed'] : st.key === 'paused' ? ['Watches 21:00-05:00', 'nothing analysed now'] : ['On, no frames yet', 'start it on /camera/'];
+  const off = !watching ? `<rect width="100" height="100" fill="#070b14" fill-opacity="${st.key === 'idle' ? 0 : .55}"/>
+      <g transform="translate(38 24)" fill="none" stroke="${st.key === 'off' ? 'var(--nw-ink-2)' : st.key === 'paused' ? 'var(--nw-moon)' : 'var(--nw-faint)'}" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">${paths[glyph]}</g>
+      <text x="50" y="62" fill="var(--nw-ink)" font-size="7.5" font-weight="750" text-anchor="middle">${esc(st.long)}</text>
+      <text x="50" y="72" fill="var(--nw-muted)" font-size="5.3" text-anchor="middle">${esc(sub[0])}</text>
+      <text x="50" y="79" fill="var(--nw-muted)" font-size="5.3" text-anchor="middle">${esc(sub[1])}</text>` : '';
+  return `<svg viewBox="0 0 100 100" role="img" aria-label="${esc(c.label)}: ${watching ? `${(c.tracks || []).length} people tracked` : esc(st.long)}">
+    <defs><clipPath id="clip-${esc(c.id)}"><rect width="100" height="100" rx="6"/></clipPath>
+      <pattern id="grid-${esc(c.id)}" width="10" height="10" patternUnits="userSpaceOnUse"><path d="M10 0H0V10" fill="none" stroke="#16223d" stroke-width=".5"/></pattern></defs>
+    <g clip-path="url(#clip-${esc(c.id)})"><rect width="100" height="100" fill="#09101e"/><rect width="100" height="100" fill="url(#grid-${esc(c.id)})"/>
+    ${d ? door : ''}${watching ? tracks : ''}${off}</g>
+    <rect x=".5" y=".5" width="99" height="99" rx="6" fill="none" stroke="var(--nw-line-strong)"/></svg>`;
+}
+let radarIds = '';
+function renderRadar(s) {
+  const cams = s.cameras || [];
+  const watching = cams.filter((c) => { const k = camState(c).key; return k === 'on' || k === 'hit'; });
+  $('radar-ms').innerHTML = watching.length && s.camera_p50_ms != null ? `${icon('chip')}<b>${esc(s.camera_p50_ms)} ms</b>/frame` : `${icon('camera')}No camera watching`;
+  const box = $('radar');
+  if (!cams.length) { box.innerHTML = `<div class="nw-empty">${icon('camera')}<div><b>No cameras configured</b>Door contacts and wearables still work.</div></div>`; radarIds = ''; return; }
+  const ids = cams.map((c) => c.id).join(',');
+  if (ids !== radarIds) {   // build cards once so the switches keep focus between polls
+    radarIds = ids;
+    box.innerHTML = cams.map((c) => `<div class="cam-card" data-cam="${esc(c.id)}"><div class="ch"><b title="${esc(c.label)}">${esc(c.label.replace(/ camera$/i, ''))}</b><span class="st-slot"></span></div>
+      <div class="svg-slot"></div><div class="sim-slot"></div>${cameraControls(c)}</div>`).join('');
+  }
+  for (const c of cams) {
+    const card = box.querySelector(`[data-cam="${CSS.escape(c.id)}"]`);
+    const k = camState(c).key;
+    card.className = `cam-card is-${k}${c.simulated ? ' is-sim' : ''}`;
+    card.querySelector('.st-slot').innerHTML = camStateHTML(c);
+    card.querySelector('.svg-slot').innerHTML = radarSVG(c);
+    card.querySelector('.sim-slot').innerHTML = c.simulated ? `<div class="sim-tag" role="note">${icon('play')}SIMULATED · demo data, not a real camera</div>` : '';
+    syncCameraControls(card, c);
+  }
+}
+
+/* ------------------------------------------------------------------ loop */
+document.addEventListener('click', async (e) => {
+  if (handleCameraClick(e, 'nurse station', tick)) return;
+  const b = e.target.closest('button'); if (!b) return;
+  if (b.dataset.ack) { b.disabled = true; const r = await act('/api/ack', { alert: +b.dataset.ack, by: 'Nurse station' }, "Acknowledge didn't reach NightWatch. Try again."); if (!r.ok) b.disabled = false; tick(); }
+  if (b.dataset.notify) {
+    if (!arm(b, LIVE ? 'Tap again: REALLY call/text contacts' : 'Tap again to call for help')) return;
+    b.disabled = true;
+    const r = await act('/api/notify', { alert: +b.dataset.notify, by: 'Nurse station' }, "Call for help didn't reach NightWatch. Try again.");
+    if (r.ok) { toast(LIVE ? 'Calling and texting the contacts now.' : 'Contacts notified (simulated: no real calls).', 'good'); setTimeout(() => { b.disabled = false; }, 3000); } else b.disabled = false;
+    tick(); return;
+  }
+  if (b.dataset.res) { b.disabled = true; const r = await act('/api/resolve', { alert: +b.dataset.res, outcome: 'Found safe, returned to room' }, "Found safe didn't reach NightWatch. Try again."); if (!r.ok) b.disabled = false; tick(); }
+});
+
+let lastGood = null;
+function setStale(on) {
+  document.body.classList.toggle('nw-stale', on);
+  $('lost').hidden = !on;
+  ['main', '.takeover', '.sysbar'].forEach((q) => { const el = document.querySelector(q); if (el) el.inert = on; });   // no clicks or tabbing into stale actions
+  if (on) $('lost').innerHTML = `${icon('wifiOff')}<span>Lost contact with NightWatch${lastGood ? ` at ${esc(lastGood)}` : ''} · alerts are NOT being checked on this screen. Retrying…</span>`;
+}
+async function tick() {
+  let s;
+  try {
+    const r = await fetch('/api/state', { cache: 'no-store' });
+    if (!r.ok) throw new Error(r.status);
+    s = await r.json();
+    if (!s || !Array.isArray(s.alerts)) throw new Error('bad state');
+  } catch { setStale(true); return; }
+  if (document.body.classList.contains('nw-stale')) setStale(false);
+  lastGood = s.clock;
+  s.alerts = sortAlerts(s.alerts);
+  const changes = track(s.alerts);
+  for (const { a, kind } of changes) {
+    if (kind === 'new' || kind === 'rose') {
+      announce(`Level ${a.level} ${LEVELS[a.level].name}: ${a.title}`);
+      if (a.level >= 2 && soundPref && !a.acked_by) tone(a.level);
+    } else if (kind === 'acked') announce(`Alert ${a.id}: ${a.acked_by} is responding`);
+  }
+  last = s;
+  renderHeader(s); renderTakeover(s); updateMap(s); renderAlerts(s); renderRadar(s); renderRecords(s); renderResidents(s); renderLog(s);
+}
+/* ------------------------------------------------------------------ sound */
+let last = null;
+const SOUND_KEY = 'nw-dash-sound';
+let soundPref = true; try { soundPref = localStorage.getItem(SOUND_KEY) !== 'off'; } catch {}   // on unless muted
+const track = tracker();
+function syncSound() {
+  const ctx = soundPref ? audio() : null, running = ctx && ctx.state === 'running';
+  $('sound').setAttribute('aria-pressed', String(soundPref));
+  $('sound').innerHTML = `${icon(soundPref ? 'volume' : 'mute')}${soundPref ? (running ? 'Sound on' : 'Sound locked') : 'Muted'}`;
+  $('unlock').hidden = !(soundPref && !running);
+}
+function toggleSound() {
+  soundPref = !soundPref; try { localStorage.setItem(SOUND_KEY, soundPref ? 'on' : 'off'); } catch {}
+  if (soundPref) { audio(); setTimeout(() => { tone(2); syncSound(); }, 60); }
+  syncSound();
+}
+$('sound').onclick = toggleSound;
+// Browsers only start audio after a gesture: the first click or key anywhere unlocks it.
+// Browsers only start audio after a gesture: any click or key anywhere unlocks it (until it runs).
+const unlockAudio = () => { if (soundPref) { audio(); setTimeout(syncSound, 80); } };
+['pointerdown', 'keydown'].forEach((ev) => document.addEventListener(ev, unlockAudio));
+setInterval(syncSound, 3000);
+
+syncSound();
+
+/* ------------------------------------------------------------------ resident drawer */
+let drawerId = null, drawerTimer = null, drawerReturn = null;
+const ZCOL = { room: 'rgba(205,217,255,.16)', corridor: 'rgba(138,180,255,.30)', common: 'rgba(61,220,151,.28)', exit: 'rgba(255,143,63,.40)', outside: 'rgba(255,82,99,.45)' };
+function spark(hist, key, { min, max, ref, refLabel, color, fmt }) {
+  const W = 320, H = 80, n = hist.length;
+  if (n < 2) return `<svg viewBox="0 0 ${W} ${H}" role="img" aria-label="Not enough history yet"><text x="${W / 2}" y="${H / 2}" fill="var(--nw-faint)" font-size="12" text-anchor="middle">Collecting… one sample every 5 s</text></svg>`;
+  const x = (i) => (i / (n - 1)) * W, y = (v) => H - 4 - ((Math.max(min, Math.min(max, v)) - min) / (max - min)) * (H - 8);
+  const bands = hist.map((h, i) => (h.in_bed ? '' : `<rect x="${x(Math.max(0, i - 0.5))}" y="0" width="${W / (n - 1) + 1.5}" shape-rendering="crispEdges" height="${H}" fill="${ZCOL[h.zone] || ZCOL.room}"/>`)).join('');
+  const pts = hist.map((h, i) => (h[key] == null ? null : `${x(i).toFixed(1)},${y(h[key]).toFixed(1)}`)).filter(Boolean).join(' ');
+  const refLine = ref == null ? '' : `<line x1="0" x2="${W}" y1="${y(ref)}" y2="${y(ref)}" stroke="var(--nw-faint)" stroke-dasharray="4 4"/><text x="${W - 4}" y="${y(ref) - 4}" fill="var(--nw-faint)" font-size="10" text-anchor="end">${esc(refLabel)}</text>`;
+  const lastV = [...hist].reverse().find((h) => h[key] != null);
+  return `<svg viewBox="0 0 ${W} ${H}" preserveAspectRatio="none" role="img" aria-label="${esc(key)} over the last ${n * 5} seconds, now ${lastV ? fmt(lastV[key]) : 'unknown'}">${bands}${refLine}
+    ${pts ? `<polyline points="${pts}" fill="none" stroke="${color}" stroke-width="2" stroke-linejoin="round" stroke-linecap="round" vector-effect="non-scaling-stroke"/>` : ''}</svg>`;
+}
+function drawerHTML(d) {
+  const now = d.now || {}, hist = d.history || [];
+  const where = now.in_bed ? 'In bed' : (ZONE[now.zone] || now.zone);
+  const outZones = [...new Set(hist.filter((h) => !h.in_bed).map((h) => h.zone))];
+  return `<div class="dr-head"><div><h2 id="dr-title">${esc(d.id)}</h2><div class="sub">Room ${esc(d.room)} · wander risk ${Math.round(d.risk * 100)}% · resting HR ${esc(d.hr_rest)}</div></div>
+      <button class="nw-x" data-close aria-label="Close resident details">✕</button></div>
+    <div class="dr-now">
+      <div><div class="k">Now</div><div class="v">${esc(where)}</div></div>
+      <div><div class="k">Up for</div><div class="v">${now.minutes_up == null ? '–' : `${esc(now.minutes_up)} min`}</div></div>
+      <div><div class="k">Heart rate</div><div class="v">${now.hr ? `${Math.round(now.hr)} bpm` : '–'}</div></div>
+      <div><div class="k">Unusual for now</div><div class="v" style="color:${heat(now.unusual || 0)}">${Math.round((now.unusual || 0) * 100)}%</div></div>
+    </div>
+    ${d.suggestions && d.suggestions.length ? `<div class="nw-tip">${icon('bulb')}<div><div class="nw-tip-k">What has worked before</div><div class="nw-tip-v">${esc(d.suggestions[0])}</div>${d.suggestions.slice(1).map((m) => `<div class="nw-tip-more">${esc(m)}</div>`).join('')}</div></div>` : ''}
+    <div class="dr-sec">Last 30 minutes</div>
+    <div class="spark"><div class="h"><span>Unusual for right now</span><b>${Math.round((now.unusual || 0) * 100)}%</b></div>
+      ${spark(hist, 'unusual', { min: 0, max: 1, ref: 0.9, refLabel: 'alert line 90%', color: 'var(--nw-l1)', fmt: (v) => `${Math.round(v * 100)}%` })}
+      <div class="ax"><span>${esc(hist[0]?.t || '')}</span><span>${esc(hist[hist.length - 1]?.t || '')}</span></div></div>
+    <div class="spark"><div class="h"><span>Heart rate</span><b>${now.hr ? `${Math.round(now.hr)} bpm` : 'no wearable reading'}</b></div>
+      ${spark(hist, 'hr', { min: Math.min(50, d.hr_rest - 10), max: 130, ref: d.hr_rest, refLabel: `resting ${d.hr_rest}`, color: 'var(--nw-l3)', fmt: (v) => `${Math.round(v)} bpm` })}
+      <div class="ax"><span>${esc(hist[0]?.t || '')}</span><span>${esc(hist[hist.length - 1]?.t || '')}</span></div></div>
+    <div class="zlegend">Shaded = out of bed:${['room', 'corridor', 'common', 'exit', 'outside'].map((z) => `<span><i style="background:${ZCOL[z]}"></i>${ZONE[z] === 'In room' ? 'Up in room' : ZONE[z]}</span>`).join('')}</div>
+    ${outZones.length ? `<p style="font-size:13px;color:var(--nw-ink-2);margin:8px 0 0">Out of bed in the last 30 min: ${outZones.map((z) => esc(ZONE[z] || z)).join(', ')}.</p>` : ''}
+    <div class="dr-sec">Profile</div>
+    <p style="margin:0 0 6px"><b>Looks like:</b> ${esc(d.description)}</p>
+    <p style="margin:0;color:var(--nw-ink-2);font-size:14px">${esc(d.pattern)}</p>
+    <div class="dr-sec">Tonight's alerts (${(d.alerts || []).length})</div>
+    ${(d.alerts || []).length ? d.alerts.slice().reverse().map((a) => `<div class="dr-alert nw-l${a.max_level || a.level}">
+        ${badge(a.max_level || a.level)}<div class="t">${esc(a.title)}</div>
+        <div class="o">${a.resolved ? `Closed · ${esc(a.resolved)}` : a.acked_by ? `${esc(a.acked_by)} responding` : 'Open'}${a.record ? ` · record ${a.record.status === 'filed' ? 'filed' : 'draft'}` : ''}</div></div>`).join('')
+      : '<p style="color:var(--nw-muted);margin:0">None tonight.</p>'}`;
+}
+async function loadDrawer() {
+  if (!drawerId) return;
+  try {
+    const d = await (await fetch(`/api/resident?id=${encodeURIComponent(drawerId)}`)).json();
+    if (d.error) { $('dr-body').innerHTML = `<div class="dr-head"><h2 id="dr-title">${esc(drawerId)}</h2><button class="nw-x" data-close aria-label="Close">✕</button></div><p class="nw-err">${esc(d.error)}</p>`; return; }
+    const sc = $('drawer').scrollTop, hadFocus = $('drawer').contains(document.activeElement) && document.activeElement.matches('[data-close]');
+    $('dr-body').innerHTML = drawerHTML(d);
+    $('drawer').scrollTop = sc;
+    if (hadFocus) $('drawer').querySelector('[data-close]').focus();
+  } catch {}
+}
+function openDrawer(id) {
+  drawerReturn = document.activeElement;
+  drawerId = id; $('scrim').hidden = false; $('drawer').hidden = false;
+  $('dr-body').innerHTML = `<div class="dr-head"><h2 id="dr-title">${esc(id)}</h2><button class="nw-x" data-close aria-label="Close resident details">✕</button></div><p style="color:var(--nw-muted)">Loading…</p>`;
+  $('drawer').querySelector('[data-close]').focus();
+  loadDrawer().then(() => $('drawer').querySelector('[data-close]')?.focus());
+  clearInterval(drawerTimer); drawerTimer = setInterval(loadDrawer, 2000);
+}
+function closeOverlays() {
+  const wasOpen = !$('drawer').hidden || !$('help').hidden || !$('confirm').hidden;
+  clearInterval(drawerTimer); drawerId = null;
+  $('drawer').hidden = true; $('help').hidden = true; $('confirm').hidden = true; $('scrim').hidden = true;
+  if (wasOpen && drawerReturn && document.contains(drawerReturn)) drawerReturn.focus();
+}
+let confirmId = null;
+function askResolve(a) {
+  drawerReturn = document.activeElement; confirmId = a.id;
+  $('cf-title').textContent = `Close alert #${a.id} as found safe?`;
+  $('cf-text').textContent = `${a.resident ? `${a.resident}: ` : ''}${a.title}. Escalation stops and a draft care record is created.`;
+  $('confirm').hidden = false; $('cf-yes').focus();
+}
+$('cf-yes').onclick = async () => {
+  const id = confirmId; closeOverlays();
+  await act('/api/resolve', { alert: id, outcome: 'Found safe, returned to room' }, "Found safe didn't reach NightWatch. Try again."); tick();
+};
+function openHelp() { drawerReturn = document.activeElement; $('help').hidden = false; $('help').querySelector('[data-close]').focus(); }
+document.addEventListener('click', (e) => {
+  if (e.target.closest('[data-close]') || e.target === $('scrim') || e.target === $('help') || e.target === $('confirm')) { closeOverlays(); return; }
+  const o = e.target.closest('[data-open-res]'); if (o) { openDrawer(o.dataset.openRes); return; }
+  const dot = e.target.closest('#map .res'); if (dot) openDrawer(dot.id.replace(/^res-/, ''));
+});
+$('help-btn').onclick = openHelp;
+$('logq').addEventListener('input', () => last && renderLog(last));
+
+/* ------------------------------------------------------------------ keyboard */
+document.addEventListener('keydown', async (e) => {
+  const overlay = !$('confirm').hidden ? $('confirm') : !$('drawer').hidden ? $('drawer') : !$('help').hidden ? $('help') : null;
+  if (e.key === 'Escape') { if (overlay) { e.preventDefault(); closeOverlays(); } else if (document.activeElement === $('logq')) $('logq').blur(); return; }
+  if (overlay) { trapFocus(overlay, e); return; }
+  if ((e.key === 'Enter' || e.key === ' ') && e.target.closest && e.target.closest('#map .res')) { e.preventDefault(); openDrawer(e.target.closest('.res').id.replace(/^res-/, '')); return; }
+  if (typing(e) || e.metaKey || e.ctrlKey || e.altKey) return;
+  const top = last && last.alerts[0];
+  const k = e.key.toLowerCase();
+  if (document.body.classList.contains('nw-stale') && (k === 'a' || k === 'f')) { toast('Not connected to NightWatch: nothing was sent.'); return; }
+  if (e.shiftKey && k === 'a') { const t = last && last.alerts.find((x) => !x.acked_by); if (t) { e.preventDefault(); await act('/api/ack', { alert: t.id, by: 'Nurse station' }, "Acknowledge didn't reach NightWatch."); tick(); } return; }
+  if (e.shiftKey && k === 'f') { if (top) { e.preventDefault(); askResolve(top); } return; }
+  if (e.key === '?') { e.preventDefault(); openHelp(); }
+  else if (e.key === '/') { e.preventDefault(); $('logq').focus(); $('logq').scrollIntoView({ block: 'center' }); }
+  else if (k === 'm') toggleSound();
+  else if (k === 'r' && top && top.resident) openDrawer(top.resident);
+});
+
+setInterval(tick, 700); tick();
+</script>
+</body>
+</html>

@@ -1,0 +1,149 @@
+{
+  "_note": "SYNTHETIC demo facility and residents. No real people and no real counts: every number here is invented. Resident R-07's general shape (exit-seeking after personal-care tasks, afternoon/evening, settles with movement) was informed by a memory-care professional and de-identified records, which stay off this repo.",
+  "facility": "Maple Wing (memory care), demo",
+  "night_staff": 1,
+  "outside_temp_c": -3,
+  "exits": [
+    {
+      "id": "front",
+      "label": "Front entrance",
+      "kind": "exterior_door",
+      "x": 470,
+      "y": 250,
+      "short": "Front entrance"
+    },
+    {
+      "id": "garden",
+      "label": "Garden door",
+      "kind": "exterior_door",
+      "x": 30,
+      "y": 140,
+      "short": "Garden door"
+    },
+    {
+      "id": "service",
+      "label": "Service door (pinned)",
+      "kind": "exterior_door",
+      "x": 470,
+      "y": 20,
+      "short": "Service door"
+    },
+    {
+      "id": "win12",
+      "label": "Window, room 12 (2nd floor)",
+      "kind": "window",
+      "x": 300,
+      "y": 20,
+      "short": "Window rm 12 (2F)"
+    }
+  ],
+  "residents": [
+    {
+      "id": "R-07",
+      "name": "Resident R-07",
+      "room": "12",
+      "wander_risk": 0.85,
+      "hr_rest": 68,
+      "pattern": "Exit-seeking in about 1 in 5 logged events; most often afternoon/evening, after personal-care tasks; often drowsy or distressed when it happens.",
+      "what_helped": [
+        [
+          "Movement (walk with staff)",
+          5,
+          6
+        ],
+        [
+          "Reassurance / presence",
+          3,
+          5
+        ],
+        [
+          "Family involvement (call)",
+          2,
+          5
+        ]
+      ],
+      "description": "Grey cardigan, slippers, walks with a slight stoop",
+      "x": 330,
+      "y": 70
+    },
+    {
+      "id": "R-03",
+      "name": "Resident R-03",
+      "room": "03",
+      "wander_risk": 0.55,
+      "hr_rest": 72,
+      "pattern": "Restless at night after evening transitions; wanders the corridor, rarely toward exits.",
+      "what_helped": [
+        [
+          "Reorientation",
+          3,
+          4
+        ],
+        [
+          "Music / sensory",
+          2,
+          3
+        ]
+      ],
+      "description": "Blue robe, uses a walker",
+      "x": 110,
+      "y": 70
+    },
+    {
+      "id": "R-15",
+      "name": "Resident R-15",
+      "room": "15",
+      "wander_risk": 0.2,
+      "hr_rest": 64,
+      "pattern": "Settled at night; one bathroom trip most nights.",
+      "what_helped": [
+        [
+          "Reassurance / presence",
+          3,
+          3
+        ]
+      ],
+      "description": "Tall, white hair, glasses",
+      "x": 410,
+      "y": 70
+    },
+    {
+      "id": "R-21",
+      "name": "Resident R-21",
+      "room": "21",
+      "wander_risk": 0.35,
+      "hr_rest": 75,
+      "pattern": "Occasional evening agitation around mealtimes.",
+      "what_helped": [
+        [
+          "Diet / hydration",
+          2,
+          2
+        ],
+        [
+          "Movement (walk with staff)",
+          1,
+          2
+        ]
+      ],
+      "description": "Red sweater, short grey hair",
+      "x": 190,
+      "y": 70
+    }
+  ],
+  "cameras": [
+    {
+      "id": "hall12",
+      "label": "Hallway camera outside room 12",
+      "resident": "R-07",
+      "zone": "corridor"
+    },
+    {
+      "id": "front",
+      "label": "Front entrance camera",
+      "resident": null,
+      "zone": "exit",
+      "exit": "front"
+    }
+  ]
+}

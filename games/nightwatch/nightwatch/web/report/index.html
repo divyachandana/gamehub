@@ -1,0 +1,203 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>NightWatch · Shift report</title>
+<script src="/assets/auth.js"></script>
+<link rel="stylesheet" href="/assets/theme.css">
+<style>
+  .nw-topbar { justify-content: space-between; }
+  .nav { display: flex; gap: 8px; flex-wrap: wrap; }
+  .nav .nw-btn { min-height: 38px; font-size: 13.5px; }
+  main { max-width: 1120px; margin: 0 auto; padding: 22px 24px 40px; display: grid; gap: 18px; }
+  .doc-head { display: flex; flex-wrap: wrap; justify-content: space-between; align-items: flex-end; gap: 12px 24px; }
+  .doc-head h1 { font: 800 30px/1.1 var(--nw-font-display); margin: 0 0 6px; letter-spacing: -.015em; }
+  .doc-head p { margin: 0; color: var(--nw-muted); }
+  .doc-head .meta { text-align: right; color: var(--nw-muted); font-size: 13px; line-height: 1.6; }
+  .doc-head .meta b { color: var(--nw-ink); }
+
+  .tiles { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 12px; }
+  .tile { border: 1px solid var(--nw-line); border-radius: 14px; padding: 14px 16px; background: linear-gradient(180deg, var(--nw-surface), var(--nw-bg-2)); }
+  .tile .k { display: flex; align-items: center; gap: 7px; font-size: 11.5px; font-weight: 750; letter-spacing: .08em; text-transform: uppercase; color: var(--nw-muted); }
+  .tile .v { font: 800 34px/1.1 var(--nw-font-display); font-variant-numeric: tabular-nums; margin-top: 6px; }
+  .tile .v small { font-size: 15px; color: var(--nw-muted); font-weight: 650; margin-left: 4px; }
+  .tile .s { font-size: 12.5px; color: var(--nw-muted); margin-top: 2px; }
+  .tile.warn { border-color: color-mix(in srgb, var(--nw-l3) 50%, transparent); } .tile.warn .v { color: var(--nw-l3); }
+  .tile.good .v { color: var(--nw-ok); }
+
+  .two { display: grid; grid-template-columns: 1fr 1fr; gap: 18px; }
+  @media (max-width: 820px) { .two { grid-template-columns: 1fr; } main { padding: 16px 16px 32px; } .nw-topbar { padding: 12px 16px; } .doc-head .meta { text-align: left; } }
+  .rows { display: grid; gap: 10px; }
+  .brow { display: grid; grid-template-columns: minmax(150px, auto) 1fr 40px; gap: 12px; align-items: center; font-size: 14px; }
+  .brow .n { text-align: right; font-weight: 750; font-variant-numeric: tabular-nums; }
+  .bar { height: 10px; border-radius: 5px; background: var(--nw-line); overflow: hidden; }
+  .bar div { height: 100%; border-radius: 5px; }
+
+  .al { border: 1px solid var(--nw-line); border-left: 6px solid var(--lvl); border-radius: 14px; padding: 14px 16px; background: var(--nw-surface); margin-bottom: 12px; break-inside: avoid; }
+  .al:last-child { margin-bottom: 0; }
+  .al .h { display: flex; flex-wrap: wrap; justify-content: space-between; gap: 8px 14px; align-items: center; }
+  .al .t { font: 700 18px/1.3 var(--nw-font-display); margin: 10px 0 4px; }
+  .al .sub { color: var(--nw-muted); font-size: 13.5px; display: flex; flex-wrap: wrap; gap: 4px 16px; margin-bottom: 10px; }
+  .al .sub b { color: var(--nw-ink-2); }
+  .state { display: inline-flex; align-items: center; gap: 6px; font-size: 12.5px; font-weight: 750; padding: 4px 10px; border-radius: var(--nw-radius-pill); }
+  .state.closed { color: var(--nw-ok); background: rgba(61, 220, 151, .12); border: 1px solid rgba(61, 220, 151, .35); }
+  .state.open { color: var(--nw-l1); background: var(--nw-l1-bg); border: 1px solid rgba(246, 195, 68, .4); }
+
+  .rec { border: 1px solid var(--nw-line-strong); border-radius: 14px; padding: 16px; background: var(--nw-bg-2); margin-bottom: 12px; break-inside: avoid; }
+  .rec:last-child { margin-bottom: 0; }
+  .rec .h { display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center; gap: 8px; }
+  .draft { font-size: 11px; font-weight: 750; letter-spacing: .08em; text-transform: uppercase; color: var(--nw-faint); border: 1px dashed var(--nw-line-strong); border-radius: 6px; padding: 2px 8px; }
+  .rec .t { font-weight: 700; margin: 10px 0 2px; }
+  .rec dl { display: grid; grid-template-columns: max-content 1fr; gap: 6px 16px; margin: 12px 0 0; font-size: 14px; }
+  .rec dt { color: var(--nw-muted); } .rec dt::first-letter { text-transform: uppercase; }
+  .rec dd { margin: 0; }
+  .tbc { display: inline-flex; align-items: center; gap: 8px; font-weight: 700; color: var(--nw-l1); }
+  .tbc .box { width: 16px; height: 16px; border: 2px solid var(--nw-l1); border-radius: 4px; flex: none; }
+  .tbc .line { display: inline-block; min-width: 160px; border-bottom: 1px dashed var(--nw-l1); height: 1em; }
+  .rec dl { grid-template-columns: max-content minmax(0, 1fr); } .rec dd { overflow-wrap: anywhere; min-width: 0; }
+  @media (max-width: 520px) { .tbc .line { min-width: 40px; } .rec dl { gap: 6px 10px; } }
+  .rec .by { margin-top: 12px; font-size: 12.5px; color: var(--nw-muted); }
+  .foot { color: var(--nw-faint); font-size: 12.5px; text-align: center; }
+
+  @media print {
+    :root { --nw-ink: #111; --nw-ink-2: #222; --nw-muted: #555; --nw-faint: #666; --nw-line: #ccc; --nw-line-strong: #999;
+            --nw-surface: #fff; --nw-bg-2: #fff; --nw-ok: #0a7a4b; --nw-l1: #8a6300; --nw-l2: #a64b00; --nw-l3: #b3001b; }
+    body.nw { background: #fff !important; color: #111; font-size: 12px; }
+    .no-print { display: none !important; }
+    main { padding: 0; max-width: none; gap: 12px; }
+    .nw-panel, .tile, .al, .rec { box-shadow: none; background: #fff !important; }
+    .nw-panel { break-inside: avoid; }
+    .nw-badge, .nw-sev .n, .bar div { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+    .nw-l3 .nw-badge, .nw-badge.nw-l3 { color: #fff; }
+    a { color: inherit; text-decoration: none; }
+    .nw-recform { display: none !important; }
+    .nw-contacts li { background: #fff !important; } .nw-cstat { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+    .nw-filed, .nw-draftbadge { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+  }
+</style>
+</head>
+<body class="nw">
+<header class="nw-topbar no-print">
+  <a class="nw-brand" href="/home/" title="NightWatch home"><div class="nw-brand-mark" id="logo"></div><div><div class="nw-brand-name">Shift report</div><div class="nw-brand-sub">NightWatch · morning handover, built on this laptop</div></div></a>
+  <div class="nav" role="group" aria-label="Report actions">
+    <button class="nw-btn nw-btn--primary" id="print">Print</button>
+    <button class="nw-btn" id="refresh">Refresh</button>
+  </div>
+  <div id="navwrap" style="flex-basis:100%"></div>
+</header>
+<main id="doc"><p style="color:var(--nw-muted)">Loading the shift report…</p></main>
+<script src="/assets/nw.js"></script>
+<script>
+const { contactsList, nav, esc, icon, LEVELS, SEVERITY, badge, timeline, recordForm, bindRecordForms, filedBadge, isDirty } = NW;
+const $ = (id) => document.getElementById(id);
+$('logo').innerHTML = icon('report');
+$('navwrap').innerHTML = nav('/report/');
+$('print').insertAdjacentHTML('afterbegin', icon('print'));
+$('refresh').insertAdjacentHTML('afterbegin', icon('reset'));
+
+const FIELDS = ['category', 'behaviour', 'affect', 'frequency', 'time_of_day', 'night_band', 'location_type', 'trigger', 'intervention', 'outcome'];
+const sev = (n) => `<span class="nw-sev nw-sev--${n}"><span class="n" aria-hidden="true">${n}</span>Severity ${n} · ${SEVERITY[n]}</span>`;
+const ackSecs = (a) => { for (const [, h] of a.history) { const m = /^Acknowledged by .* \((\d+) s after/.exec(h); if (m) return +m[1]; } return null; };
+
+function tile(k, ic, v, sub, cls = '') {
+  return `<div class="tile ${cls}"><div class="k">${icon(ic)}${k}</div><div class="v">${v}</div>${sub ? `<div class="s">${sub}</div>` : ''}</div>`;
+}
+
+let TAX = null;
+function render(r, camEvents) {
+  const t = r.totals, rs = r.response_s;
+  const maxSev = Math.max(1, ...Object.values(r.severity));
+  const byRes = Object.entries(r.by_resident).sort((a, b) => b[1] - a[1]);
+  const maxRes = Math.max(1, ...byRes.map(([, n]) => n));
+  const records = r.alerts.filter((a) => a.record);
+  $('doc').innerHTML = `
+    <div class="doc-head">
+      <div><h1>Night shift handover</h1><p>${esc(r.facility)} · night staff on duty: ${esc(r.night_staff)}</p></div>
+      <div class="meta">Generated at <b>${esc(r.generated_at)}</b><br>Model <b>${esc(r.model.name)}</b> on <b>${esc(r.model.device)}</b><br>No internet used · nothing left the building</div>
+    </div>
+
+    <section class="tiles" aria-label="Headline numbers">
+      ${tile('Alerts', 'bell', esc(t.alerts), !t.alerts ? 'none tonight' : t.open ? `${esc(t.open)} still open` : 'all closed', t.open ? 'warn' : '')}
+      ${tile('Reached emergency', 'siren', esc(t.reached_emergency), 'level 3', t.reached_emergency ? 'warn' : 'good')}
+      ${tile('Went outside', 'door', esc(t.went_outside), 'left the building', t.went_outside ? 'warn' : 'good')}
+      ${tile('Settled on their own', 'bed', esc(t.settled_on_their_own), 'no staff needed', 'good')}
+      ${tile('Median response', 'clock', rs.median == null ? '–' : `${esc(rs.median)}<small>s</small>`, rs.count ? `slowest ${esc(rs.max)} s · ${esc(rs.count)} acknowledged` : 'nothing acknowledged yet')}
+      ${tile('Care records', 'note', `${esc(t.records_filed ?? 0)}<small>filed</small>`, `${esc(t.records_draft ?? 0)} draft${t.records_draft === 1 ? '' : 's'} still to file`, t.records_draft ? '' : 'good')}
+      ${tile('Visits logged', 'user', esc(t.visits_logged), 'daytime door openings')}
+    </section>
+
+    <div class="two">
+      <section class="nw-panel" aria-labelledby="h-sev">
+        <div class="nw-panel-head"><h2 class="nw-panel-title" id="h-sev">Severity of closed alerts</h2></div>
+        <div class="rows">${[1, 2, 3].map((n) => `<div class="brow">${sev(n)}<div class="bar"><div style="width:${(r.severity[n] || 0) / maxSev * 100}%;background:var(--nw-sev${n})"></div></div><span class="n">${esc(r.severity[n] || 0)}</span></div>`).join('')}</div>
+        <p style="color:var(--nw-muted);font-size:12.5px;margin:12px 0 0">From the highest level each alert reached: 1 routine, 2 notable, 3 escalation.</p>
+      </section>
+      <section class="nw-panel" aria-labelledby="h-byres">
+        <div class="nw-panel-head"><h2 class="nw-panel-title" id="h-byres">Alerts by resident</h2></div>
+        <div class="rows">${byRes.length ? byRes.map(([id, n]) => `<div class="brow"><span><b>${esc(id)}</b></span><div class="bar"><div style="width:${n / maxRes * 100}%;background:var(--nw-accent)"></div></div><span class="n">${esc(n)}</span></div>`).join('')
+          : '<p style="color:var(--nw-muted);margin:0">No resident alerts tonight.</p>'}</div>
+      </section>
+    </div>
+
+    <section class="nw-panel" aria-labelledby="h-tl">
+      <div class="nw-panel-head"><h2 class="nw-panel-title" id="h-tl">Every alert tonight <span class="nw-count">${r.alerts.length}</span></h2></div>
+      ${r.alerts.length ? r.alerts.map((a) => {
+        const lv = a.max_level || a.level, s = ackSecs(a);
+        return `<article class="al nw-l${lv}">
+          <div class="h">${badge(lv)}${a.resolved ? `<span class="state closed">${icon('check')}Closed</span>` : `<span class="state open">${icon('clock')}Still open</span>`}</div>
+          <div class="t">${esc(a.title)}</div>
+          <div class="sub">${a.resident ? `<span>Resident <b>${esc(a.resident)}</b>${a.room ? ` · Room ${esc(a.room)}` : ''}</span>` : ''}
+            <span>Highest level <b>${esc(lv)} · ${esc(LEVELS[lv].name)}</b></span>
+            <span>Response <b>${s == null ? 'not acknowledged' : `${s} s`}</b></span>
+            ${a.resolved ? `<span>Outcome <b>${esc(a.resolved)}</b></span>` : ''}</div>
+          ${(a.notifications || []).length ? `<div class="sub" style="margin:4px 0 6px"><b>Who was contacted</b></div>${contactsList(a.notifications)}<div style="height:10px"></div>` : ''}
+          ${timeline(a.history)}
+        </article>`;
+      }).join('') : `<div class="nw-empty">${icon('shield')}<div><b>A quiet night</b>No alerts were raised.</div></div>`}
+    </section>
+
+    <section class="nw-panel" aria-labelledby="h-rec">
+      <div class="nw-panel-head"><h2 class="nw-panel-title" id="h-rec">Care records <span class="nw-count">${records.length}</span></h2>
+        <span style="display:flex;flex-wrap:wrap;gap:8px 14px;align-items:center"><span class="nw-filed">${icon('check')}${records.filter((a) => a.record.status === 'filed').length} filed</span>
+        <span class="nw-draftbadge">${icon('note')}${records.filter((a) => a.record.status !== 'filed').length} draft</span>
+        <span class="tbc" style="font-size:12.5px"><span class="box"></span>= staff to confirm before filing</span></span></div>
+      ${records.length ? records.map((a) => {
+        const rec = a.record, filed = rec.status === 'filed';
+        return `<article class="rec" data-id="${esc(a.id)}">
+          <div class="h">${sev(rec.severity)}${filed ? filedBadge(rec) : '<span class="draft">Draft · not filed</span>'}</div>
+          <div class="t">${esc(a.title)}</div>
+          <div style="color:var(--nw-muted);font-size:13.5px">${esc(rec.resident || a.resident || '')}${a.resolved ? ` · ${esc(a.resolved)}` : ''}</div>
+          <dl>${FIELDS.concat(['nondrug_alt', 'note']).filter((k) => rec[k]).map((k) => `<dt>${k === 'nondrug_alt' ? 'non-drug alternative' : k.replace(/_/g, ' ')}</dt><dd>${/staff to confirm/i.test(rec[k])
+            ? `<span class="tbc"><span class="box" aria-hidden="true"></span>Staff to confirm <span class="line" aria-hidden="true"></span></span>` : esc(rec[k])}</dd>`).join('')}</dl>
+          ${filed ? '' : `<div class="by">${icon('note')} ${esc(rec.draft_by || '')}</div>${recordForm(a, TAX)}`}
+        </article>`;
+      }).join('') : '<p style="color:var(--nw-muted);margin:0">Closed alerts appear here as draft entries in the care team\'s record format.</p>'}
+    </section>
+    ${camEvents.length ? `<section class="nw-panel" aria-labelledby="h-cam">
+      <div class="nw-panel-head"><h2 class="nw-panel-title" id="h-cam">Camera privacy switches tonight <span class="nw-count">${camEvents.length}</span></h2></div>
+      <ol class="nw-timeline">${camEvents.slice().reverse().map((e) => `<li class="k-${/ OFF |night only/.test(e.text) ? '' : 'ack'}"><time>${esc(e.t)}</time><span class="what"><b style="color:var(--nw-ink)">${/ OFF /.test(e.text) ? 'Off' : / ON /.test(e.text) ? 'On' : 'Schedule'}</b> · ${esc(e.text)}</span></li>`).join('')}</ol>
+      <p style="color:var(--nw-muted);font-size:12.5px;margin:10px 0 0">While a camera is off or paused its frames are dropped unseen. From the live event log (most recent 60 events).</p>
+    </section>` : ''}
+    <p class="foot">Generated by NightWatch on the nurse-station laptop. Synthetic demo residents. Not a medical device: it supports staff, it does not replace them.</p>`;
+}
+
+async function load() {
+  try {
+    const [r, st] = await Promise.all([fetch('/api/report').then((x) => x.json()), fetch('/api/state').then((x) => x.json()).catch(() => null)]);
+    // /api/report has no events yet: camera on/off/schedule switches come from the live event log.
+    const camEvents = ((st && st.events) || []).filter((e) => e.kind === 'camera' && /turned (ON|OFF) by|night only \(|always on \(/.test(e.text));
+    TAX = (st && st.taxonomy) || TAX;
+    const sc = window.scrollY; render(r, camEvents); window.scrollTo(0, sc);
+  }
+  catch { $('doc').innerHTML = `<div class="nw-empty">${icon('wifiOff')}<div><b>Report not reachable</b>Is the NightWatch server running on this laptop?</div></div>`; }
+}
+$('print').onclick = () => window.print();
+$('refresh').onclick = load;
+load();
+// Auto-refresh, but never while someone is filling a record form.
+setInterval(() => { if (!document.hidden && !isDirty()) load(); }, 5000);
+bindRecordForms(() => 'Nurse station', () => load());
+</script>
+</body>
+</html>

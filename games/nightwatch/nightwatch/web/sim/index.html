@@ -1,0 +1,620 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>NightWatch · Presenter</title>
+<script src="/assets/auth.js"></script>
+<link rel="stylesheet" href="/assets/theme.css">
+<style>
+  .nw-topbar { justify-content: space-between; }
+  .live { display: flex; align-items: center; gap: 14px; flex-wrap: wrap; }
+  .live .t { font: 750 26px/1 var(--nw-font-display); font-variant-numeric: tabular-nums; }
+  .navwrap { flex-basis: 100%; }
+  .nav { display: flex; gap: 8px; flex-wrap: wrap; }
+  .nav .nw-btn { min-height: 36px; font-size: 13.5px; }
+  main { max-width: 1180px; margin: 0 auto; padding: 18px 24px 32px; display: grid; gap: 16px; }
+  .note { color: var(--nw-muted); margin: 0; font-size: 14px; display: flex; flex-wrap: wrap; align-items: center; gap: 6px 10px; }
+  .scn { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 12px; }
+  .scn button {
+    text-align: left; font: inherit; color: var(--nw-ink); cursor: pointer; display: grid; gap: 6px; padding: 14px 16px;
+    border-radius: 14px; border: 1px solid var(--nw-line-strong); background: linear-gradient(180deg, var(--nw-surface-2), var(--nw-surface));
+    transition: border-color .15s, background .15s, transform .08s;
+  }
+  .scn button:hover { border-color: var(--nw-accent); }
+  .scn button:active { transform: translateY(1px); }
+  .scn button.ran { border-color: var(--nw-accent); box-shadow: 0 0 0 3px rgba(138, 180, 255, .18); }
+  .scn .r1 { display: flex; align-items: center; justify-content: space-between; gap: 8px; }
+  .scn .when { display: inline-flex; align-items: center; gap: 6px; font-size: 12px; font-weight: 750; letter-spacing: .08em; }
+  .scn .when.night { color: var(--nw-moon); } .scn .when.day { color: var(--nw-sun); }
+  .scn b { font-size: 16.5px; }
+  .scn .exp { font-size: 13px; color: var(--nw-muted); }
+  .scn .exp em { font-style: normal; font-weight: 700; }
+  .row2 { display: grid; grid-template-columns: 1fr 1.4fr; gap: 16px; }
+  @media (max-width: 860px) { .row2 { grid-template-columns: 1fr; } main { padding: 14px 16px 28px; } .nw-topbar { padding: 12px 16px; } }
+  .btnrow { display: flex; flex-wrap: wrap; gap: 8px; }
+  .doors { display: grid; gap: 8px; }
+  .door { display: flex; align-items: center; justify-content: space-between; gap: 10px; padding: 8px 10px 8px 12px;
+          border: 1px solid var(--nw-line); border-radius: 12px; background: var(--nw-surface); }
+  .door .nm { display: flex; align-items: center; gap: 10px; min-width: 0; }
+  .door .nm .nw-ico { color: var(--nw-muted); }
+  .door .st { font-size: 12px; font-weight: 800; letter-spacing: .08em; color: var(--nw-faint); }
+  .door.open { border-color: var(--nw-l3); background: var(--nw-l3-bg); }
+  .door.open .st { color: #ff9aa4; } .door.open .nw-ico { color: var(--nw-l3); }
+  .door .nw-btn { min-height: 38px; min-width: 92px; }
+  .res { display: grid; grid-template-columns: 1fr auto auto; gap: 10px 14px; align-items: center; padding: 10px 0; border-bottom: 1px solid var(--nw-line); }
+  .res:last-child { border-bottom: 0; }
+  .res .who b { display: block; font-size: 15px; } .res .who span { font-size: 12px; color: var(--nw-muted); }
+  .seg { display: inline-flex; border: 1px solid var(--nw-line-strong); border-radius: 10px; overflow: hidden; }
+  .seg button { font: 600 13px/1 var(--nw-font); padding: 9px 11px; border: 0; border-right: 1px solid var(--nw-line); background: var(--nw-surface); color: var(--nw-ink-2); cursor: pointer; }
+  .seg button:last-child { border-right: 0; }
+  .res .seg.zone { grid-column: 1 / -1; display: flex; } .res .seg.zone button { flex: 1; }
+  .seg button:hover { background: var(--nw-raised); }
+  .seg button[aria-pressed="true"] { background: var(--nw-accent); color: var(--nw-accent-ink); }
+  .seg button.out[aria-pressed="true"] { background: var(--nw-l3); color: #fff; }
+  .hr { display: flex; align-items: center; gap: 8px; font-size: 13px; color: var(--nw-muted); }
+  .hr b { color: var(--nw-ink); min-width: 30px; font-variant-numeric: tabular-nums; }
+  input[type=range] { width: 130px; accent-color: var(--nw-accent); }
+  .cams { display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 10px; }
+  .cam { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 8px 14px; padding: 10px 12px;
+         border: 1px solid var(--nw-line); border-radius: 12px; background: var(--nw-surface); }
+  .cam.is-off, .cam.is-paused { border-style: dashed; }
+  .cam .nm b { display: block; font-weight: 650; } .cam .nm .why { font-size: 12px; color: var(--nw-muted); }
+  @media (max-width: 420px) { .cams { grid-template-columns: 1fr; } }
+  /* live scenario status */
+  .nowrun { margin-top: 14px; border: 1px solid var(--nw-line-strong); border-radius: 14px; background: var(--nw-bg-2); padding: 12px 14px; }
+  .nowrun:empty { display: none; }
+  .nowrun .h { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 6px 12px; margin-bottom: 10px; }
+  .nowrun .h b { font-size: 15px; } .nowrun .h span { font-size: 12.5px; color: var(--nw-muted); font-variant-numeric: tabular-nums; }
+  .miles { list-style: none; margin: 0; padding: 0; display: flex; flex-wrap: wrap; gap: 6px; }
+  .miles li { display: inline-flex; align-items: center; gap: 6px; padding: 6px 10px; border-radius: var(--nw-radius-pill); font-size: 12.5px; font-weight: 650;
+              border: 1px solid var(--nw-line); color: var(--nw-faint); background: var(--nw-surface); }
+  .miles li .st { font-size: 11px; font-weight: 800; letter-spacing: .06em; }
+  .miles li.ok { color: var(--nw-ink); border-color: rgba(61, 220, 151, .45); } .miles li.ok .st { color: var(--nw-ok); }
+  .miles li.next { color: var(--nw-ink); border-color: var(--nw-accent); box-shadow: 0 0 0 2px rgba(138, 180, 255, .2); } .miles li.next .st { color: var(--nw-accent); }
+  .miles li.bad { color: #ffc2c8; border-color: var(--nw-l3); } .miles li.bad .st { color: var(--nw-l3); }
+  .nowrun .last { margin-top: 10px; font-size: 13px; color: var(--nw-ink-2); } .nowrun .last time { font-family: var(--nw-mono); color: var(--nw-faint); margin-right: 8px; }
+  .resetbox { display: inline-flex; flex-wrap: wrap; align-items: center; gap: 8px; justify-content: flex-end; }
+  .resetbox .q { font-size: 13px; color: #ffc2c8; font-weight: 650; }
+  .nw-btn--danger { background: var(--nw-l3); border-color: var(--nw-l3); color: #120a02; }
+  /* contacts */
+  #contacts-panel .nw-panel-head { flex-wrap: wrap; }
+  .liverow { display: flex; flex-wrap: wrap; align-items: center; gap: 10px 16px; margin-bottom: 12px; }
+  #live-sw[aria-checked="true"] { color: #ffb3bb; border-color: var(--nw-l3); } #live-sw[aria-checked="true"] .trk { background: var(--nw-l3); }
+  .liveconfirm { border: 2px solid var(--nw-l3); background: var(--nw-l3-bg); border-radius: 14px; padding: 12px 14px; margin-bottom: 12px; display: grid; gap: 8px; }
+  .liveconfirm[hidden] { display: none; }
+  .liveconfirm ul { margin: 0; padding-left: 18px; font-size: 13.5px; }
+  .crows { display: grid; gap: 8px; }
+  .crow { display: grid; grid-template-columns: 170px minmax(0, 1fr) 190px 150px 130px auto; gap: 8px; align-items: start; padding: 10px; border: 1px solid var(--nw-line); border-radius: 12px; background: var(--nw-surface); }
+  .crow.bad { border-color: var(--nw-l3); }
+  .crow .nw-input, .crow .nw-select { min-height: 40px; }
+  .crow .err { grid-column: 1 / -1; } .crow .err:empty { display: none; }
+  .crow .acts { display: flex; flex-direction: column; gap: 6px; } .crow .acts .nw-btn { min-height: 40px; white-space: nowrap; }
+  .crow .topic { grid-column: 1 / -1; } .crow .trow { display: flex; gap: 8px; } .crow .trow .nw-input { flex: 1; font-family: var(--nw-mono); }
+  .crow .hint { margin: 6px 0 0; font-size: 12.5px; color: var(--nw-muted); }
+  .crow .warn { grid-column: 1 / -1; display: flex; gap: 8px; align-items: center; font-size: 12.5px; color: #ffe3a3; }
+  .crow .warn .nw-ico { color: var(--nw-l1); width: 16px; height: 16px; }
+  .test-out { grid-column: 1 / -1; font-size: 13px; font-weight: 650; padding: 6px 10px; border-radius: 8px; }
+  .test-out:empty { display: none; }
+  .test-out.is-ok { color: var(--nw-ok); background: rgba(61, 220, 151, .1); } .test-out.is-sim { color: var(--nw-l1); background: var(--nw-l1-bg); }
+  .test-out.is-bad { color: #ffb3bb; background: var(--nw-l3-bg); }
+  @media (max-width: 480px) { .crow .trow { flex-direction: column; } }
+  .crow .lbl-sm { font-size: 11px; font-weight: 700; color: var(--nw-faint); letter-spacing: .06em; text-transform: uppercase; display: block; margin-bottom: 3px; }
+  @media (max-width: 1000px) { .crow { grid-template-columns: 1fr 1fr; } .crow .del { justify-self: end; } }
+  @media (max-width: 480px) { .crow { grid-template-columns: 1fr; } }
+  /* demo guide */
+  .steps { list-style: none; margin: 0 0 14px; padding: 0; display: grid; grid-template-columns: repeat(7, 1fr); gap: 8px; }
+  .steps button { width: 100%; text-align: left; font: inherit; cursor: pointer; display: flex; align-items: center; gap: 10px; padding: 10px 12px;
+                  border-radius: 12px; border: 1px solid var(--nw-line); background: var(--nw-surface); color: var(--nw-ink-2); }
+  .steps button:hover { border-color: var(--nw-line-strong); }
+  .steps .num { width: 26px; height: 26px; flex: none; border-radius: 50%; display: grid; place-items: center; font-weight: 800; font-size: 13px;
+                background: var(--nw-raised); color: var(--nw-ink); }
+  .steps .num .nw-ico { width: 15px; height: 15px; }
+  .steps .lbl { font-size: 13px; font-weight: 650; line-height: 1.2; }
+  .steps button.done .num { background: var(--nw-ok); color: var(--nw-ok-ink); }
+  .steps button[aria-current="step"] { border-color: var(--nw-accent); background: linear-gradient(180deg, rgba(138, 180, 255, .16), var(--nw-surface)); color: var(--nw-ink);
+                                       box-shadow: 0 0 0 3px rgba(138, 180, 255, .18); }
+  .steps button[aria-current="step"] .num { background: var(--nw-accent); color: var(--nw-accent-ink); }
+  .beat { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 16px 24px; align-items: center; padding: 16px 18px; border-radius: 14px;
+          border: 1px solid var(--nw-line-strong); background: var(--nw-bg-2); }
+  .beat .k { font-size: 11.5px; font-weight: 750; letter-spacing: .1em; text-transform: uppercase; color: var(--nw-accent); }
+  .beat h3 { font: 750 22px/1.2 var(--nw-font-display); margin: 4px 0 10px; }
+  .beat .say { font-size: 18px; line-height: 1.45; color: var(--nw-ink); margin: 0; padding-left: 14px; border-left: 3px solid var(--nw-accent); }
+  .beat .do { font-size: 13.5px; color: var(--nw-muted); margin: 10px 0 0; }
+  .beat .acts { display: grid; gap: 8px; min-width: 210px; }
+  .beat .acts .run { min-height: 56px; font-size: 17px; }
+  .beat .nb { display: flex; gap: 8px; } .beat .nb .nw-btn { flex: 1; }
+  @media (max-width: 860px) { .steps { grid-template-columns: repeat(7, minmax(0, 1fr)); } .steps .lbl { display: none; } .steps button { justify-content: center; padding: 8px; }
+    .beat { grid-template-columns: 1fr; } .beat .say { font-size: 16px; } }
+  @media (max-width: 720px) { .res { grid-template-columns: 1fr auto; } .res .hr { grid-column: 1 / -1; } input[type=range] { flex: 1; } .seg button { padding: 10px 8px; } }
+</style>
+</head>
+<body class="nw">
+<header class="nw-topbar">
+  <a class="nw-brand" href="/home/" title="NightWatch home"><div class="nw-brand-mark" id="logo"></div><div><h1 class="nw-brand-name">Presenter controls</h1><div class="nw-brand-sub">NightWatch · stands in for door contacts, bed sensors and wearables</div></div></a>
+  <div class="live"><span class="nw-mode" id="mode">–</span><span class="t" id="clock">--:--:--</span><span id="status" class="nw-chip"></span></div>
+  <div class="navwrap" id="navwrap"></div>
+</header>
+<main>
+  <p class="note">Real sensors post to the same API. Keyboard:
+    <span><span class="nw-kbd">1</span> <span class="nw-kbd">2</span> <span class="nw-kbd">3</span> <span class="nw-kbd">4</span> scenarios</span>
+    <span><span class="nw-kbd">D</span> front door open/close</span>
+    <span><span class="nw-kbd">W</span> window room 12</span></p>
+
+  <section class="nw-panel" aria-labelledby="h-guide">
+    <div class="nw-panel-head"><h2 class="nw-panel-title" id="h-guide">Demo guide · seven beats</h2>
+      <span class="note" style="font-size:12.5px"><span class="nw-kbd">←</span><span class="nw-kbd">→</span> step · <span class="nw-kbd">Enter</span> run</span></div>
+    <ol class="steps" id="steps"></ol>
+    <div class="beat" id="beat" aria-live="polite"></div>
+  </section>
+
+  <section class="nw-panel" aria-labelledby="h-scn">
+    <div class="nw-panel-head"><h2 class="nw-panel-title" id="h-scn">Scenarios</h2>
+      <span class="resetbox" id="resetbox"><button class="nw-btn nw-btn--ghost" id="reset-ask">Reset everything</button></span></div>
+    <div class="nowrun" id="nowrun" aria-live="polite"></div>
+    <div class="scn">
+      <button data-scn="night_elopement"><span class="r1"><span class="when night" data-ico="moon">02:08 · NIGHT</span><span class="nw-kbd">1</span></span>
+        <b>R-07 heads for the front door</b><span class="exp">Expect <em style="color:var(--nw-l1)">heads-up</em> → <em style="color:var(--nw-l2)">urgent</em> → <em style="color:var(--nw-l3)">emergency</em> if nobody acknowledges. Walks outside after ~40 s.</span></button>
+      <button data-scn="night_bathroom"><span class="r1"><span class="when night" data-ico="moon">03:00 · NIGHT</span><span class="nw-kbd">2</span></span>
+        <b>R-15 ensuite trip</b><span class="exp">Normal for them: <em style="color:var(--nw-ok)">should stay quiet</em>. No alert.</span></button>
+      <button data-scn="day_visits"><span class="r1"><span class="when day" data-ico="sun">14:00 · DAY</span><span class="nw-kbd">3</span></span>
+        <b>Visitors come and go</b><span class="exp">Doors open and close: <em style="color:var(--nw-ok)">logged as visits</em>, no alarms.</span></button>
+      <button data-scn="camera_walkout"><span class="r1"><span class="when night" data-ico="camera">02:08 · NIGHT</span><span class="nw-kbd">4</span></span>
+        <b>Camera: R-07 walks out</b><span class="exp"><em style="color:var(--nw-l1)">Simulated camera</em> track crosses the room-12 doorway line → <em style="color:var(--nw-l1)">heads-up</em> "left their room". Tagged SIMULATED on the radar.</span></button>
+    </div>
+  </section>
+
+  <section class="nw-panel" aria-labelledby="h-cams">
+    <div class="nw-panel-head"><h2 class="nw-panel-title" id="h-cams">Cameras · privacy switches</h2>
+      <div class="btnrow"><button class="nw-btn" data-all-cams="1">All cameras on</button><button class="nw-btn" data-all-cams="0">All cameras off</button></div></div>
+    <div class="cams" id="cams"></div>
+    <p class="note" style="margin-top:10px;font-size:12.5px">Off or paused: frames are dropped on arrival, never decoded or analysed. Every switch is logged with who did it.</p>
+  </section>
+
+  <section class="nw-panel" aria-labelledby="h-contacts" id="contacts-panel">
+    <div class="nw-panel-head"><h2 class="nw-panel-title" id="h-contacts">Contacts · who gets called</h2><span id="twilio" class="nw-chip" style="white-space:normal;max-width:100%;display:inline-block"></span></div>
+    <div class="liverow">
+      <button class="nw-switch" role="switch" aria-checked="false" id="live-sw" aria-describedby="live-warn"><span class="trk" aria-hidden="true"></span><span class="txt">Real sending: OFF</span></button>
+      <p id="live-warn" style="margin:0;font-size:13px;color:var(--nw-muted);flex:1 1 320px">OFF = dry run: every contact is marked "simulated" and nothing leaves this laptop. Turning it ON will <b>really call, text, push or iMessage</b> the contacts below (never emergency services). Resets to OFF on every server start.</p>
+    </div>
+    <div id="live-confirm" class="liveconfirm" hidden role="alertdialog" aria-labelledby="lc-t" aria-describedby="lc-d">
+      <b id="lc-t">Really send to these contacts?</b><div id="lc-d"></div>
+      <div class="btnrow"><button class="nw-btn nw-btn--danger" id="live-yes">Yes, turn real calls/SMS ON</button><button class="nw-btn" id="live-no">Cancel</button></div>
+    </div>
+    <form id="cform" novalidate>
+      <div id="crows" class="crows"></div>
+      <div class="btnrow" style="margin-top:10px"><button type="button" class="nw-btn" id="c-add">Add contact</button><button type="submit" class="nw-btn nw-btn--primary" id="c-save">Save contacts</button><span class="nw-err" id="c-err" role="alert"></span></div>
+      <p class="note" style="margin-top:8px;font-size:12.5px">Phone numbers in international format (+15551234821). Emergency and short numbers (911, 112, 999…) are refused: emergency services are always simulated. Family contacts are only told about their own resident.</p>
+    </form>
+  </section>
+
+  <div class="row2">
+    <section class="nw-panel" aria-labelledby="h-clock">
+      <div class="nw-panel-head"><h2 class="nw-panel-title" id="h-clock">Clock</h2></div>
+      <div class="btnrow">
+        <button class="nw-btn" data-time="02:08" data-ico="moon">02:08 night</button>
+        <button class="nw-btn" data-time="14:00" data-ico="sun">14:00 day</button>
+        <button class="nw-btn" data-time="20:58" data-ico="clock" id="soon"><span>20:58 night starts soon</span></button>
+      </div>
+      <div class="nw-panel-head" style="margin:18px 0 12px"><h2 class="nw-panel-title">Doors and windows</h2></div>
+      <div class="doors" id="doors"></div>
+    </section>
+    <section class="nw-panel" aria-labelledby="h-res">
+      <div class="nw-panel-head"><h2 class="nw-panel-title" id="h-res">Residents</h2></div>
+      <div id="res"></div>
+    </section>
+  </div>
+</main>
+<script src="/assets/nw.js"></script>
+<script>
+const { trapFocus, esc, icon, post, act, toast, nav, camState, camStateHTML, cameraControls, syncCameraControls, handleCameraClick } = NW;
+const $ = (id) => document.getElementById(id);
+// Every action reports failure instead of looking like it worked (UX audit H3).
+const send = (body) => act('/api/sensor', body, "That sensor event didn't reach NightWatch.");
+const call = (url, body) => act(url, body, "That didn't reach NightWatch. Is the server running?");
+$('navwrap').innerHTML = nav('/sim/', { newTab: true }).replace('</nav>', `<a href="/staff/" target="_blank" rel="noopener">${icon('phone')}Staff phone</a></nav>`);
+$('logo').innerHTML = icon('logo');
+$('reset-ask').insertAdjacentHTML('afterbegin', icon('reset'));
+document.querySelectorAll('[data-ico]').forEach((el) => el.insertAdjacentHTML('afterbegin', icon(el.dataset.ico)));
+
+const ZONES = ['room', 'corridor', 'common', 'exit', 'outside'];
+let state = null, built = false;
+
+function build(s) {
+  $('doors').innerHTML = s.exits.map((e) => `<div class="door" id="door-${esc(e.id)}">
+      <span class="nm">${icon(e.kind === 'window' ? 'window' : 'door')}<span><b style="font-weight:600">${esc(e.label)}</b><br><span class="st">CLOSED</span></span></span>
+      <button class="nw-btn" data-exit="${esc(e.id)}">Open</button></div>`).join('');
+  $('res').innerHTML = s.residents.map((r) => `<div class="res" id="r-${esc(r.id)}">
+      <div class="who"><b>${esc(r.id)}</b><span>Room ${esc(r.room)} · risk ${Math.round(r.risk * 100)}%</span></div>
+      <div class="seg bed" role="group" aria-label="${esc(r.id)} bed sensor">
+        <button data-bed="${esc(r.id)}" data-v="1">${icon('bed')} In bed</button><button data-bed="${esc(r.id)}" data-v="0">Up</button></div>
+      <div class="seg zone" role="group" aria-label="${esc(r.id)} location">
+        ${ZONES.map((z) => `<button class="${z === 'outside' ? 'out' : ''}" data-zone="${esc(r.id)}" data-z="${z}">${z[0].toUpperCase() + z.slice(1)}</button>`).join('')}</div>
+      <label class="hr">${icon('heart')}<input type="range" min="50" max="130" value="${Math.round(r.hr || r.hr_rest)}" data-hr="${esc(r.id)}" aria-label="${esc(r.id)} heart rate"><b id="hr-${esc(r.id)}">${Math.round(r.hr || r.hr_rest)}</b></label>
+    </div>`).join('');
+  built = true;
+}
+
+function update(s) {
+  state = s;
+  if (s.night_hours) {   // configurable night band: "two minutes before night starts"
+    const h = (Number(s.night_hours[0]) + 23) % 24, t = `${String(h).padStart(2, '0')}:58`;
+    if ($('soon').dataset.time !== t) { $('soon').dataset.time = t; $('soon').querySelector('span').textContent = `${t} night starts soon`; }
+  }
+  renderNowRun(s);
+  if (!built) build(s);
+  $('clock').textContent = s.clock;
+  $('mode').className = 'nw-mode ' + (s.night ? 'is-night' : 'is-day');
+  $('mode').innerHTML = s.night ? `${icon('moon')}NIGHT` : `${icon('sun')}DAY`;
+  const top = s.alerts[0];
+  $('status').innerHTML = top ? `<span class="nw-dot" style="background:var(--nw-l${top.level})"></span>${s.alerts.length} active · highest <b>level ${top.level}</b>`
+    : `<span class="nw-dot is-live"></span><b>No alerts</b>`;
+  const cams = s.cameras || [];
+  if ($('cams').dataset.ids !== cams.map((c) => c.id).join(',')) {
+    $('cams').dataset.ids = cams.map((c) => c.id).join(',');
+    $('cams').innerHTML = cams.length ? cams.map((c) => `<div class="cam" data-cam="${esc(c.id)}"><div class="nm"><b>${esc(c.label)}</b><span class="why"></span></div>${cameraControls(c)}</div>`).join('')
+      : '<p class="note">No cameras configured.</p>';
+  }
+  for (const c of cams) {
+    const row = $('cams').querySelector(`[data-cam="${CSS.escape(c.id)}"]`); if (!row) continue;
+    const st = camState(c);
+    row.className = `cam is-${st.key}`;
+    row.querySelector('.why').innerHTML = `${camStateHTML(c)}${st.sub ? ` · ${esc(st.sub)}` : ''}`;
+    syncCameraControls(row, c);
+  }
+  for (const e of s.exits) {
+    const d = $('door-' + e.id); if (!d) continue;
+    d.classList.toggle('open', e.open);
+    d.querySelector('.st').textContent = e.open ? 'OPEN' : 'CLOSED';
+    const b = d.querySelector('button');
+    b.textContent = e.open ? 'Close' : 'Open';
+    b.dataset.open = e.open ? '0' : '1';
+  }
+  for (const r of s.residents) {
+    const row = $('r-' + r.id); if (!row) continue;
+    row.querySelectorAll('[data-bed]').forEach((b) => b.setAttribute('aria-pressed', String((b.dataset.v === '1') === r.in_bed)));
+    row.querySelectorAll('[data-zone]').forEach((b) => b.setAttribute('aria-pressed', String(b.dataset.z === r.zone)));
+    const hr = row.querySelector('[data-hr]');
+    if (r.hr && document.activeElement !== hr) { hr.value = Math.round(r.hr); $('hr-' + r.id).textContent = Math.round(r.hr); }
+  }
+}
+
+async function tick() { try { update(await (await fetch('/api/state')).json()); } catch { $('status').innerHTML = '<b>Server not reachable</b>'; } }
+
+/* ------------------------------------------------------------------ live status of the running scenario */
+const R = (s, id) => s.residents.find((r) => r.id === id) || {};
+const anyLevel = (s, n) => s.alerts.some((a) => a.level >= n) || s.recent.some((a) => a.max_level >= n);
+const MILES = {
+  night_elopement: { title: 'R-07 heads for the front door', steps: [
+    ['Clock 02:08 · night', (s) => s.night && s.clock.startsWith('02:0')],
+    ['R-07 out of bed', (s) => !R(s, 'R-07').in_bed],
+    ['Heads-up', (s) => anyLevel(s, 1)],
+    ['In the corridor', (s) => ['corridor', 'exit', 'outside'].includes(R(s, 'R-07').zone)],
+    ['At the exit', (s) => ['exit', 'outside'].includes(R(s, 'R-07').zone)],
+    ['Front door opens · urgent', (s) => anyLevel(s, 2)],
+    ['No answer · emergency', (s) => anyLevel(s, 3), 'bad'],
+    ['Walks outside', (s) => R(s, 'R-07').zone === 'outside' || s.recent.some((a) => /OUTSIDE/.test(a.title)), 'bad'],
+    ['Answered on a phone', (s) => s.alerts.some((a) => a.acked_by) || s.recent.some((a) => a.history.some(([, h]) => /^Acknowledged/.test(h)))],
+    ['Closed · found safe', (s) => s.recent.some((a) => a.resident === 'R-07')],
+  ] },
+  night_bathroom: { title: 'R-15 ensuite trip', steps: [
+    ['Clock 03:00 · night', (s) => s.night && s.clock.startsWith('03:')],
+    ['R-15 up', (s) => !R(s, 'R-15').in_bed],
+    ['Back in bed', (s, seen) => seen.has(1) && R(s, 'R-15').in_bed],
+    ['No alert raised', (s, seen) => seen.has(2) && !s.alerts.length && !s.recent.length],
+  ] },
+  day_visits: { title: 'Visitors come and go', steps: [
+    ['Clock 14:00 · day', (s) => !s.night && s.clock.startsWith('14:')],
+    ['Residents walking', (s) => s.residents.some((r) => !r.in_bed)],
+    ['Doors open · logged as visits', (s) => s.stats.visits_today > 0],
+    ['3 visits logged', (s) => s.stats.visits_today >= 3],
+    ['No alarms', (s, seen) => seen.has(3) && !s.alerts.length],
+  ] },
+  camera_walkout: { title: 'Camera: R-07 walks out (simulated)', steps: [
+    ['Clock 02:08 · night', (s) => s.night && s.clock.startsWith('02:0')],
+    ['Simulated camera frames', (s) => (s.cameras || []).some((c) => c.simulated)],
+    ['Track crosses the doorway', (s) => anyLevel(s, 1) || R(s, 'R-07').zone !== 'room'],
+    ['Heads-up: left their room', (s) => s.alerts.concat(s.recent).some((a) => /left their room/.test(a.title))],
+  ] },
+};
+let running = null;   // { name, started, seen:Set }
+try { running = JSON.parse(sessionStorage.getItem('nw-running') || 'null'); if (running) running.seen = new Set(running.seen); } catch {}
+function saveRunning() { try { sessionStorage.setItem('nw-running', JSON.stringify(running ? { ...running, seen: [...running.seen] } : null)); } catch {} }
+function renderNowRun(s) {
+  const box = $('nowrun');
+  if (!running || !MILES[running.name]) { box.innerHTML = ''; return; }
+  const M = MILES[running.name];
+  M.steps.forEach(([, test], i) => { try { if (!running.seen.has(i) && test(s, running.seen)) running.seen.add(i); } catch {} });
+  saveRunning();
+  const next = M.steps.findIndex((_, i) => !running.seen.has(i));
+  const el = Math.round((Date.now() - running.started) / 1000);
+  const ev = s.events[0];
+  box.innerHTML = `<div class="h"><b>${icon('play')} Now running: ${esc(M.title)}</b><span>${el} s since start · ${next === -1 ? 'all steps reached' : `step ${next + 1} of ${M.steps.length}`}</span></div>
+    <ol class="miles">${M.steps.map(([label, , tone], i) => {
+      const ok = running.seen.has(i), cls = ok ? (tone === 'bad' ? 'bad' : 'ok') : i === next ? 'next' : '';
+      return `<li class="${cls}"><span class="st">${ok ? '✓ DONE' : i === next ? '● NOW' : '○'}</span>${esc(label)}</li>`;
+    }).join('')}</ol>
+    ${ev ? `<div class="last"><time>${esc(ev.t)}</time>${esc(ev.text)}</div>` : ''}`;
+}
+
+function runScenario(name) {
+  running = name === 'reset' ? null : { name, started: Date.now(), seen: new Set() }; saveRunning();
+  call('/api/scenario', { name });
+  document.querySelectorAll('.scn button').forEach((b) => b.classList.toggle('ran', b.dataset.scn === name));
+  // a scenario resets the facility: let the next poll re-read live HR values
+  setTimeout(tick, 400);
+}
+function toggleExit(id) {
+  const e = state && state.exits.find((x) => x.id === id);
+  send({ type: 'door', exit: id, open: !(e && e.open) }).then(tick);
+}
+
+function resetAsk(on) {
+  $('resetbox').innerHTML = on
+    ? `<span class="q" id="reset-q">Reset clock, residents, alerts, records and cameras?</span><button class="nw-btn nw-btn--danger" id="reset-yes">Yes, reset everything</button><button class="nw-btn" id="reset-no">Cancel</button>`
+    : `<button class="nw-btn nw-btn--ghost" id="reset-ask">${icon('reset')}Reset everything</button>`;
+  (on ? $('reset-no') : $('reset-ask')).focus();
+}
+document.addEventListener('click', (e) => {
+  if (e.target.closest('#reset-ask')) resetAsk(true);
+  else if (e.target.closest('#reset-no')) resetAsk(false);
+  else if (e.target.closest('#reset-yes')) {
+    runScenario('reset'); done.clear(); step = 0; renderGuide(); resetAsk(false);
+    document.querySelectorAll('.scn button').forEach((b) => b.classList.remove('ran'));
+  }
+});
+function allCameras(on) {
+  return Promise.all((state ? state.cameras : []).map((c) => act('/api/camera/config', { camera: c.id, enabled: on, by: 'presenter' }))).then(tick);
+}
+document.addEventListener('click', (e) => {
+  if (handleCameraClick(e, 'presenter', tick)) return;
+  const b = e.target.closest('button'); if (!b) return;
+  const d = b.dataset;
+  if (d.allCams) allCameras(d.allCams === '1');
+  if (d.scn) runScenario(d.scn);
+  if (d.time) call('/api/clock', { time: d.time, speed: 1 }).then(tick);
+  if (d.exit) send({ type: 'door', exit: d.exit, open: d.open === '1' }).then(tick);
+  if (d.bed) send({ type: 'bed', resident: d.bed, in_bed: d.v === '1' }).then(tick);
+  if (d.zone) send({ type: 'location', resident: d.zone, zone: d.z, exit: 'front' }).then(tick);
+});
+document.addEventListener('input', (e) => {
+  const d = e.target.dataset;
+  if (d.hr) { $('hr-' + d.hr).textContent = e.target.value; send({ type: 'hr', resident: d.hr, bpm: +e.target.value }); }
+});
+document.addEventListener('keydown', (e) => {
+  if (e.target.tagName === 'INPUT' || e.target.tagName === 'SELECT' || e.metaKey || e.ctrlKey || e.altKey) return;
+  const k = e.key.toLowerCase();
+  if (k === 'd') toggleExit('front');
+  if (k === 'w') toggleExit('win12');
+  const scn = { 1: 'night_elopement', 2: 'night_bathroom', 3: 'day_visits', 4: 'camera_walkout' }[e.key];
+  if (scn) runScenario(scn);
+});
+/* ------------------------------------------------------------------ demo guide (README "Demo script") */
+const BEATS = [
+  { title: 'Day visits', when: '14:00 · day', scn: 'day_visits', run: 'Run day visits',
+    say: 'In the daytime the same doors are just visits: NightWatch logs them and stays silent.',
+    act: 'Point at the visit counter on the nurse station. No alarms.' },
+  { title: 'Normal night', when: '03:00 · night', scn: 'night_bathroom', run: 'Run the ensuite trip',
+    say: 'At 3 am R-15 gets up for the bathroom. That is normal for them, so the on-device model stays quiet: no false alarm.',
+    act: 'Watch R-15 get up and go back to bed. Nothing fires.' },
+  { title: 'Elopement, unanswered', when: '02:08 · night', scn: 'night_elopement', run: 'Run the elopement',
+    say: 'R-07 gets up and heads for the front door. Nobody answers, so NightWatch keeps climbing: heads-up, urgent, emergency, then the supervisor.',
+    act: 'Do not touch the phone. Let it reach level 3 and walk outside (about 60 s).' },
+  { title: 'Camera walk-out', when: '02:08 · simulated camera', scn: 'camera_walkout', run: 'Run the camera walk-out',
+    say: 'The hallway camera only sees positions, never stores video. When R-07 crosses their doorway at night, that alone is a heads-up. This run uses simulated camera data.',
+    act: 'Point at the camera radar on the nurse station: the track crosses the line, the card is tagged SIMULATED.' },
+  { title: 'Privacy: camera off', when: 'any time', run: 'Turn hallway camera off',
+    fn: () => act('/api/camera/config', { camera: 'hall12', enabled: false, by: 'presenter' }).then(tick),
+    say: 'Privacy is a switch, not a promise: staff can turn the hallway camera off, or night only. Off means frames are dropped on arrival: nothing is analysed, nothing is stored.',
+    act: 'Show the radar card change to "Camera off" and the log line with who did it. Turn it back on (All cameras on) before the next beat.' },
+  { title: 'Answered on the phone', when: '02:08 · night', scn: 'night_elopement', run: 'Run it again',
+    say: 'Same night, but now the night worker taps "I\'m going". Escalation stops, and "Found safe" closes it with a draft care record.',
+    act: 'On the staff phone: tap I\'m going at the heads-up or urgent stage, then Found safe.' },
+  { title: 'Wi-Fi off', when: 'any time', scn: 'night_elopement', run: 'Run it again offline',
+    say: 'Now I turn the Wi-Fi off. Everything runs on this laptop, so it keeps protecting: no cloud, no data leaving the building.',
+    act: 'Turn Wi-Fi off first. The dashboard shows "Offline · still protecting". Show /perf/: the models run on this laptop, here is how fast. Finish on the shift report.', report: true, perf: true },
+];
+let step = 0;
+try { step = Math.min(BEATS.length - 1, Math.max(0, +localStorage.getItem('nw-demo-step') || 0)); } catch {}
+const done = new Set();
+function renderGuide() {
+  try { localStorage.setItem('nw-demo-step', step); } catch {}
+  $('steps').innerHTML = BEATS.map((b, i) => `<li><button data-step="${i}" class="${done.has(i) ? 'done' : ''}" ${i === step ? 'aria-current="step"' : ''} aria-label="Step ${i + 1}: ${esc(b.title)}${done.has(i) ? ' (done)' : ''}">
+      <span class="num">${done.has(i) ? icon('check') : i + 1}</span><span class="lbl">${esc(b.title)}</span></button></li>`).join('');
+  const b = BEATS[step];
+  $('beat').innerHTML = `<div><div class="k">Step ${step + 1} of ${BEATS.length} · ${esc(b.when)}</div><h3>${esc(b.title)}</h3>
+      <p class="say">“${esc(b.say)}”</p><p class="do"><b style="color:var(--nw-ink-2)">Do:</b> ${esc(b.act)}</p></div>
+    <div class="acts"><button class="nw-btn nw-btn--primary run" data-run="${step}">${icon('play')}${esc(b.run)}</button>
+      ${b.perf ? `<a class="nw-btn" href="/perf/" target="_blank" rel="noopener">${icon('chip')}Open performance</a>` : ''}
+      ${b.report ? `<a class="nw-btn" href="/report/" target="_blank" rel="noopener">${icon('report')}Open shift report</a>` : ''}
+      <div class="nb"><button class="nw-btn" data-go="-1" ${step === 0 ? 'disabled' : ''}>${icon('back')}Back</button>
+        <button class="nw-btn" data-go="1" ${step === BEATS.length - 1 ? 'disabled' : ''}>Next${icon('next')}</button></div></div>`;
+}
+function runBeat(i) { const b = BEATS[i]; if (b.fn) b.fn(); else runScenario(b.scn); done.add(i); renderGuide(); }
+function go(d) { step = Math.min(BEATS.length - 1, Math.max(0, step + d)); renderGuide(); }
+document.addEventListener('click', (e) => {
+  const b = e.target.closest('button'); if (!b) return;
+  if (b.dataset.step) { step = +b.dataset.step; renderGuide(); }
+  if (b.dataset.run) runBeat(+b.dataset.run);
+  if (b.dataset.go) go(+b.dataset.go);
+});
+document.addEventListener('keydown', (e) => {
+  if (e.target.tagName === 'INPUT' || e.target.tagName === 'SELECT' || e.metaKey || e.ctrlKey || e.altKey) return;
+  if (e.key === 'ArrowRight') go(1);
+  if (e.key === 'ArrowLeft') go(-1);
+  if (e.key === 'Enter' && e.target.tagName !== 'BUTTON' && e.target.tagName !== 'A') runBeat(step);
+});
+renderGuide();
+
+/* ------------------------------------------------------------------ contacts (laptop only) */
+const ROLES = [['on_call', 'On-call supervisor'], ['family', 'Family'], ['owner', 'Facility owner'], ['emergency_services', 'Emergency services'], ['other', 'Other']];
+const CHANNELS = [['simulated', 'Simulated only'], ['call', 'Phone call'], ['sms', 'Text (SMS)'], ['call+sms', 'Call + text'], ['push', 'Push (ntfy, free)'], ['imessage', 'iMessage (free)'], ['push+imessage', 'Push + iMessage (free)']];
+// Which senders this laptop has right now (contacts "available", or state.channels); the reason explains a greyed-out one.
+const WHY = { call: 'needs Twilio', sms: 'needs Twilio', push: 'needs internet (ntfy)', imessage: 'needs macOS + Messages' };
+const parts = (ch) => (ch === 'simulated' ? [] : String(ch).split('+'));
+const avail = () => (C && C.available) || (state && state.channels) || null;
+const missing = (ch) => { const av = avail(); return av ? parts(ch).filter((p) => !av[p]) : []; };
+const chanOK = (ch) => missing(ch).length === 0;
+const whyNot = (ch) => [...new Set(missing(ch).map((p) => WHY[p] || `needs ${p}`))].join(', ');
+const chanName = (ch) => (CHANNELS.find(([k]) => k === ch) || [, ch])[1];
+const EMERGENCY = new Set(['911', '112', '999', '000', '110', '119', '118', '08', '100', '101', '102', '933']);
+const TOPIC = /^[A-Za-z0-9_-]{12,64}$/, E164 = /^\+[1-9]\d{7,14}$/, EMAIL = /^[^\s@]{1,64}@[^\s@]+\.[^\s@]{2,}$/;
+let C = null, cDirty = false, cLocal = true;
+const testOut = {};   // contact id -> last "Send test" result, survives re-renders
+const sel = (name, list, v, dis) => `<select class="nw-select" name="${name}"${dis ? ' disabled' : ''}>${list.map(([k, l]) => `<option value="${k}"${k === v ? ' selected' : ''}>${esc(l)}</option>`).join('')}</select>`;
+const chanSel = (v, dis) => `<select class="nw-select" name="channel"${dis ? ' disabled' : ''}>${CHANNELS.map(([k, l]) => {
+  const ok = chanOK(k);
+  return `<option value="${k}"${k === v ? ' selected' : ''}${!ok && k !== v ? ' disabled' : ''}>${esc(l)}${ok ? '' : ` · ${whyNot(k)}`}</option>`;
+}).join('')}</select>`;
+function rowHTML(c, i) {
+  const es = c.role === 'emergency_services', ch = es ? 'simulated' : (c.channel || 'simulated');
+  const im = parts(ch).includes('imessage'), push = parts(ch).includes('push'), saved = c.id && !cDirty;
+  const t = testOut[c.id];
+  return `<div class="crow" data-i="${i}" data-id="${esc(c.id || '')}">
+    <label><span class="lbl-sm">Role</span>${sel('role', ROLES, c.role, !cLocal)}</label>
+    <label><span class="lbl-sm">Name</span><input class="nw-input" name="name" maxlength="60" value="${esc(c.name || '')}"${cLocal ? '' : ' disabled'}></label>
+    <label><span class="lbl-sm">Phone</span><input class="nw-input" name="phone" inputmode="tel" autocomplete="off"
+      placeholder="${es ? 'never dialled' : parts(ch).some((p) => p === 'call' || p === 'sms') ? '+15551234821' : 'optional'}" value="${esc(c.phone || '')}"${cLocal && !es ? '' : ' disabled'}></label>
+    <label><span class="lbl-sm">How</span>${chanSel(ch, !cLocal || es)}</label>
+    <label><span class="lbl-sm">Residents</span><input class="nw-input" name="residents" placeholder="all" value="${esc((c.residents || []).join(', '))}"${cLocal ? '' : ' disabled'}></label>
+    <span class="acts">${cLocal && !es ? `<button type="button" class="nw-btn" data-test="${esc(c.id || '')}"${saved ? '' : ' disabled title="Save first"'}>${icon('play')}Send test</button>` : ''}
+      ${cLocal ? `<button type="button" class="nw-btn nw-btn--ghost del" data-del="${i}" aria-label="Remove ${esc(c.name || 'contact')}">Remove</button>` : ''}</span>
+    ${push ? `<div class="topic"><label><span class="lbl-sm">ntfy topic (the "address" of this push channel)</span>
+        <span class="trow"><input class="nw-input" name="topic" maxlength="64" spellcheck="false" autocomplete="off" placeholder="nightwatch-…" value="${esc(c.topic || '')}"${cLocal ? '' : ' disabled'}>
+        ${cLocal ? `<button type="button" class="nw-btn" data-gen="${i}">Generate topic</button>` : ''}</span></label>
+        <p class="hint">Install the free <b>ntfy</b> app → <b>Subscribe to topic</b> → enter this topic. Anyone who knows it can read the alerts, so keep it long and random.</p></div>` : ''}
+    ${im && !es ? `<div class="topic"><label><span class="lbl-sm">iMessage to (phone or Apple ID email)</span>
+        <input class="nw-input" name="imessage" inputmode="email" autocomplete="off" spellcheck="false" placeholder="empty = the phone number above, or name@icloud.com" value="${esc(c.imessage || '')}"${cLocal ? '' : ' disabled'}></label>
+        <p class="hint">Sent by this Mac's Messages app (free). The recipient needs iMessage on.</p></div>` : ''}
+    ${!es && !chanOK(ch) ? `<div class="warn">${icon('wifiOff')}This laptop can't send by ${esc(chanName(ch))} right now (${esc(whyNot(ch))}): it will show as simulated.</div>` : ''}
+    <div class="test-out${t ? ` is-${t.kind}` : ''}" role="status">${t ? esc(t.text) : ''}</div>
+    <div class="nw-err err" role="alert"></div></div>`;
+}
+function renderContacts() {
+  if (!C) return;
+  const av = avail();
+  $('twilio').innerHTML = `${C.twilio_configured ? '<span class="nw-dot is-live"></span>Calls/SMS: Twilio set up' : '<span class="nw-dot"></span>Calls/SMS: no Twilio'}${av
+    ? ` · Push: ${av.push ? 'ready' : 'off'} · iMessage: ${av.imessage ? 'ready' : 'needs macOS'}` : ''}`;
+  const sw = $('live-sw');
+  sw.setAttribute('aria-checked', String(!!C.live));
+  sw.querySelector('.txt').textContent = `Real sending: ${C.live ? 'ON' : 'OFF'}`;
+  if (!cDirty) $('crows').innerHTML = C.contacts.map(rowHTML).join('') || '<p class="note">No contacts yet.</p>';
+  ['c-add', 'c-save'].forEach((id) => { $(id).hidden = !cLocal; });
+}
+async function loadContacts() {
+  try {
+    const r = await fetch('/api/contacts', { cache: 'no-store' });
+    if (!r.ok) throw 0;
+    C = await r.json(); if (!Array.isArray(C.contacts)) throw 0;
+    cLocal = !C.contacts.some((c) => /•/.test(c.phone || ''));   // phones are masked unless this is the laptop
+    $('contacts-panel').hidden = false;
+    renderContacts();
+  } catch { $('contacts-panel').hidden = !C; }
+}
+function readRows() {
+  return [...document.querySelectorAll('.crow')].map((row) => {
+    const f = (n) => row.querySelector(`[name="${n}"]`);
+    const role = f('role').value, channel = role === 'emergency_services' ? 'simulated' : f('channel').value;
+    const raw = role === 'emergency_services' ? '' : f('phone').value.trim();
+    const old = (C && C.contacts.find((c) => c.id === row.dataset.id)) || {};
+    const im = f('imessage') ? f('imessage').value.trim() : (old.imessage || '');
+    return { id: row.dataset.id || undefined, role, name: f('name').value.trim(), channel,
+             phone: raw.replace(/[\s().-]/g, ''),
+             topic: f('topic') ? f('topic').value.trim() : (old.topic || ''),
+             imessage: im.includes('@') ? im : im.replace(/[\s().-]/g, ''),
+             residents: f('residents').value.split(',').map((x) => x.trim()).filter(Boolean) };
+  });
+}
+function validate(list) {   // same rules as the server, so mistakes show before saving
+  let ok = true;
+  document.querySelectorAll('.crow').forEach((row, i) => {
+    const c = list[i], errs = [], P = parts(c.channel), es = c.role === 'emergency_services';
+    const badNum = (v) => { const d = v.replace(/\D/g, ''); return EMERGENCY.has(d) || d.length < 8 ? 'short' : !E164.test(v) ? 'format' : ''; };
+    if (!c.name) errs.push('Name is required.');
+    if (c.phone) { const b = badNum(c.phone); if (b === 'short') errs.push('That looks like an emergency or short number: NightWatch never contacts those.'); else if (b === 'format') errs.push('Phone: use international format, e.g. +15551234821.'); }
+    if (c.imessage) {
+      if (c.imessage.includes('@')) { if (!EMAIL.test(c.imessage)) errs.push('iMessage: that is not a valid Apple ID email.'); }
+      else { const b = badNum(c.imessage); if (b) errs.push(b === 'short' ? 'iMessage: emergency or short numbers are refused.' : 'iMessage: phone in international format or an Apple ID email.'); }
+    }
+    if (!es) {
+      if ((P.includes('call') || P.includes('sms')) && !c.phone) errs.push(`A phone number is needed to ${P.includes('call') ? 'call' : 'text'}.`);
+      if (P.includes('imessage') && !c.imessage && !c.phone) errs.push('iMessage needs a phone number or an Apple ID email.');
+      if (P.includes('push') && !TOPIC.test(c.topic || '')) errs.push('Push needs a topic: 12-64 letters, digits, - or _ (use Generate topic).');
+    }
+    if (c.residents.some((r) => !/^[A-Za-z0-9_.-]{1,24}$/.test(r))) errs.push('Residents: ids like R-07, separated by commas.');
+    row.classList.toggle('bad', errs.length > 0);
+    row.querySelector('.err').textContent = errs.join(' ');
+    if (errs.length) ok = false;
+  });
+  return ok;
+}
+const genTopic = () => 'nightwatch-' + [...crypto.getRandomValues(new Uint8Array(6))].map((b) => b.toString(16).padStart(2, '0')).join('');
+$('cform').addEventListener('input', () => { cDirty = true; });
+$('cform').addEventListener('change', (e) => {
+  if (e.target.name === 'role' || e.target.name === 'channel') { const list = readRows(); C.contacts = list; cDirty = false; renderContacts(); cDirty = true;
+    document.querySelector(`.crow[data-i="${e.target.closest('.crow').dataset.i}"] [name="${e.target.name}"]`)?.focus(); }
+});
+$('c-add').onclick = () => { const list = cDirty ? readRows() : C.contacts.slice(); list.push({ role: 'family', name: '', phone: '', channel: 'simulated', residents: [] }); C.contacts = list; cDirty = false; renderContacts(); cDirty = true; document.querySelector('.crow:last-child [name="name"]').focus(); };
+document.addEventListener('click', async (e) => {
+  const g = e.target.closest('[data-gen]');
+  if (g) { const inp = g.closest('.crow').querySelector('[name="topic"]'); inp.value = genTopic(); cDirty = true; inp.focus(); inp.select(); return; }   // nightwatch- + 12 random hex
+  const t = e.target.closest('[data-test]');
+  if (t) {   // laptop only; with real sending OFF the server only says what it would send
+    const id = t.dataset.test, out = t.closest('.crow').querySelector('.test-out');
+    t.disabled = true; out.className = 'test-out'; out.textContent = 'Sending test…';
+    try {
+      const r = await post('/api/contacts/test', { contact_id: id });
+      const j = await r.json().catch(() => ({}));
+      if (j.error || !r.ok) testOut[id] = { kind: 'bad', text: `Not sent: ${j.error || `server said ${r.status}`}` };
+      else {
+        const res = j.results || [];
+        const line = (x) => {
+          const how = chanName(x.channel), to = x.to ? ` to ${x.to}` : '';
+          if (x.status === 'dry_run') return `Would send by ${how}${to}: “${x.text}” (real sending is OFF)`;
+          if (x.status === 'sent' || x.status === 'calling' || x.status === 'queued') return `Sent by ${how}${to}`;
+          if (x.status === 'failed') return `Failed by ${how}${to}: ${x.detail || 'error'}`;
+          return `Simulated ${how}: ${x.detail || ''}`;
+        };
+        const kind = res.some((x) => x.status === 'failed') ? 'bad' : res.length && res.every((x) => ['sent', 'calling', 'queued'].includes(x.status)) ? 'ok' : 'sim';
+        testOut[id] = { kind, text: res.map(line).join(' · ') || 'Done' };
+      }
+    } catch { testOut[id] = { kind: 'bad', text: "Didn't reach NightWatch." }; }
+    out.className = `test-out is-${testOut[id].kind}`; out.textContent = testOut[id].text; t.disabled = false;
+    return;
+  }
+  const d = e.target.closest('[data-del]'); if (!d) return;
+  const list = readRows(); list.splice(+d.dataset.del, 1); C.contacts = list; cDirty = false; renderContacts(); cDirty = true;
+});
+$('cform').onsubmit = async (e) => {
+  e.preventDefault();
+  const list = readRows();
+  $('c-err').textContent = '';
+  if (!validate(list)) { $('c-err').textContent = 'Fix the highlighted contacts first.'; return; }
+  const r = await act('/api/contacts', { contacts: list.map((c) => (c.id ? c : { ...c, id: undefined })) }, "Contacts weren't saved");
+  if (!r.ok) { $('c-err').textContent = r.out.error || 'Not saved.'; return; }
+  cDirty = false; toast('Contacts saved.', 'good'); loadContacts();
+};
+// Real calls: OFF is instant, ON asks first and lists exactly who would be called.
+$('live-sw').onclick = async () => {
+  if (C && C.live) { const r = await act('/api/contacts', { live: false }, 'Could not turn real calls off'); if (r.ok) toast('Real sending OFF: dry run.', 'good'); loadContacts(); return; }
+  const to = (c, p) => (p === 'push' ? c.topic && `ntfy topic ${c.topic}` : p === 'imessage' ? c.imessage || c.phone : c.phone);
+  const real = (C ? C.contacts : []).filter((c) => c.role !== 'emergency_services').flatMap((c) =>
+    parts(c.channel).filter((p) => chanOK(p) && to(c, p)).map((p) => ({ c, p })));
+  $('lc-d').innerHTML = real.length ? `<ul>${real.map(({ c, p }) => `<li>${esc(c.name)} · ${esc(chanName(p))} · ${esc(to(c, p))}</li>`).join('')}</ul>
+      <span style="font-size:13px">At most 5 per alert and 20 per hour. Emergency services stay simulated.${C.twilio_configured ? '' : ' No phone line is set up, so they will still show as simulated.'}</span>`
+    : '<span style="font-size:13px">No contact has a working channel and an address yet, so nothing would actually be sent.</span>';
+  $('live-confirm').hidden = false; $('live-no').focus();
+};
+$('live-no').onclick = () => { $('live-confirm').hidden = true; $('live-sw').focus(); };
+$('live-yes').onclick = async () => {
+  $('live-confirm').hidden = true;
+  const r = await act('/api/contacts', { live: true }, 'Could not turn real calls on');
+  if (r.ok) toast('Real sending ON. Turn it off after the demo.', 'bad', 7000);
+  loadContacts();
+};
+loadContacts(); setInterval(() => { if (!document.hidden) loadContacts(); }, 5000);
+
+setInterval(tick, 1000); tick();
+</script>
+</body>
+</html>

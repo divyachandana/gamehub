@@ -1,0 +1,172 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>NightWatch · On-device performance</title>
+<script src="/assets/auth.js"></script>
+<link rel="stylesheet" href="/assets/theme.css">
+<style>
+  .nw-topbar { justify-content: space-between; }
+  .nav { display: flex; gap: 8px; flex-wrap: wrap; }
+  .nav .nw-btn { min-height: 36px; font-size: 13.5px; }
+  main { max-width: 1180px; margin: 0 auto; padding: 18px 24px 40px; display: grid; grid-template-columns: minmax(0, 1fr); gap: 16px; }
+  main > * { min-width: 0; }   /* let wide tables scroll inside their card instead of widening the page */
+  @media (max-width: 860px) { main { padding: 14px 16px 28px; } .nw-topbar { padding: 12px 16px; } }
+  .live { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(220px, 100%), 1fr)); gap: 12px; }
+  .tile { background: var(--nw-bg-2); border: 1px solid var(--nw-line); border-radius: 14px; padding: 14px 16px; }
+  .tile .k { color: var(--nw-muted); font-size: 12px; letter-spacing: .06em; text-transform: uppercase; font-weight: 700; }
+  .tile .v { font: 750 34px/1.1 var(--nw-font-display); font-variant-numeric: tabular-nums; margin-top: 6px; }
+  .tile .v small { font-size: 15px; color: var(--nw-muted); font-weight: 600; margin-left: 4px; }
+  .tile .s { color: var(--nw-ink-2); font-size: 13px; margin-top: 4px; overflow-wrap: anywhere; }
+  .hero { display: flex; flex-wrap: wrap; align-items: baseline; gap: 10px 18px; padding: 16px 18px; border-radius: 14px;
+          background: linear-gradient(135deg, rgba(61,220,151,.12), rgba(138,180,255,.08)); border: 1px solid #285a4a; }
+  .hero b { font: 800 40px/1 var(--nw-font-display); color: var(--nw-ok); }
+  .hero span { color: var(--nw-ink-2); }
+  .tablewrap { overflow-x: auto; }
+  table { width: 100%; border-collapse: collapse; font-size: 14px; font-variant-numeric: tabular-nums; min-width: 640px; }
+  th, td { text-align: left; padding: 9px 10px; border-bottom: 1px solid var(--nw-line); white-space: nowrap; }
+  th { color: var(--nw-muted); font-weight: 600; font-size: 12px; letter-spacing: .04em; text-transform: uppercase; }
+  td.dev b { display: inline-block; padding: 2px 9px; border-radius: 999px; font-size: 12px; font-weight: 800; letter-spacing: .06em; }
+  .dev-NPU { background: rgba(61,220,151,.16); color: var(--nw-ok); }
+  .dev-CPU { background: rgba(138,180,255,.14); color: var(--nw-accent); }
+  .meta { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 10px; }
+  .warn { color: var(--nw-l1); font-size: 13px; }
+  .muted { color: var(--nw-muted); font-size: 13px; }
+  .btns { display: flex; flex-wrap: wrap; gap: 10px; align-items: center; }
+  .btns select { font: inherit; padding: 6px 8px; border-radius: 8px; background: var(--nw-bg); color: var(--nw-ink); border: 1px solid var(--nw-line-strong); }
+  .job { margin-top: 12px; font-size: 14px; }
+  .job .run { display: inline-flex; align-items: center; gap: 10px; color: var(--nw-accent); font-weight: 650; }
+  .job .run::before { content: ""; width: 14px; height: 14px; border-radius: 50%; border: 2px solid currentColor; border-right-color: transparent; animation: spin .8s linear infinite; }
+  @keyframes spin { to { transform: rotate(360deg); } }
+  @media (prefers-reduced-motion: reduce) { .job .run::before { animation: none; } }
+  .job .err { color: var(--nw-l3); white-space: pre-wrap; font-family: var(--nw-mono); font-size: 12px; }
+  code { font-family: var(--nw-mono); font-size: .92em; color: var(--nw-ink-2); }
+  pre { margin: 0; white-space: pre-wrap; font-family: var(--nw-mono); font-size: 13px; background: var(--nw-bg); border: 1px solid var(--nw-line);
+        border-radius: 10px; padding: 12px; color: var(--nw-ink-2); }
+</style>
+</head>
+<body class="nw">
+<header class="nw-topbar">
+  <div class="nw-brand"><div class="nw-brand-mark" id="logo"></div><div><div class="nw-brand-name">On-device performance</div>
+    <div class="nw-brand-sub">ExecuTorch models running on this laptop · measured, not estimated</div></div></div>
+  <nav class="nav" aria-label="Other screens">
+    <a class="nw-btn nw-btn--ghost" href="/dashboard/">Nurse station</a>
+    <a class="nw-btn nw-btn--ghost" href="/camera/">Camera</a>
+    <a class="nw-btn nw-btn--ghost" href="/sim/">Presenter</a>
+  </nav>
+</header>
+<main>
+  <section class="nw-panel">
+    <div class="nw-panel-head"><div class="nw-panel-title">Live right now</div><span class="muted">from the running server</span></div>
+    <div class="live">
+      <div class="tile"><div class="k">Normal-pattern model</div><div class="v" id="pat">–</div><div class="s" id="pat-s">–</div></div>
+      <div class="tile"><div class="k">Person detector</div><div class="v" id="cam">–</div><div class="s" id="cam-s">Camera off</div></div>
+      <div class="tile"><div class="k">Internet needed</div><div class="v">No</div><div class="s">Every model runs on this laptop</div></div>
+    </div>
+  </section>
+  <section class="nw-panel" id="runner">
+    <div class="nw-panel-head"><div class="nw-panel-title">Measure now</div><span class="muted" id="job-host">on this laptop</span></div>
+    <p class="muted" style="margin:0 0 12px">Runs the same benchmark as <code>nightwatch/bench/benchmark.py</code>: NPU build vs CPU build of a model, whichever
+      exist in <code>models/</code>. <b>Unplug the laptop</b> to also measure energy. The demo keeps running meanwhile.</p>
+    <div class="btns">
+      <button class="nw-btn nw-btn--primary" data-kind="detector">Benchmark the camera model</button>
+      <button class="nw-btn" data-kind="pattern">Benchmark the pattern model</button>
+      <label class="muted">for <select id="secs" aria-label="Seconds per backend"><option value="10">10 s</option><option value="30">30 s</option><option value="60">60 s</option></select> per device</label>
+    </div>
+    <div id="job" class="job" role="status" aria-live="polite"></div>
+  </section>
+  <div id="runs"></div>
+</main>
+<script src="/assets/nw.js"></script>
+<script>
+const $ = (id) => document.getElementById(id);
+const esc = (s) => String(s ?? '').replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+const n = (v, d = 2) => (v == null ? '–' : Number(v).toFixed(d));
+if (window.NW) $('logo').innerHTML = NW.icon('chip');
+
+function hostName(h) {
+  if (h.system === 'Windows' && /arm|aarch/i.test(h.machine || '')) return 'Snapdragon laptop (Windows on ARM)';
+  if (h.system === 'Windows') return `Windows ${esc(h.machine)}`;
+  if (h.system === 'Darwin') return 'Dev MacBook (not the demo hardware)';
+  return `${esc(h.system)} ${esc(h.machine)}`;
+}
+
+function runCard(run) {
+  const isDet = run.kind === 'detector';
+  const unit = isDet ? 'frame' : 'check';
+  const rows = run.results.map((r) => {
+    const noisy = r.watts_above_idle != null && r.watts_above_idle <= 0;   // below idle = noise, not a result
+    const mj = noisy ? null : r[`mj_per_${unit}`];
+    const diff = r.output_check ? (r.output_check.max_abs_logit_diff ?? r.output_check.max_abs_diff) : null;
+    return `<tr><td class="dev"><b class="dev-${esc(r.label)}">${esc(r.label)}</b></td><td>${esc((r.pte || '').split(/[\\/]/).pop())}</td>
+      <td>${n(r.p50_ms, isDet ? 1 : 3)}</td><td>${n(r.p95_ms, isDet ? 1 : 3)}</td><td>${n(r.p99_ms, isDet ? 1 : 3)}</td>
+      <td>${r.per_s == null ? '–' : Math.round(r.per_s).toLocaleString()}</td><td>${noisy ? 'n/a*' : n(r.watts_above_idle, 2)}</td><td>${noisy ? 'n/a*' : n(mj, isDet ? 1 : 3)}</td>
+      <td>${r.pte_mb == null ? '–' : r.pte_mb < 0.1 ? '&lt;0.1' : n(r.pte_mb, 1)}</td>
+      <td>${diff == null || run.results.length < 2 || r === run.results[0] ? '–' : Number(diff).toExponential(1)}</td></tr>`;
+  }).join('');
+  const npu = run.results.find((r) => r.label === 'NPU'), cpu = run.results.find((r) => r.label === 'CPU');
+  const hero = npu && cpu && npu.p50_ms && cpu.p50_ms
+    ? `<div class="hero"><b>${(cpu.p50_ms / npu.p50_ms).toFixed(1)}×</b><span>faster on the Hexagon NPU than the CPU (median ${n(npu.p50_ms, isDet ? 1 : 3)} vs ${n(cpu.p50_ms, isDet ? 1 : 3)} ms per ${unit})</span></div>` : '';
+  const anyNoisy = run.results.some((r) => r.watts_above_idle != null && r.watts_above_idle <= 0);
+  const power = run.results.some((r) => r.watts_above_idle != null)
+    ? (run.on_ac ? '<div class="warn">Power was measured while plugged in: energy numbers are not meaningful. Re-run on battery.</div>'
+       : anyNoisy ? '<div class="warn">* Power while running read at or below idle: that is measurement noise, not a result. Run 30-60 s, unplugged, with other apps closed.</div>' : '')
+    : '<div class="muted">No power numbers in this run (run it on battery, without --no-power, to measure energy).</div>';
+  const ts = String(run.timestamp || '').replace(/^(\d{4})(\d\d)(\d\d)-(\d\d)(\d\d).*/, '$1-$2-$3 $4:$5');
+  return `<section class="nw-panel">
+    <div class="nw-panel-head"><div class="nw-panel-title">${isDet ? 'Person detector (camera)' : 'Normal-pattern model'}</div><span class="muted">${esc(ts)}</span></div>
+    <div class="meta"><span class="nw-chip">${hostName(run.host || {})}</span><span class="nw-chip">ExecuTorch <b>${esc(run.host?.executorch || '?')}</b></span>
+      <span class="nw-chip">${run.rate ? `${esc(run.rate)} per second (realistic load)` : 'as fast as possible'}</span></div>
+    ${hero}
+    <div class="tablewrap" tabindex="0" role="region" aria-label="${isDet ? 'Person detector' : 'Normal-pattern model'} benchmark results"><table>
+      <thead><tr><th>Device</th><th>Model file</th><th>p50 ms</th><th>p95 ms</th><th>p99 ms</th><th>Per second</th><th>Watts above idle</th><th>mJ per ${unit}</th><th>Size MB</th><th>Output diff</th></tr></thead>
+      <tbody>${rows}</tbody></table></div>
+    ${power}
+  </section>`;
+}
+
+async function load() {
+  try {
+    const [b, s] = await Promise.all([fetch('/api/bench').then((r) => r.json()), fetch('/api/state').then((r) => r.json())]);
+    $('pat').innerHTML = s.scorer.p50_ms == null ? '–' : `${n(s.scorer.p50_ms, 3)}<small>ms</small>`;
+    $('pat-s').textContent = `${s.scorer.name} on ${s.scorer.device}`;
+    const live = (s.cameras || []).some((c) => c.live);
+    $('cam').innerHTML = live && s.camera_p50_ms != null ? `${n(s.camera_p50_ms, 1)}<small>ms/frame</small>` : '–';
+    $('cam-s').textContent = live ? 'Hallway camera live' : 'Camera off: start it on /camera/';
+    const latest = {};
+    for (const r of b.runs) if (!latest[r.kind]) latest[r.kind] = r;
+    const cards = ['detector', 'pattern'].filter((k) => latest[k]).map((k) => runCard(latest[k])).join('');
+    $('runs').innerHTML = cards || `<section class="nw-panel"><div class="nw-panel-title">No benchmark runs yet</div>
+      <p class="muted">On the Snapdragon laptop, unplugged, run:</p>
+      <pre>python nightwatch/bench/benchmark.py --pte models/person_ssdlite_qnn_int8.pte:NPU --pte models/person_ssdlite_xnnpack.pte:CPU --rate max
+python nightwatch/bench/benchmark.py --pte models/normal_pattern_qnn.pte:NPU --pte models/normal_pattern_xnnpack.pte:CPU</pre>
+      <p class="muted">Results appear here automatically.</p></section>`;
+  } catch { $('runs').innerHTML = '<section class="nw-panel">Server not reachable</section>'; }
+}
+let wasRunning = false;
+function renderJob(job) {
+  const el = $('job');
+  document.querySelectorAll('#runner button').forEach((b) => { b.disabled = !!(job && job.running); });
+  if (!job) { el.innerHTML = ''; return; }
+  if (job.running) el.innerHTML = `<span class="run">Measuring the ${job.kind === 'detector' ? 'camera' : 'pattern'} model (started ${esc(job.started)})…</span>`;
+  else if (job.error) el.innerHTML = `<div class="err">${esc(job.error)}</div>`;
+  else if (job.started) el.innerHTML = `<span class="muted">Last run finished (started ${esc(job.started)}). Results below.</span>`;
+  else el.innerHTML = '';
+  if (wasRunning && !job.running) load();
+  wasRunning = !!job.running;
+}
+document.querySelectorAll('#runner button').forEach((b) => b.addEventListener('click', async () => {
+  const r = await fetch('/api/bench/run', { method: 'POST', headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ kind: b.dataset.kind, seconds: Number($('secs').value) }) });
+  const out = await r.json().catch(() => ({}));
+  if (out.error) $('job').innerHTML = `<div class="err">${esc(out.error)}</div>`;
+  pollJob();
+}));
+async function pollJob() {
+  try { renderJob((await (await fetch('/api/bench')).json()).job); } catch {}
+}
+load(); setInterval(load, 5000); pollJob(); setInterval(pollJob, 2000);
+</script>
+</body>
+</html>

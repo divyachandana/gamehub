@@ -1,0 +1,101 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Northside Health Portal</title>
+  <link rel="stylesheet" href="portal.css">
+</head>
+<body>
+  <!-- A deliberately hard-to-use patient portal: the struggle detector's test bench. -->
+  <header class="bar">
+    <span class="logo">Northside Health</span>
+    <nav><a>Messages</a><a>Visits</a><a>Billing</a><a>Records</a><a>Help Center</a></nav>
+  </header>
+
+  <section id="intro" class="screen">
+    <h1>Refill a prescription</h1>
+    <p>Use the information on this card to request a refill.</p>
+    <div class="card task">
+      <div><b>Name:</b> Margaret Ellis</div>
+      <div><b>Birthday:</b> March 14, 1958</div>
+      <div class="bottle"><b>Pill bottle label:</b> LISINOPRIL 10MG · RX 482-1937 · Refills: 2</div>
+      <div><b>Pharmacy:</b> Main St. Pharmacy (Downtown)</div>
+      <div><b>Pick-up:</b> any weekday next week</div>
+    </div>
+    <label class="switch"><input type="checkbox" id="assist" checked> Struggle detector help ON</label>
+    <button id="begin" class="go">Start task</button>
+    <p class="fine">Press <kbd>F8</kbd> any time you feel frustrated. That helps us train the model.</p>
+  </section>
+
+  <section id="task" class="screen hidden">
+    <div class="steps"><span data-s="1">1. Patient</span><span data-s="2">2. Medication</span><span data-s="3">3. Confirm</span></div>
+
+    <form id="form" novalidate>
+      <div class="step" data-step="1">
+        <h2>Patient Verification</h2>
+        <label>Legal name <input id="name" autocomplete="off"></label>
+        <label>Date of birth <input id="dob" data-field="dob" autocomplete="off" placeholder="Date"></label>
+        <div class="err" id="dob-err"></div>
+        <label>Member ID (optional) <input id="member" autocomplete="off"></label>
+      </div>
+
+      <div class="step hidden" data-step="2">
+        <h2>Medication Information</h2>
+        <label>Rx # <input id="rx" data-field="rx" autocomplete="off"></label>
+        <div class="err" id="rx-err"></div>
+        <label>Dispensing location
+          <select id="pharmacy" data-field="pharmacy">
+            <option value="">-- select --</option>
+            <option>CVS #10293 - Oak Ave</option><option>CVS #10388 - Pine St</option>
+            <option>Walgreens #4471 - Elm Rd</option><option>Walgreens #4502 - Harbor Blvd</option>
+            <option>Northside Outpatient Pharmacy - Bldg C</option>
+            <option>Main Street Pharmacy LLC (Uptown)</option>
+            <option>Rite Aid #2210 - 5th St</option>
+            <option value="other">Other / not listed</option>
+          </select>
+        </label>
+        <label id="other-wrap" class="hidden">Location name <input id="other" data-field="pharmacy" autocomplete="off"></label>
+        <div class="err" id="pharmacy-err"></div>
+        <label>Requested fulfillment date <input id="pickup" data-field="pickup" type="date"></label>
+      </div>
+
+      <div class="step hidden" data-step="3">
+        <h2>Attestation</h2>
+        <div class="terms" id="terms">
+          <p>By submitting this request you acknowledge that refill authorization is subject to prescriber review,
+          formulary restrictions, plan coverage determinations and applicable state and federal regulations.
+          Northside Health is not responsible for delays arising from third-party pharmacy processing.</p>
+          <p>Controlled substances may require additional verification. Requests submitted after 4:00 PM are
+          processed the following business day. Quantity limits may apply.</p>
+          <p>You agree to the electronic communications policy and consent to receive notifications regarding
+          this request through the portal and any contact methods on file.</p>
+          <p>Information provided must be accurate. Inaccurate submissions may result in cancellation.</p>
+          <label class="consent"><input type="checkbox" id="consent" data-field="consent"> I attest to the above.</label>
+        </div>
+        <div class="err" id="consent-err"></div>
+      </div>
+
+      <div class="nav">
+        <button type="button" id="back" class="primary">Go Back</button>
+        <button type="button" id="next" class="tiny">continue</button>
+      </div>
+      <a id="giveup" class="giveup">I give up</a>
+    </form>
+  </section>
+
+  <section id="done" class="screen hidden">
+    <h1 id="done-title">Refill requested</h1>
+    <p id="done-text"></p>
+    <button id="again" class="go">Next person</button>
+  </section>
+
+  <aside id="helper" class="helper hidden" role="status" aria-live="polite">
+    <div class="helper-head">Need a hand?</div>
+    <div id="helper-text"></div>
+    <button id="helper-ok">Got it</button>
+  </aside>
+
+  <script type="module" src="portal.js"></script>
+</body>
+</html>

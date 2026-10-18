@@ -1,0 +1,1173 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>NightWatch · Camera</title>
+<script src="/assets/auth.js"></script>
+<script src="/assets/a11y.js"></script>
+<link rel="stylesheet" href="/assets/theme.css">
+<link rel="stylesheet" href="/assets/a11y.css">
+<link rel="icon" href="/assets/brand/favicon.svg" type="image/svg+xml">
+<link rel="apple-touch-icon" href="/assets/brand/apple-touch-icon.png">
+<style>
+  /* Local names mapped onto the shared NightWatch theme (assets/theme.css). */
+  :root {
+    --bg: var(--nw-bg); --panel: var(--nw-surface); --panel-2: var(--nw-bg-2); --ink: var(--nw-ink); --muted: var(--nw-muted);
+    --line: var(--nw-line); --room: #2dd4bf; --hall: var(--nw-l2); --alert: var(--nw-l3); --ok: var(--nw-ok);
+    --accent: var(--nw-accent); --radius: var(--nw-radius); --font: var(--nw-font);
+  }
+  * { box-sizing: border-box; }
+  [hidden] { display: none !important; }
+  html, body { overflow-x: hidden; }
+  .nw-topbar { justify-content: space-between; }
+  h1.nw-brand-name { margin: 0; }
+  .live { display: flex; align-items: center; gap: 14px; flex-wrap: wrap; }
+  .live .t { font: 750 26px/1 var(--nw-font-display); font-variant-numeric: tabular-nums; }
+  .nav { display: flex; gap: 8px; flex-wrap: wrap; }
+  .nav .nw-btn { min-height: 36px; font-size: 13.5px; }
+  .nav .nw-btn .nw-ico { width: 16px; height: 16px; }
+
+  /* Layout: stage on the left; the setup guide (when open) above the side cards on the right.
+     On narrow screens the guide comes first, then the stage, then the cards. */
+  main { display: grid; grid-template-columns: minmax(0, 1fr) 360px; grid-template-areas: "stage side"; gap: 18px;
+         padding: 18px 22px; max-width: 1440px; margin: 0 auto; align-items: start; }
+  main.wiz-on { grid-template-areas: "stage wiz" "stage side"; grid-template-rows: auto 1fr; }
+  .stagecol { grid-area: stage; display: flex; flex-direction: column; align-items: center; gap: 12px; min-width: 0; }
+  .stagecol > * { width: min(100%, max(380px, calc(100vh - 250px))); }
+  #wiz { grid-area: wiz; } .side { grid-area: side; }
+  @media (max-width: 980px) {
+    main { grid-template-columns: minmax(0, 1fr); grid-template-areas: "stage" "side"; padding: 14px; }
+    main.wiz-on { grid-template-areas: "stage" "wiz" "side"; grid-template-rows: auto; }
+    .stagecol .tl-card { display: none; }
+    main:not(.wiz-on) .stagecol .tl-card { display: block; }
+    .stagecol > * { width: min(100%, max(320px, calc(100vh - 220px))); }
+  }
+  @media (max-width: 520px) {
+    .nw-topbar { padding: 12px 14px; }
+    main { padding: 12px; gap: 12px; }
+    .live .t { font-size: 22px; }
+    .nav .nw-btn { padding: 0 10px; font-size: 13px; min-height: 34px; }
+    .nw-brand-sub { white-space: normal; }
+  }
+
+  /* ------------------------------------------------------------ stage */
+  .stage { position: relative; border-radius: var(--radius); overflow: hidden; background: #000; border: 1px solid var(--line);
+           box-shadow: 0 20px 60px rgba(0,0,0,.45); }
+  .stage canvas#view { display: block; width: 100%; height: auto; aspect-ratio: 1; cursor: default; }
+  .stage.drawing canvas#view { cursor: crosshair; }
+  .stage.has-tracks canvas#view { cursor: pointer; }
+  .stage.drawing.has-tracks canvas#view { cursor: crosshair; }
+  .file-badge { position: absolute; left: 12px; top: 12px; z-index: 3; padding: 4px 10px; border-radius: 999px;
+    font: 700 12px/1.4 var(--nw-font, system-ui); letter-spacing: .04em; background: var(--nw-l1, #f6c344); color: #1a1200; }
+  .banner { position: absolute; left: 50%; top: 58px; transform: translateX(-50%) translateY(-12px); opacity: 0; transition: .25s;
+            padding: 10px 18px; border-radius: 999px; font-weight: 750; font-size: 16px; background: var(--alert); color: #fff;
+            box-shadow: 0 10px 30px rgba(255,92,92,.4); max-width: calc(100% - 24px); text-align: center; z-index: 4;
+            display: flex; align-items: center; gap: 8px; pointer-events: none; }
+  .banner.show { opacity: 1; transform: translateX(-50%) translateY(0); }
+  .banner.in { background: var(--ok); color: #05210f; box-shadow: 0 10px 30px rgba(74,222,128,.35); }
+  .hint { position: absolute; left: 0; right: 0; bottom: 0; padding: 26px 16px 12px; background: linear-gradient(transparent, rgba(0,0,0,.8));
+          font-size: 13.5px; color: #dfe7f1; pointer-events: none; z-index: 2; }
+
+  /* State chip: icon + words + colour, never colour alone. */
+  .state { position: absolute; left: 12px; top: 12px; z-index: 3; display: inline-flex; align-items: center; gap: 8px;
+           padding: 7px 13px 7px 10px; border-radius: 999px; font-weight: 750; font-size: 14px; letter-spacing: .01em;
+           background: rgba(7,11,20,.82); border: 1px solid var(--nw-line-strong); color: var(--nw-ink); backdrop-filter: blur(6px); }
+  .state .nw-ico { width: 17px; height: 17px; }
+  .state.k-det { color: #ffd1ad; border-color: var(--nw-l2); background: rgba(60,26,6,.85); }
+  .state.k-clear { color: var(--nw-ok); border-color: rgba(61,220,151,.5); }
+  .state.k-paused { color: var(--nw-moon); border-color: #2c3f7a; }
+  .state.k-off { color: var(--nw-muted); }
+  .state.k-err { color: #ffc2c8; border-color: var(--nw-l3); background: rgba(60,8,14,.85); }
+  .state .pulse { width: 8px; height: 8px; border-radius: 50%; background: currentColor; animation: nw-cam-pulse 1.4s ease-in-out infinite; }
+  @keyframes nw-cam-pulse { 50% { opacity: .25; } }
+  .aimbadge { position: absolute; right: 12px; top: 12px; z-index: 3; padding: 6px 11px; border-radius: 999px; font-size: 12.5px; font-weight: 750;
+              background: rgba(246,195,68,.18); color: var(--nw-l1); border: 1px solid rgba(246,195,68,.55); display: flex; gap: 6px; align-items: center; }
+  .aimbadge .nw-ico { width: 15px; height: 15px; }
+
+  /* Server / detector problems: a strip over the video (the video itself is still fine). */
+  .strip { position: absolute; left: 12px; right: 12px; top: 56px; z-index: 4; display: flex; gap: 10px; align-items: flex-start;
+           padding: 10px 12px; border-radius: 12px; background: rgba(40,6,12,.92); border: 1px solid var(--nw-l3); color: #ffd9dd; font-size: 13.5px; }
+  .strip .nw-ico { width: 20px; height: 20px; color: var(--nw-l3); margin-top: 1px; }
+  .strip b { display: block; color: #fff; font-size: 14.5px; }
+  .strip code { font-family: var(--nw-mono); font-size: 12px; background: rgba(0,0,0,.35); padding: 1px 5px; border-radius: 5px; overflow-wrap: anywhere; }
+
+  /* Draggable doorway ends: 44px touch targets with a visible knob. */
+  .handle { position: absolute; width: 44px; height: 44px; margin: -22px 0 0 -22px; padding: 0; border: 0; background: transparent;
+            cursor: grab; z-index: 5; touch-action: none; border-radius: 50%; display: grid; place-items: center; }
+  .handle::before { content: ""; width: 18px; height: 18px; border-radius: 50%; background: #0b1730; border: 3px solid #6aa8ff;
+                    box-shadow: 0 0 0 4px rgba(106,168,255,.25), 0 2px 8px rgba(0,0,0,.6); }
+  .handle span { position: absolute; top: -6px; left: 30px; font: 800 11px/1 var(--nw-font); color: #cfe0ff; background: rgba(7,11,20,.8);
+                 padding: 3px 5px; border-radius: 5px; pointer-events: none; }
+  .handle:hover::before, .handle:focus-visible::before, .handle.dragging::before { background: #6aa8ff; transform: scale(1.15); }
+  .handle:focus-visible { outline: 3px solid var(--nw-accent); outline-offset: 0; }
+  .handle.dragging { cursor: grabbing; }
+  .handle[hidden] { display: none; }
+
+  /* Animated "click here, then here" hint while drawing. */
+  .drawhint { position: absolute; inset: 0; z-index: 2; pointer-events: none; }
+  .drawhint[hidden] { display: none; }
+  .drawhint svg { width: 100%; height: 100%; display: block; }
+  .drawhint .tgt { fill: none; stroke: #6aa8ff; stroke-width: .6; transform-box: fill-box; transform-origin: center; }
+  .drawhint .ln { stroke: #6aa8ff; stroke-width: .7; stroke-dasharray: 44; stroke-dashoffset: 44; opacity: .9; }
+  .drawhint .dot { fill: #6aa8ff; }
+  .drawhint .lbl { fill: #dfe9ff; font: 700 3px var(--nw-font); paint-order: stroke; stroke: rgba(0,0,0,.75); stroke-width: .8px; }
+  .drawhint .a { animation: nw-tgt 2.6s var(--nw-ease) infinite; }
+  .drawhint .b { animation: nw-tgt 2.6s var(--nw-ease) infinite 1.3s; }
+  .drawhint .ln { animation: nw-ln 2.6s var(--nw-ease) infinite; }
+  .drawhint.second .first { display: none; }
+  .drawhint .then { display: none; } .drawhint.second .then { display: inline; }
+  @keyframes nw-tgt { 0% { transform: scale(.6); opacity: 1; } 45% { transform: scale(1.8); opacity: 0; } 100% { opacity: 0; } }
+  @keyframes nw-ln { 0%, 25% { stroke-dashoffset: 44; } 55%, 85% { stroke-dashoffset: 0; } 100% { stroke-dashoffset: 0; opacity: 0; } }
+
+  /* Per-person details (hover, tap, or the list on the side). */
+  .tip { position: absolute; z-index: 6; width: 210px; padding: 10px 12px; border-radius: 12px; background: rgba(9,14,26,.95);
+         border: 1px solid var(--nw-line-strong); box-shadow: 0 10px 30px rgba(0,0,0,.5); font-size: 13px; pointer-events: none; }
+  .tip[hidden] { display: none; }
+  .tip b { font-size: 15px; }
+  .tip dl { display: grid; grid-template-columns: auto 1fr; gap: 3px 10px; margin: 6px 0 0; }
+  .tip dt { color: var(--muted); } .tip dd { margin: 0; font-weight: 650; font-variant-numeric: tabular-nums; }
+
+  /* Test mode: the exact 320x320 frame sent to the detector. */
+  .inset { position: absolute; right: 12px; top: 56px; z-index: 4; width: min(36%, 190px); margin: 0; border-radius: 12px; overflow: hidden;
+           background: #000; border: 2px solid var(--nw-accent); box-shadow: 0 10px 30px rgba(0,0,0,.6); }
+  .inset[hidden] { display: none; }
+  .inset canvas { display: block; width: 100%; height: auto; aspect-ratio: 1; }
+  .inset figcaption { padding: 6px 8px; font-size: 11.5px; line-height: 1.35; background: rgba(9,14,26,.95); color: var(--nw-ink-2); }
+  .inset figcaption b { color: var(--nw-ink); }
+
+  /* Full overlays: camera off / paused / not started / permission / busy / missing. */
+  .off { position: absolute; inset: 0; z-index: 7; display: grid; place-items: center; background: rgba(5, 8, 14, .93); text-align: center; overflow: auto; }
+  .off[hidden] { display: none; }
+  .off > div { display: grid; justify-items: center; gap: 8px; color: var(--nw-ink-2); max-width: 380px; padding: 20px; }
+  .off .big, .off .big svg { width: 46px; height: 46px; color: var(--nw-muted); }
+  .off .big { display: grid; place-items: center; }
+  .off.k-err .big { color: var(--nw-l3); } .off.k-start .big { color: var(--nw-accent); } .off.k-paused .big { color: var(--nw-moon); }
+  .off #off-title { color: var(--ink); font-size: 20px; } .off b { color: var(--ink); }
+  .off ol { text-align: left; margin: 4px 0 0; padding-left: 20px; font-size: 14px; display: grid; gap: 4px; }
+  .off .acts { display: flex; flex-wrap: wrap; gap: 8px; justify-content: center; margin-top: 6px; }
+
+  /* ------------------------------------------------------------ timeline */
+  .tl-card { padding: 12px 14px 10px; }
+  .tl-head { display: flex; justify-content: space-between; align-items: baseline; gap: 10px; flex-wrap: wrap; margin-bottom: 6px; }
+  .tl-head h2 { margin: 0; }
+  .tl-head .sum { font-size: 13px; color: var(--nw-ink-2); }
+  #tl { display: block; width: 100%; height: 60px; }
+  .tl-axis { display: flex; justify-content: space-between; font-size: 11px; color: var(--nw-faint); margin-top: 3px; }
+  .legend { display: flex; flex-wrap: wrap; gap: 4px 14px; font-size: 12px; color: var(--muted); margin-top: 6px; }
+  .legend i { display: inline-block; width: 10px; height: 10px; border-radius: 2px; margin-right: 5px; vertical-align: -1px; }
+  .legend .sw-p { background: var(--nw-l2); } .legend .sw-c { background: var(--nw-ok); height: 3px; vertical-align: 2px; }
+  .legend .sw-x { background: repeating-linear-gradient(45deg, #3a465c 0 2px, transparent 2px 4px); border: 1px solid #3a465c; }
+  .legend .g-out { color: var(--nw-l3); font-weight: 800; } .legend .g-in { color: var(--nw-ok); font-weight: 800; }
+
+  /* ------------------------------------------------------------ side cards */
+  .side { display: flex; flex-direction: column; gap: 14px; min-width: 0; }
+  .card { background: linear-gradient(180deg, var(--nw-surface-2), var(--nw-surface)); border: 1px solid var(--line); border-radius: var(--radius);
+          padding: 14px 16px; box-shadow: var(--nw-shadow); min-width: 0; }
+  .card h2 { margin: 0 0 10px; font-size: 11px; font-weight: 700; letter-spacing: .08em; text-transform: uppercase; color: var(--muted); }
+  .card-head { display: flex; justify-content: space-between; align-items: center; gap: 8px; margin-bottom: 10px; }
+  .card-head h2 { margin: 0; }
+  .status { display: flex; align-items: center; gap: 10px; font-size: 18px; font-weight: 700; }
+  .dot { width: 12px; height: 12px; border-radius: 50%; background: var(--muted); box-shadow: 0 0 0 4px rgba(140,153,168,.15); flex: none; }
+  .dot.on { background: var(--ok); box-shadow: 0 0 0 4px rgba(74,222,128,.18); }
+  .dot.hit { background: var(--hall); box-shadow: 0 0 0 4px rgba(245,165,36,.2); }
+  .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+  .stat { background: var(--panel-2); border-radius: 10px; padding: 10px 12px; min-width: 0; }
+  .stat .k { font-size: 11px; color: var(--muted); } .stat .v { font-size: 18px; font-weight: 700; font-variant-numeric: tabular-nums; overflow-wrap: anywhere; }
+  .row { display: flex; flex-wrap: wrap; gap: 8px; }
+  .row .nw-btn { min-height: 40px; padding: 0 13px; font-size: 14px; }
+  button, select { font: inherit; border-radius: 10px; border: 1px solid var(--line); background: var(--panel-2); color: var(--ink); padding: 9px 12px; cursor: pointer; }
+  button:hover { border-color: #3a4a60; }
+  button:disabled { opacity: .45; cursor: not-allowed; }
+  select { width: 100%; min-height: 42px; }
+  label.toggle { display: flex; align-items: flex-start; gap: 9px; color: var(--muted); padding: 5px 0; cursor: pointer; }
+  label.toggle input { width: 18px; height: 18px; margin: 1px 0 0; flex: none; accent-color: var(--nw-accent); }
+  ul.log { list-style: none; margin: 0; padding: 0; max-height: 220px; overflow: auto; }
+  ul.log li { display: flex; gap: 10px; padding: 7px 0; border-bottom: 1px solid var(--line); font-size: 13px; align-items: center; }
+  ul.log .t { color: var(--muted); font-variant-numeric: tabular-nums; }
+  ul.log .out { color: var(--alert); font-weight: 650; } ul.log .in { color: var(--ok); font-weight: 650; }
+  ul.log .nw-ico { width: 15px; height: 15px; }
+  .privacy { font-size: 12px; color: var(--muted); line-height: 1.5; }
+  .privacy b { color: var(--ink); }
+  .small { font-size: 12.5px; color: var(--muted); line-height: 1.45; margin: 8px 0 0; }
+  video, #grab { display: none; }
+  .power { display: flex; flex-wrap: wrap; align-items: center; gap: 10px; margin-top: 12px; }
+  .power select { width: auto; flex: 1; min-width: 180px; }
+  .switch { display: flex; align-items: center; gap: 10px; cursor: pointer; flex: 1 1 220px; position: relative; }
+  .switch input { position: absolute; opacity: 0; width: 1px; height: 1px; }
+  .switch .knob { width: 46px; height: 26px; border-radius: 999px; background: var(--nw-line-strong); position: relative; flex: none; transition: background .15s; }
+  .switch .knob::after { content: ""; position: absolute; top: 3px; left: 3px; width: 20px; height: 20px; border-radius: 50%; background: #fff; transition: transform .15s; }
+  .switch input:checked + .knob { background: var(--ok); }
+  .switch input:checked + .knob::after { transform: translateX(20px); }
+  .switch input:focus-visible + .knob { outline: 3px solid var(--accent); outline-offset: 2px; }
+  .switch b { display: block; } .switch small { color: var(--muted); font-size: 12px; }
+
+  /* People in view */
+  .people { list-style: none; margin: 0; padding: 0; display: grid; gap: 6px; }
+  .people button { width: 100%; text-align: left; display: grid; grid-template-columns: auto 1fr auto; gap: 4px 10px; align-items: center;
+                   padding: 8px 10px; background: var(--panel-2); }
+  .people button[aria-pressed="true"] { border-color: var(--nw-accent); background: #142446; }
+  .people .sw { width: 12px; height: 12px; border-radius: 3px; }
+  .people .id { font-weight: 750; } .people .meta { color: var(--muted); font-size: 12.5px; grid-column: 2 / 4; font-variant-numeric: tabular-nums; }
+  .people .side-t { font-size: 12px; font-weight: 700; }
+  .empty-p { color: var(--muted); font-size: 13.5px; padding: 4px 0; }
+
+  /* ------------------------------------------------------------ setup guide */
+  .wiz { border-color: var(--nw-accent); box-shadow: 0 0 0 1px rgba(138,180,255,.25), var(--nw-shadow); }
+  .wiz[hidden], .wiz [hidden] { display: none !important; }
+  .wiz-top { display: flex; justify-content: space-between; align-items: center; gap: 8px; }
+  .wiz-top .kick { font-size: 11px; font-weight: 750; letter-spacing: .1em; text-transform: uppercase; color: var(--nw-accent); }
+  .wiz-x { min-height: 36px; padding: 0 10px; font-size: 13px; }
+  .wiz-steps { list-style: none; margin: 10px 0 12px; padding: 0; display: grid; grid-template-columns: repeat(5, 1fr); gap: 4px; }
+  .wiz-steps li { font-size: 10.5px; color: var(--nw-faint); text-align: center; line-height: 1.2; }
+  .wiz-steps li::before { content: ""; display: block; height: 4px; border-radius: 2px; background: var(--nw-line-strong); margin-bottom: 5px; }
+  .wiz-steps li.done { color: var(--nw-ink-2); } .wiz-steps li.done::before { background: var(--nw-ok); }
+  .wiz-steps li[aria-current="step"] { color: var(--nw-ink); font-weight: 750; } .wiz-steps li[aria-current="step"]::before { background: var(--nw-accent); }
+  .wiz h3 { margin: 0 0 8px; font: 750 19px/1.2 var(--nw-font-display); }
+  .wiz h3:focus { outline: none; }
+  .wiz p { margin: 0 0 10px; color: var(--nw-ink-2); font-size: 14px; }
+  .wiz label.f { display: grid; gap: 5px; font-size: 13px; color: var(--muted); margin-bottom: 10px; }
+  .wiz-state { display: flex; gap: 9px; align-items: flex-start; padding: 9px 11px; border-radius: 10px; background: var(--panel-2);
+               border: 1px solid var(--line); font-size: 13.5px; margin: 0 0 10px; }
+  .wiz-state .nw-ico { width: 18px; height: 18px; margin-top: 1px; }
+  .wiz-state.ok { border-color: rgba(61,220,151,.45); } .wiz-state.ok .nw-ico { color: var(--nw-ok); }
+  .wiz-state.warn { border-color: rgba(246,195,68,.5); } .wiz-state.warn .nw-ico { color: var(--nw-l1); }
+  .wiz-state.err { border-color: var(--nw-l3); } .wiz-state.err .nw-ico { color: var(--nw-l3); }
+  .wiz-state b { color: var(--nw-ink); }
+  .wiz ul.chk { margin: 0 0 10px; padding-left: 18px; font-size: 13.5px; color: var(--nw-ink-2); display: grid; gap: 5px; }
+  .wiz-note { display: flex; gap: 9px; padding: 9px 11px; border-radius: 10px; background: var(--nw-l1-bg); border: 1px solid rgba(246,195,68,.4);
+              font-size: 13px; color: #f6e2b0; margin-bottom: 10px; }
+  .wiz-note .nw-ico { color: var(--nw-l1); width: 18px; height: 18px; }
+  .walks { list-style: none; margin: 0 0 10px; padding: 0; display: grid; gap: 6px; }
+  .walks li { display: flex; gap: 10px; align-items: center; padding: 10px 12px; border-radius: 10px; background: var(--panel-2); border: 1px solid var(--line); }
+  .walks li .nw-ico { width: 22px; height: 22px; color: var(--nw-faint); }
+  .walks li.seen { border-color: rgba(61,220,151,.5); } .walks li.seen .nw-ico { color: var(--nw-ok); }
+  .walks li b { display: block; font-size: 14.5px; } .walks li span { font-size: 12.5px; color: var(--muted); }
+  .wiz-foot { display: flex; gap: 8px; justify-content: space-between; align-items: center; margin-top: 12px; flex-wrap: wrap; }
+  .wiz-foot .r { display: flex; gap: 8px; margin-left: auto; }
+  .wiz-foot .nw-btn { min-height: 42px; }
+  .linkish { background: none; border: 0; color: var(--nw-accent); padding: 6px 4px; text-decoration: underline; text-underline-offset: 3px; font-size: 13.5px; }
+  .guide-dot { width: 8px; height: 8px; border-radius: 50%; background: var(--nw-l1); }
+
+  @media (prefers-reduced-motion: reduce) {
+    .switch .knob, .switch .knob::after, .banner, .nw-btn { transition: none; }
+    .state .pulse, .drawhint .a, .drawhint .b, .drawhint .ln { animation: none; }
+    .drawhint .ln { stroke-dashoffset: 0; stroke-dasharray: 2 1.5; }
+    .drawhint .tgt { transform: scale(1.3); }
+  }
+  .nw-rm .switch .knob, .nw-rm .switch .knob::after, .nw-rm .banner, .nw-rm .nw-btn { transition: none; }
+  .nw-rm .state .pulse, .nw-rm .drawhint .a, .nw-rm .drawhint .b, .nw-rm .drawhint .ln { animation: none; }
+  .nw-rm .drawhint .ln { stroke-dashoffset: 0; stroke-dasharray: 2 1.5; }
+  .nw-rm .drawhint .tgt { transform: scale(1.3); }
+</style>
+</head>
+<body class="nw">
+<header class="nw-topbar">
+  <div class="nw-brand"><div class="nw-brand-mark" style="background:none;border:0"><img src="/assets/brand/logo.svg" alt="" width="38" height="38" style="display:block"></div><div><h1 class="nw-brand-name">Hallway camera</h1><div class="nw-brand-sub">On-device person detection · nothing recorded</div></div></div>
+  <div class="live"><span class="nw-mode" id="mode">–</span><span class="t" id="clock">--:--</span></div>
+  <nav class="nav" aria-label="Other screens">
+    <a class="nw-btn nw-btn--ghost" href="/home/" target="_blank" rel="noopener">Home</a>
+    <a class="nw-btn nw-btn--ghost" href="/dashboard/" target="_blank" rel="noopener">Nurse station</a>
+    <a class="nw-btn nw-btn--ghost" href="/staff/" target="_blank" rel="noopener">Staff phone</a>
+    <a class="nw-btn nw-btn--ghost" href="/sim/" target="_blank" rel="noopener">Presenter</a>
+    <a class="nw-btn nw-btn--ghost" href="/perf/" target="_blank" rel="noopener">Performance</a>
+    <a class="nw-btn nw-btn--ghost" href="/help/" target="_blank" rel="noopener">Help</a>
+    <button class="nw-btn" id="guide" type="button" aria-controls="wiz"><span class="ico-help"></span>Setup guide</button>
+    <div data-nw-display></div>
+  </nav>
+</header>
+<main id="main">
+  <section class="stagecol" aria-label="Live camera">
+    <div class="stage" id="stage">
+      <canvas id="view" width="720" height="720" aria-label="Camera view with detected people and the doorway line" aria-describedby="hint"></canvas>
+      <div class="state k-off" id="state" role="status" aria-live="polite"><span class="ico"></span><span id="state-t">Not started</span></div>
+      <div class="aimbadge" id="aimbadge" hidden><span class="ico-eye"></span>Blur off while aiming</div>
+      <div class="banner" id="banner" role="status" aria-live="assertive"></div>
+      <div class="file-badge" id="file-badge" hidden>RECORDED VIDEO · analysed live on this laptop</div>
+      <div class="strip" id="strip" role="alert" hidden></div>
+      <div class="drawhint" id="drawhint" hidden aria-hidden="true">
+        <svg viewBox="0 0 100 100">
+          <g class="first">
+            <line class="ln" x1="28" y1="80" x2="72" y2="80"/>
+            <circle class="tgt a" cx="28" cy="80" r="3"/><circle class="dot" cx="28" cy="80" r="1.2"/>
+            <circle class="tgt b" cx="72" cy="80" r="3"/><circle class="dot" cx="72" cy="80" r="1.2"/>
+            <text class="lbl" x="28" y="74" text-anchor="middle">1 · one side of the door</text>
+            <text class="lbl" x="72" y="74" text-anchor="middle">2 · other side</text>
+          </g>
+          <text class="lbl" x="50" y="88" text-anchor="middle"><tspan class="then">Now click the other side · </tspan>on the floor, where feet cross</text>
+        </svg>
+      </div>
+      <button class="handle" id="hA" type="button" hidden aria-label="Doorway end A" aria-describedby="handle-help"><span aria-hidden="true">A</span></button>
+      <button class="handle" id="hB" type="button" hidden aria-label="Doorway end B" aria-describedby="handle-help"><span aria-hidden="true">B</span></button>
+      <div class="tip" id="tip" hidden></div>
+      <figure class="inset" id="inset" hidden>
+        <canvas id="insetc" width="320" height="320" aria-label="The exact image the detector receives"></canvas>
+        <figcaption id="inset-cap">What the detector sees</figcaption>
+      </figure>
+      <div class="off k-off" id="off" hidden><div>
+        <span class="big" id="off-ico"></span>
+        <b id="off-title">Camera off</b><span id="off-why">Not watching. The webcam is released and nothing is analysed.</span>
+        <div id="off-more"></div>
+        <div class="acts" id="off-acts"></div></div></div>
+      <div class="hint" id="hint">Start the camera, then draw the doorway line.</div>
+    </div>
+    <div class="card tl-card">
+      <div class="tl-head"><h2 id="tl-h">People in view · last 60 s</h2><span class="sum" id="tl-sum" aria-live="off">Waiting for the camera</span></div>
+      <canvas id="tl" role="img" aria-labelledby="tl-h tl-sum"></canvas>
+      <div class="tl-axis" aria-hidden="true"><span>60 s ago</span><span>30 s</span><span>now</span></div>
+      <div class="legend" aria-hidden="true"><span><i class="sw-p"></i>people (bar height = how many)</span><span><i class="sw-c"></i>watching, clear</span>
+        <span><i class="sw-x"></i>not watching</span><span><b class="g-out">▼</b> walked out</span><span><b class="g-in">▲</b> came back in</span></div>
+    </div>
+  </section>
+
+  <section class="card wiz" id="wiz" hidden aria-labelledby="wiz-title"></section>
+
+  <aside class="side">
+    <div class="card">
+      <h2>Status</h2>
+      <div class="status"><span class="dot" id="dot"></span><span id="status">Camera off</span></div>
+      <div class="grid" style="margin-top:12px">
+        <div class="stat"><div class="k">People in view</div><div class="v" id="people">0</div></div>
+        <div class="stat"><div class="k">Per frame</div><div class="v" id="ms">–</div></div>
+        <div class="stat"><div class="k">Frames / s</div><div class="v" id="fps">–</div></div>
+        <div class="stat"><div class="k">Frames stored</div><div class="v">0</div></div>
+        <div class="stat"><div class="k">Detection area</div><div class="v" id="area">Full</div></div>
+        <div class="stat"><div class="k">Night boost</div><div class="v" id="gain">Off</div></div>
+      </div>
+      <div class="privacy" style="margin-top:10px">Model <b id="model">–</b> on <b id="device">–</b></div>
+    </div>
+    <div class="card">
+      <div class="card-head"><h2 id="pv-h">People in view</h2></div>
+      <ul class="people" id="plist" aria-labelledby="pv-h"></ul>
+      <p class="small">Hover or tap a box on the camera (or pick a person here) for details.</p>
+    </div>
+    <div class="card">
+      <div class="card-head"><h2>Setup</h2><button class="linkish" id="guide2" type="button">Open setup guide</button></div>
+      <label class="f" style="display:grid;gap:5px;font-size:13px;color:var(--muted)">Which camera this is
+        <select id="cam"></select></label>
+      <div class="power">
+        <label class="switch"><input type="checkbox" id="power" checked><span class="knob" aria-hidden="true"></span>
+          <span><b id="power-label">Camera ON</b><small id="power-sub">Analysing frames on this laptop</small></span></label>
+        <select id="schedule" aria-label="When this camera watches">
+          <option value="always">Watch always</option>
+          <option value="night">Night only (21:00-05:00)</option>
+        </select>
+      </div>
+      <div class="row" style="margin-top:12px">
+        <button class="nw-btn nw-btn--primary" id="start">Start camera</button>
+        <button class="nw-btn" id="use-file" title="Run the live detector on a recorded video instead of the webcam">Use a video file</button>
+        <input type="file" id="file-input" accept="video/*" hidden aria-label="Choose a recorded video to analyse">
+        <button class="nw-btn" id="draw">Draw doorway</button>
+        <button class="nw-btn" id="flip" title="Swap which side of the line is the room">Flip room side</button>
+        <button class="nw-btn" id="undo" disabled>Undo</button>
+        <button class="nw-btn" id="clear">Clear line</button>
+      </div>
+      <p class="small" id="handle-help">Fine-tune the line: drag its round ends A and B, or Tab to an end and use the arrow keys (hold Shift for bigger steps).</p>
+      <div style="margin-top:8px">
+        <label class="toggle"><input type="checkbox" id="privacy" checked> Privacy view (blurred)</label>
+        <label class="toggle"><input type="checkbox" id="zoom" checked> Zoom on the doorway (sharper detection once the line is drawn)</label>
+        <label class="toggle"><input type="checkbox" id="boost" checked> Night boost (auto brightness / contrast for dark hallways)</label>
+      </div>
+      <div class="row" style="margin-top:8px">
+        <button class="nw-btn" id="testmode" type="button" aria-pressed="false" aria-controls="inset">Show what the detector sees</button>
+      </div>
+      <p class="small">Test mode shows the exact 320×320 image sent for analysis (blurred here if privacy view is on). Nothing is saved.</p>
+    </div>
+    <div class="card">
+      <h2>Doorway crossings</h2>
+      <ul class="log" id="log"><li><span class="t">–</span><span>No crossings yet</span></li></ul>
+    </div>
+    <div class="card privacy">
+      <b>Nothing leaves this computer.</b> Each frame is analysed in memory by an ExecuTorch person detector and dropped.
+      No video is recorded or stored. Only events ("someone crossed the doorway at 02:11") are kept.
+    </div>
+  </aside>
+</main>
+<div class="nw-sr-only" id="sr" aria-live="polite"></div>
+<video id="video" playsinline muted></video>
+<script src="/assets/nw.js"></script>
+<canvas id="grab" width="320" height="320"></canvas>
+<canvas id="full" width="960" height="960" style="display:none"></canvas>
+<script>
+const $ = (id) => document.getElementById(id);
+const V = 720, G = 320;
+const view = $('view').getContext('2d'), grab = $('grab').getContext('2d', { willReadFrequently: true });
+const full = $('full').getContext('2d'), FULL = 960;
+let running = false, tracks = [], door = null, drawing = null, sent = [], logRows = [];
+let stream = null, wanted = false, active = true;   // wanted = the user started the camera on this page
+// UI state (display only; none of it changes what is sent or detected)
+let camErr = null, serverDown = false, modelErr = null, pausedReason = '', lastPeople = 0, haveCams = false;
+let aim = false, testMode = false, hoverId = null, selId = null;
+const firstSeen = new Map(), lastSeen = new Map(), undoStack = [];
+const ICON = (n) => (window.NW ? NW.icon(n) : '');
+const SVG = {
+  pause: '<svg class="nw-ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M9 5v14M15 5v14"/></svg>',
+  camOff: '<svg class="nw-ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="m2 2 20 20"/><path d="M7 7H3v13h14v-4M10 4h6l2 3h3v10"/><circle cx="12" cy="13" r="3"/></svg>',
+  alert: '<svg class="nw-ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M12 3 2 21h20z"/><path d="M12 10v5"/><circle cx="12" cy="18" r=".6" fill="currentColor"/></svg>',
+  ring: '<svg class="nw-ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><circle cx="12" cy="12" r="8"/></svg>',
+  lock: '<svg class="nw-ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><rect x="5" y="11" width="14" height="10" rx="2"/><path d="M8 11V7a4 4 0 0 1 8 0v4"/></svg>',
+};
+const esc = (s) => String(s ?? '').replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+const privacyOn = () => $('privacy').checked && !aim;   // blur is lifted only while aiming in the setup guide
+const camLabel = () => { const o = $('cam').selectedOptions[0]; return o ? o.textContent : 'this camera'; };
+
+const load = () => { try { return JSON.parse(localStorage.getItem('nw-door-' + $('cam').value) || 'null'); } catch { return null; } };
+const save = () => { try { localStorage.setItem('nw-door-' + $('cam').value, JSON.stringify(door)); } catch {} };
+const post = (url, body) => fetch(url, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(body) });
+const setupDone = () => { try { return JSON.parse(localStorage.getItem('nw-setup-' + $('cam').value) || 'null'); } catch { return null; } };
+const markSetup = (tested) => { try { localStorage.setItem('nw-setup-' + $('cam').value, JSON.stringify({ at: new Date().toISOString(), tested })); } catch {} };
+
+async function pushDoor() {
+  save(); updateUndo(); wizUpdate();
+  await post('/api/camera/config', { camera: $('cam').value, line: door ? door.line : null, inside: door ? door.inside : 1 });
+  $('hint').textContent = door ? 'Doorway set. Walking OUT across the line (feet) raises the alert at night.' : 'No doorway line: anyone in view counts.';
+}
+
+// Fit the whole camera frame into a square (letterbox), so people at the edges aren't cut off.
+function letterbox(ctx, video, size) {
+  const vw = video.videoWidth, vh = video.videoHeight, s = size / Math.max(vw, vh);
+  const w = vw * s, h = vh * s;
+  ctx.fillStyle = '#111'; ctx.fillRect(0, 0, size, size);
+  ctx.drawImage(video, (size - w) / 2, (size - h) / 2, w, h);
+}
+
+// Square crop around the doorway (in letterboxed-frame fractions), so people near the door appear
+// larger to the 320x320 detector. Falls back to the whole frame without a line.
+function roiFor() {
+  if (!door || !$('zoom').checked) return null;
+  const [x1, y1, x2, y2] = door.line;
+  const cx = (x1 + x2) / 2, cy = (y1 + y2) / 2;
+  const size = Math.min(1, Math.max(0.55, Math.max(Math.abs(x2 - x1), Math.abs(y2 - y1)) * 1.9));
+  const x0 = Math.min(Math.max(0, cx - size / 2), 1 - size), y0 = Math.min(Math.max(0, cy - size / 2), 1 - size);
+  return [x0, y0, size];
+}
+
+// Auto levels for dark frames: stretch the 2nd-98th percentile of brightness to the full range and lift
+// shadows with a gamma. Returns the gain so the display can show the same boost.
+let lastGain = 1;
+function nightBoost(ctx, size) {
+  if (!$('boost').checked) { lastGain = 1; return; }
+  const img = ctx.getImageData(0, 0, size, size), d = img.data, hist = new Uint32Array(256);
+  for (let i = 0; i < d.length; i += 16) hist[(d[i] * 77 + d[i + 1] * 150 + d[i + 2] * 29) >> 8]++;
+  const total = d.length / 16; let acc = 0, lo = 0, hi = 255;
+  for (let v = 0; v < 256; v++) { acc += hist[v]; if (acc < total * 0.02) lo = v; if (acc < total * 0.98) hi = v; }
+  if (hi - lo > 200 && lo < 20) { lastGain = 1; return; }          // already well exposed
+  const span = Math.max(hi - lo, 64), gamma = hi < 110 ? 0.7 : 0.9, lut = new Uint8ClampedArray(256);
+  for (let v = 0; v < 256; v++) lut[v] = 255 * Math.pow(Math.min(Math.max((v - lo) / span, 0), 1), gamma);
+  for (let i = 0; i < d.length; i += 4) { d[i] = lut[d[i]]; d[i + 1] = lut[d[i + 1]]; d[i + 2] = lut[d[i + 2]]; }
+  ctx.putImageData(img, 0, 0);
+  lastGain = 255 / span;
+}
+
+function roundRect(x, y, w, h, r) {
+  view.beginPath(); view.moveTo(x + r, y); view.arcTo(x + w, y, x + w, y + h, r); view.arcTo(x + w, y + h, x, y + h, r);
+  view.arcTo(x, y + h, x, y, r); view.arcTo(x, y, x + w, y, r); view.closePath();
+}
+
+function drawDoor() {
+  const pts = door ? door.line : drawing;
+  if (!pts || pts.length < 4) {
+    if (drawing && drawing.length === 2) {
+      view.fillStyle = '#6aa8ff'; view.beginPath(); view.arc(drawing[0] * V, drawing[1] * V, 8, 0, 7); view.fill();
+      view.strokeStyle = 'rgba(106,168,255,.5)'; view.lineWidth = 3; view.beginPath(); view.arc(drawing[0] * V, drawing[1] * V, 15, 0, 7); view.stroke();
+    }
+    return;
+  }
+  const [x1, y1, x2, y2] = pts.map((v) => v * V);
+  if (door) { // shade the room side
+    const nx = -(y2 - y1), ny = x2 - x1, len = Math.hypot(nx, ny) || 1, k = door.inside * 90 / len;
+    view.fillStyle = 'rgba(45,212,191,.13)';
+    view.beginPath(); view.moveTo(x1, y1); view.lineTo(x2, y2); view.lineTo(x2 + nx * k, y2 + ny * k); view.lineTo(x1 + nx * k, y1 + ny * k); view.fill();
+    view.font = '800 13px system-ui'; view.textAlign = 'center';
+    const rx = (x1 + x2) / 2 + nx * k * 0.6, ry = (y1 + y2) / 2 + ny * k * 0.6;
+    const hx = (x1 + x2) / 2 - nx * k * 0.6, hy = (y1 + y2) / 2 - ny * k * 0.6;
+    view.lineWidth = 4; view.strokeStyle = 'rgba(0,0,0,.65)';
+    view.strokeText('ROOM', rx, ry); view.fillStyle = '#2dd4bf'; view.fillText('ROOM', rx, ry);
+    view.font = '700 12px system-ui'; view.strokeText('HALLWAY', hx, hy); view.fillStyle = '#ffc48a'; view.fillText('HALLWAY', hx, hy);
+    view.textAlign = 'start';
+  }
+  view.strokeStyle = '#6aa8ff'; view.lineWidth = 4; view.setLineDash([14, 10]);
+  view.beginPath(); view.moveTo(x1, y1); view.lineTo(x2, y2); view.stroke(); view.setLineDash([]);
+  // "DOORWAY" tag on the middle of the line (side labels sit off the line, so nothing overlaps).
+  view.font = '800 11px system-ui'; const dw = view.measureText('DOORWAY').width + 12, mx = (x1 + x2) / 2, my = (y1 + y2) / 2;
+  view.fillStyle = 'rgba(7,11,20,.85)'; roundRect(mx - dw / 2, my - 9, dw, 18, 6); view.fill();
+  view.fillStyle = '#9cc4ff'; view.textAlign = 'center'; view.fillText('DOORWAY', mx, my + 4); view.textAlign = 'start';
+}
+
+const sideWord = (s) => (s > 0 ? 'room' : s < 0 ? 'hall' : '');
+function drawTracks() {
+  const focus = hoverId ?? selId;
+  for (const t of tracks) {
+    const color = t.side > 0 ? '#2dd4bf' : t.side < 0 ? '#f5a524' : '#e8eef5';
+    const x = t.x1 * V, y = t.y1 * V, w = (t.x2 - t.x1) * V, h = (t.y2 - t.y1) * V;
+    if (t.trail.length > 1) {
+      view.strokeStyle = color; view.globalAlpha = .55; view.lineWidth = 3;
+      view.beginPath(); t.trail.forEach(([px, py], i) => (i ? view.lineTo(px * V, py * V) : view.moveTo(px * V, py * V))); view.stroke();
+      view.globalAlpha = 1;
+    }
+    if (t.id === focus) { view.lineWidth = 9; view.strokeStyle = 'rgba(138,180,255,.45)'; roundRect(x, y, w, h, 10); view.stroke(); }
+    view.lineWidth = 3; view.strokeStyle = color; view.setLineDash(t.confirmed ? [] : [6, 6]);
+    roundRect(x, y, w, h, 10); view.stroke(); view.setLineDash([]);
+    view.fillStyle = color; view.beginPath(); view.arc(x + w / 2, y + h, 6, 0, 7); view.fill();
+    const sw = sideWord(t.side);
+    const tag = `#${t.id} · ${Math.round(t.score * 100)}%` + (sw ? ` · ${sw}` : '');
+    view.font = '700 14px system-ui'; const tw = view.measureText(tag).width + 16;
+    roundRect(x, Math.max(0, y - 28), tw, 24, 8); view.fill();
+    view.fillStyle = '#071017'; view.fillText(tag, x + 8, Math.max(17, y - 11));
+  }
+}
+
+function render() {
+  const v = $('video');
+  if (v.readyState >= 2) {
+    const filters = [];
+    if (privacyOn()) filters.push('blur(16px) saturate(.4) brightness(.8)');
+    if (lastGain > 1) filters.push(`brightness(${Math.min(lastGain, 3).toFixed(2)}) contrast(1.15)`);  // show the night boost
+    view.filter = filters.join(' ') || 'none';
+    letterbox(view, v, V);
+    view.filter = 'none';
+  } else {
+    view.fillStyle = '#05080c'; view.fillRect(0, 0, V, V);
+  }
+  const roi = roiFor();
+  if (roi) {
+    view.strokeStyle = testMode ? 'rgba(138,180,255,.9)' : 'rgba(232,238,245,.35)'; view.lineWidth = testMode ? 3 : 2; view.setLineDash([4, 6]);
+    view.strokeRect(roi[0] * V, roi[1] * V, roi[2] * V, roi[2] * V); view.setLineDash([]);
+    view.fillStyle = testMode ? 'rgba(138,180,255,.95)' : 'rgba(232,238,245,.55)'; view.font = '600 11px system-ui';
+    view.fillText(testMode ? 'DETECTION ZONE · this square is what the detector sees' : 'DETECTION ZONE', roi[0] * V + 8, roi[1] * V + 16);
+  }
+  drawDoor(); drawTracks(); placeOverlays();
+  requestAnimationFrame(render);
+}
+
+// DOM overlays that follow the canvas: line-end handles and the per-person tooltip.
+function placeOverlays() {
+  const show = !!door && !drawing && active;
+  ['hA', 'hB'].forEach((id, k) => {
+    const h = $(id); h.hidden = !show;
+    if (show) { h.style.left = (door.line[k * 2] * 100) + '%'; h.style.top = (door.line[k * 2 + 1] * 100) + '%'; }
+  });
+  $('stage').classList.toggle('has-tracks', tracks.length > 0);
+  const id = hoverId ?? selId, t = tracks.find((x) => x.id === id), tip = $('tip');
+  if (!t) { tip.hidden = true; return; }
+  const W = $('stage').clientWidth;
+  tip.innerHTML = trackHTML(t);
+  tip.hidden = false;
+  const tw = 210, th = tip.offsetHeight || 110;
+  let left = t.x2 * W + 10; if (left + tw > W - 6) left = Math.max(6, t.x1 * W - tw - 10);
+  tip.style.left = left + 'px'; tip.style.top = Math.min(Math.max(6, t.y1 * W), W - th - 6) + 'px';
+}
+
+function trackFacts(t) {
+  const secs = Math.max(0, Math.round((performance.now() - (firstSeen.get(t.id) ?? performance.now())) / 1000));
+  const side = t.side > 0 ? 'Room side' : t.side < 0 ? 'Hallway side' : (door ? 'On / near the line' : 'No doorway line');
+  return { secs, side, conf: Math.round(t.score * 100), state: t.confirmed ? 'Followed' : 'Checking (new)' };
+}
+function trackHTML(t) {
+  const f = trackFacts(t);
+  return `<b>Person #${t.id}</b><dl><dt>Confidence</dt><dd>${f.conf}%</dd><dt>Side</dt><dd>${f.side}</dd>`
+    + `<dt>In view</dt><dd>${f.secs} s</dd><dt>Status</dt><dd>${f.state}</dd></dl>`;
+}
+
+function renderPeople() {
+  const ul = $('plist');
+  if (!tracks.length) {
+    const msg = !running ? 'Camera not started.' : !active ? 'Not watching right now.' : 'No one in view.';
+    if (ul.dataset.k !== msg) { ul.innerHTML = `<li class="empty-p">${msg}</li>`; ul.dataset.k = msg; }
+    return;
+  }
+  const key = tracks.map((t) => t.id).join(',');
+  if (ul.dataset.k !== key) {
+    ul.innerHTML = tracks.map((t) => `<li><button type="button" data-id="${t.id}" aria-pressed="false"><span class="sw"></span><span class="id"></span><span class="side-t"></span><span class="meta"></span></button></li>`).join('');
+    ul.dataset.k = key;
+  }
+  for (const t of tracks) {
+    const b = ul.querySelector(`[data-id="${t.id}"]`); if (!b) continue;
+    const f = trackFacts(t);
+    b.querySelector('.sw').style.background = t.side > 0 ? '#2dd4bf' : t.side < 0 ? '#f5a524' : '#e8eef5';
+    b.querySelector('.id').textContent = `Person #${t.id}`;
+    b.querySelector('.side-t').textContent = f.side;
+    b.querySelector('.meta').textContent = `${f.conf}% confident · in view ${f.secs} s · ${f.state.toLowerCase()}`;
+    b.setAttribute('aria-pressed', String(selId === t.id));
+  }
+}
+$('plist').addEventListener('click', (e) => { const b = e.target.closest('button[data-id]'); if (!b) return; const id = +b.dataset.id; selId = selId === id ? null : id; renderPeople(); });
+$('plist').addEventListener('focusin', (e) => { const b = e.target.closest('button[data-id]'); if (b) hoverId = +b.dataset.id; });
+$('plist').addEventListener('focusout', () => { hoverId = null; });
+
+function flash(dir, id) {
+  const b = $('banner');
+  b.innerHTML = (dir === 'out' ? ICON('walk') : ICON('check')) + esc(dir === 'out' ? `Person #${id} LEFT the room` : `Person #${id} went back in`);
+  b.className = 'banner show' + (dir === 'in' ? ' in' : '');
+  clearTimeout(flash.t); flash.t = setTimeout(() => { b.className = 'banner' + (dir === 'in' ? ' in' : ''); }, 3000);
+  logRows.unshift(`<li><span class="t">${$('clock').textContent}</span><span class="${dir}">${dir === 'out' ? '▼' : '▲'} #${id} ${dir === 'out' ? 'left the room' : 'went back in'}</span></li>`);
+  $('log').innerHTML = logRows.slice(0, 30).join('');
+}
+
+// ---------------------------------------------------------------- 60-second timeline
+const TL = Array.from({ length: 60 }, () => ({ p: -1, out: 0, in: 0 }));
+let tlCur = { p: -1, out: 0, in: 0 };
+function tlTick() {
+  TL.push(tlCur); TL.shift(); tlCur = { p: -1, out: 0, in: 0 };
+  drawTimeline();
+}
+function drawTimeline() {
+  const c = $('tl'), dpr = window.devicePixelRatio || 1, W = c.clientWidth, H = c.clientHeight;
+  if (!W) return;
+  if (c.width !== Math.round(W * dpr)) { c.width = Math.round(W * dpr); c.height = Math.round(H * dpr); }
+  const g = c.getContext('2d'); g.setTransform(dpr, 0, 0, dpr, 0, 0); g.clearRect(0, 0, W, H);
+  const cs = getComputedStyle(document.documentElement), col = (n) => cs.getPropertyValue(n).trim();
+  const bw = W / 60, top = 14, base = H - 2;
+  g.fillStyle = col('--nw-line'); g.fillRect(0, base, W, 1);
+  TL.forEach((s, i) => {
+    const x = i * bw;
+    if (s.p < 0) {
+      g.fillStyle = '#2a3446';
+      for (let k = 0; k < bw; k += 3) g.fillRect(x + k, base - 6, 1, 6);
+    } else if (s.p === 0) {
+      g.fillStyle = col('--nw-ok'); g.fillRect(x, base - 3, Math.max(1, bw - 1), 3);
+    } else {
+      const h = (Math.min(s.p, 3) / 3) * (base - top);
+      g.fillStyle = col('--nw-l2'); g.fillRect(x + 0.5, base - h, Math.max(1, bw - 1.5), h);
+    }
+    const mark = (glyph, color, y) => { g.fillStyle = color; g.font = '800 11px system-ui'; g.textAlign = 'center'; g.fillText(glyph, x + bw / 2, y); };
+    if (s.out) mark('▼', col('--nw-l3'), 10);
+    if (s.in) mark('▲', col('--nw-ok'), s.out ? H / 2 : 10);
+  });
+  g.textAlign = 'start';
+  // Text summary (also the canvas' accessible name)
+  const watched = TL.filter((s) => s.p >= 0).length, seen = TL.filter((s) => s.p > 0).length;
+  const peak = Math.max(0, ...TL.map((s) => s.p)), outs = TL.reduce((a, s) => a + s.out, 0), ins = TL.reduce((a, s) => a + s.in, 0);
+  let sum = !watched ? 'Not watching' : seen ? `Someone in view ${seen} s · peak ${peak}` : 'Clear the whole time';
+  if (outs || ins) sum += ` · ${outs} out, ${ins} in`;
+  $('tl-sum').textContent = sum;
+}
+setInterval(tlTick, 1000);
+window.addEventListener('resize', drawTimeline);
+
+// ---------------------------------------------------------------- state chip, overlays, error strip
+function setChip() {
+  let k, ico, txt;
+  if (serverDown) { k = 'err'; ico = ICON('wifiOff'); txt = 'Server offline'; }
+  else if (!active) { const off = pausedReason === 'turned off'; k = off ? 'off' : 'paused'; ico = off ? SVG.camOff : SVG.pause; txt = off ? 'Off' : 'Paused · night only'; if (!off && !/night/.test(pausedReason)) txt = 'Paused'; }
+  else if (camErr) { k = 'err'; ico = SVG.camOff; txt = 'No camera'; }
+  else if (!running) { k = 'off'; ico = SVG.camOff; txt = 'Not started'; }
+  else if (modelErr) { k = 'err'; ico = SVG.alert; txt = 'Detector not loaded'; }
+  else if (lastPeople > 0) { k = 'det'; ico = '<span class="pulse" aria-hidden="true"></span>' + ICON('user'); txt = `Detecting · ${lastPeople} ${lastPeople === 1 ? 'person' : 'people'}`; }
+  else { k = 'clear'; ico = ICON('check'); txt = 'Clear · watching'; }
+  const el = $('state'), key = k + txt;
+  if (el.dataset.k === key) return;
+  el.dataset.k = key; el.className = 'state k-' + k;
+  el.innerHTML = ico + `<span>${esc(txt)}</span>`;
+}
+
+function camErrorInfo(e) {
+  const n = (e && e.name) || '';
+  if (n === 'Insecure') return { title: 'Camera needs localhost or https', text: 'Browsers only allow the webcam on a secure address. Open this page on the laptop itself:', more: '<p><code>http://localhost:8000/camera/</code></p>' };
+  if (/NotAllowed|Security|PermissionDenied/.test(n)) return { title: 'Camera permission blocked', text: 'The browser was told not to use the webcam for this page.',
+    more: '<ol><li>Click the camera / lock icon at the left of the address bar.</li><li>Set <b>Camera</b> to <b>Allow</b>.</li><li>Press <b>Try again</b>.</li></ol><p class="small">On Windows also check Settings → Privacy &amp; security → Camera → let desktop apps / your browser use the camera.</p>' };
+  if (/NotReadable|TrackStart|Abort/.test(n)) return { title: 'Camera is in use by another app', text: 'Windows lets one app use the webcam at a time.',
+    more: '<ol><li>Close Teams, Zoom, the Camera app, or another browser tab using the webcam.</li><li>Press <b>Try again</b>.</li></ol>' };
+  if (/NotFound|DevicesNotFound|Overconstrained/.test(n)) return { title: 'No camera found', text: 'No webcam is connected or it is disabled.', more: '<ol><li>Plug in the USB webcam (or enable the built-in one).</li><li>Press <b>Try again</b>.</li></ol>' };
+  return { title: "Camera didn't start", text: (e && e.message) || 'Unknown error.', more: '' };
+}
+
+function setOverlay() {
+  const o = $('off');
+  let k = null, ico = '', title = '', why = '', more = '', acts = '';
+  if (!active) {
+    const off = pausedReason === 'turned off';
+    k = off ? 'off' : 'paused'; ico = off ? SVG.camOff : SVG.pause;
+    title = off ? 'Camera off' : 'Camera paused';
+    why = (off ? 'Turned off. ' : `Paused: ${pausedReason}. `) + 'The webcam is released and nothing is analysed.';
+    acts = off ? '<button class="nw-btn nw-btn--primary" data-act="on">Turn camera on</button>'
+               : '<button class="nw-btn nw-btn--primary" data-act="always">Watch always for now</button>';
+  } else if (camErr) {
+    const i = camErrorInfo(camErr); k = 'err'; ico = SVG.camOff; title = i.title; why = i.text; more = i.more;
+    acts = '<button class="nw-btn nw-btn--primary" data-act="start">Try again</button>';
+  } else if (!running) {
+    k = 'start'; ico = ICON('camera'); title = 'Camera not started';
+    why = 'Point this laptop’s webcam at the doorway. Frames are analysed on this laptop and dropped; nothing is recorded.';
+    acts = '<button class="nw-btn nw-btn--primary" data-act="start">Start camera</button><button class="nw-btn" data-act="guide">Setup guide</button>';
+  }
+  o.hidden = !k;
+  if (!k) return;
+  const key = [k, title, why].join('|');
+  if (o.dataset.k === key) return;
+  o.dataset.k = key; o.className = 'off k-' + k;
+  $('off-ico').innerHTML = ico;
+  $('off-title').textContent = title; $('off-why').textContent = why; $('off-more').innerHTML = more; $('off-acts').innerHTML = acts;
+}
+$('off').addEventListener('click', (e) => {
+  const a = e.target.closest('[data-act]'); if (!a) return;
+  const act = a.dataset.act;
+  if (act === 'start') startCamera();
+  else if (act === 'guide') openWiz(0);
+  else if (act === 'on') setPower({ enabled: true });
+  else if (act === 'always') setPower({ enabled: true, schedule: 'always' });
+});
+const setPower = (cfg) => post('/api/camera/config', { camera: $('cam').value, ...cfg, by: 'camera page' }).then(poll);
+
+function setStrip() {
+  const s = $('strip');
+  let html = '';
+  if (serverDown) html = `${ICON('wifiOff')}<div><b>Can’t reach the NightWatch server</b>Is <code>python nightwatch/server.py …</code> still running in the terminal? Retrying every second; nothing is lost.</div>`;
+  else if (modelErr) {
+    const pair = /pair/i.test(modelErr);
+    html = pair ? `${SVG.lock}<div><b>This device isn’t paired</b>Enter the PIN from the nurse-station laptop, or open the camera page on the laptop itself.</div>`
+      : `${SVG.alert}<div><b>Person detector not loaded</b>The server says: “${esc(modelErr)}”. Example: <code>--camera-model models/person_ssdlite_xnnpack.pte</code></div>`;
+  }
+  if (s.dataset.k !== html) { s.dataset.k = html; s.innerHTML = html; }
+  s.hidden = !html || !active;
+}
+function refreshUI() { setChip(); setOverlay(); setStrip(); renderPeople(); wizUpdate(); }
+
+async function loop() {
+  const v = $('video');
+  while (running) {
+    if (!active) { await new Promise((ok) => setTimeout(ok, 300)); continue; }
+    const roi = roiFor();
+    if (roi) {
+      // Crop the doorway area from the letterboxed full frame at the detector's resolution.
+      letterbox(full, v, FULL);
+      grab.drawImage($('full'), roi[0] * FULL, roi[1] * FULL, roi[2] * FULL, roi[2] * FULL, 0, 0, G, G);
+    } else {
+      letterbox(grab, v, G);
+    }
+    nightBoost(grab, G);
+    if (testMode) showInset(roi);
+    $('area').textContent = roi ? `Doorway ×${(1 / roi[2]).toFixed(1)}` : 'Full';
+    $('gain').textContent = lastGain > 1 ? `×${lastGain.toFixed(1)}` : 'Off';
+    const jpeg = $('grab').toDataURL('image/jpeg', 0.8);
+    try {
+      const r = await (await post('/api/frame', { camera: $('cam').value, jpeg, roi })).json();
+      serverDown = false;
+      if (r.error) { modelErr = r.error; $('status').textContent = r.error; $('dot').className = 'dot'; refreshUI(); await new Promise((ok) => setTimeout(ok, 1000)); continue; }
+      modelErr = null;
+      if (r.paused) { applyActive(false, r.reason); continue; }
+      tracks = r.tracks;
+      noteTracks();
+      r.crossings.forEach((c) => { flash(c.direction, c.track); tlCur[c.direction === 'out' ? 'out' : 'in']++; wizCrossing(c); });
+      $('model').textContent = r.model; $('device').textContent = r.device;
+      $('ms').textContent = `${r.ms} ms`; $('people').textContent = r.people;
+      $('status').textContent = r.people ? `${r.people} ${r.people === 1 ? 'person' : 'people'} in view` : 'Clear';
+      $('dot').className = 'dot ' + (r.people ? 'hit' : 'on');
+      lastPeople = r.people; tlCur.p = Math.max(tlCur.p, r.people);
+      const now = performance.now(); sent = sent.filter((t) => now - t < 2000); sent.push(now);
+      $('fps').textContent = (sent.length / 2).toFixed(1);
+    } catch {
+      $('status').textContent = 'Server not reachable'; $('dot').className = 'dot';
+      serverDown = true; tracks = []; refreshUI(); await new Promise((ok) => setTimeout(ok, 1000));
+    }
+    refreshUI();
+    await new Promise((ok) => setTimeout(ok, 80));
+  }
+}
+
+// Seconds-in-view per track id (client side only; ids come from the server's tracker).
+function noteTracks() {
+  const now = performance.now();
+  for (const t of tracks) { if (!firstSeen.has(t.id)) firstSeen.set(t.id, now); lastSeen.set(t.id, now); }
+  for (const [id, at] of lastSeen) if (now - at > 3000) { lastSeen.delete(id); firstSeen.delete(id); if (selId === id) selId = null; }
+}
+
+// Test mode: copy the exact 320x320 frame that is about to be sent (after zoom + night boost).
+function showInset(roi) {
+  const c = $('insetc').getContext('2d');
+  c.filter = privacyOn() ? 'blur(7px) saturate(.5)' : 'none';
+  c.drawImage($('grab'), 0, 0); c.filter = 'none';
+  const zoom = roi ? `zoom <b>×${(1 / roi[2]).toFixed(1)}</b>` : '<b>whole frame</b>';
+  const boost = lastGain > 1 ? `boost <b>×${lastGain.toFixed(1)}</b>` : 'no boost';
+  const cap = `<b>Detector input</b> 320×320<br>${zoom} · ${boost}` + (privacyOn() ? '<br>Blurred here; the detector gets it sharp.' : '') + '<br>Not saved.';
+  if ($('inset-cap').innerHTML !== cap) $('inset-cap').innerHTML = cap;
+}
+$('testmode').onclick = () => {
+  testMode = !testMode;
+  $('testmode').setAttribute('aria-pressed', String(testMode));
+  $('testmode').textContent = testMode ? 'Hide detector view' : 'Show what the detector sees';
+  $('inset').hidden = !testMode;
+  if (testMode && !running) $('inset-cap').innerHTML = '<b>Start the camera</b> to see the frame sent to the detector.';
+};
+
+// ---------------------------------------------------------------- doorway line: draw, undo, drag, nudge
+const clamp01 = (v) => Math.min(1, Math.max(0, v));
+function remember() { undoStack.push(door ? { line: [...door.line], inside: door.inside } : null); if (undoStack.length > 30) undoStack.shift(); updateUndo(); }
+function updateUndo() { $('undo').disabled = !(drawing ? true : undoStack.length); }
+function setDrawHint() {
+  const h = $('drawhint');
+  h.hidden = !drawing;
+  h.classList.toggle('second', !!drawing && drawing.length === 2);
+}
+function startDrawing() {
+  if (drawing) return;
+  remember();
+  drawing = []; door = null; $('stage').classList.add('drawing'); $('hint').textContent = 'Click one end of the doorway, on the floor.';
+  setDrawHint(); updateUndo(); wizUpdate();
+}
+function cancelDrawing() {
+  if (!drawing) return;
+  drawing = null; $('stage').classList.remove('drawing'); setDrawHint();
+  door = undoStack.length ? undoStack.pop() : null; pushDoor();
+}
+function undo() {
+  if (drawing) {
+    if (drawing.length) { drawing = []; setDrawHint(); $('hint').textContent = 'Click one end of the doorway, on the floor.'; updateUndo(); wizUpdate(); }
+    else cancelDrawing();
+    return;
+  }
+  if (!undoStack.length) return;
+  door = undoStack.pop(); pushDoor();
+  say(door ? 'Doorway line restored.' : 'Doorway line removed.');
+}
+const say = (m) => { $('sr').textContent = ''; setTimeout(() => { $('sr').textContent = m; }, 30); };
+
+$('view').addEventListener('click', (e) => {
+  if (!drawing) return;
+  const r = $('view').getBoundingClientRect();
+  drawing.push((e.clientX - r.left) / r.width, (e.clientY - r.top) / r.height);
+  if (drawing.length === 4) {
+    door = { line: drawing, inside: 1 }; drawing = null; $('stage').classList.remove('drawing'); setDrawHint(); pushDoor();
+    say('Doorway line set. Drag ends A and B to fine-tune.');
+  } else {
+    $('hint').textContent = 'Now click the other end of the doorway.'; setDrawHint(); updateUndo(); wizUpdate();
+  }
+});
+$('draw').onclick = startDrawing;
+$('flip').onclick = () => { if (door) { remember(); door.inside *= -1; pushDoor(); say('Room side flipped.'); } };
+$('clear').onclick = () => { if (door || drawing) remember(); door = null; drawing = null; $('stage').classList.remove('drawing'); setDrawHint(); pushDoor(); };
+$('undo').onclick = undo;
+$('cam').onchange = () => { door = load(); undoStack.length = 0; pushDoor(); wizUpdate(); };
+
+// Hover / tap a person for details.
+function trackAt(e) {
+  const r = $('view').getBoundingClientRect(), x = (e.clientX - r.left) / r.width, y = (e.clientY - r.top) / r.height, p = 0.012;
+  const hits = tracks.filter((t) => x >= t.x1 - p && x <= t.x2 + p && y >= t.y1 - p - 0.04 && y <= t.y2 + p);
+  hits.sort((a, b) => (a.x2 - a.x1) * (a.y2 - a.y1) - (b.x2 - b.x1) * (b.y2 - b.y1));
+  return hits[0] || null;
+}
+$('view').addEventListener('pointermove', (e) => { if (e.pointerType === 'mouse') { const t = trackAt(e); hoverId = t ? t.id : null; } });
+$('view').addEventListener('pointerleave', () => { hoverId = null; });
+$('view').addEventListener('pointerdown', (e) => { if (drawing) return; const t = trackAt(e); selId = t ? (selId === t.id ? null : t.id) : null; renderPeople(); });
+
+// Drag either end; arrow keys nudge the focused end. The config is re-sent when the change settles.
+let drag = null, nudgeT = null, nudging = false;
+['hA', 'hB'].forEach((id, k) => {
+  const h = $(id), name = k ? 'B' : 'A';
+  const where = () => `Doorway end ${name} at ${Math.round(door.line[k * 2] * 100)}% across, ${Math.round(door.line[k * 2 + 1] * 100)}% down.`;
+  h.addEventListener('pointerdown', (e) => {
+    if (!door) return;
+    e.preventDefault(); h.setPointerCapture(e.pointerId); remember(); drag = { k, id: e.pointerId }; h.classList.add('dragging'); h.focus({ preventScroll: true });
+  });
+  h.addEventListener('pointermove', (e) => {
+    if (!drag || drag.k !== k || !door) return;
+    const r = $('view').getBoundingClientRect();
+    door.line[k * 2] = clamp01((e.clientX - r.left) / r.width); door.line[k * 2 + 1] = clamp01((e.clientY - r.top) / r.height);
+  });
+  const end = () => { if (!drag || drag.k !== k) return; drag = null; h.classList.remove('dragging'); pushDoor(); say(where()); };
+  h.addEventListener('pointerup', end); h.addEventListener('pointercancel', end); h.addEventListener('lostpointercapture', end);
+  h.addEventListener('keydown', (e) => {
+    const d = { ArrowLeft: [-1, 0], ArrowRight: [1, 0], ArrowUp: [0, -1], ArrowDown: [0, 1] }[e.key];
+    if (!d || !door) return;
+    e.preventDefault();
+    if (!nudging) { remember(); nudging = true; }
+    const step = e.shiftKey ? 0.02 : 0.004;
+    door.line[k * 2] = clamp01(door.line[k * 2] + d[0] * step); door.line[k * 2 + 1] = clamp01(door.line[k * 2 + 1] + d[1] * step);
+    clearTimeout(nudgeT); nudgeT = setTimeout(() => { nudging = false; pushDoor(); say(where()); }, 350);
+  });
+  h.addEventListener('focus', () => h.setAttribute('aria-label', door ? where() + ' Use arrow keys to move it.' : `Doorway end ${name}`));
+});
+
+let fileURL = null;   // a recorded video chosen with "Use a video file": played on loop and analysed live
+async function openStream() {
+  if (fileURL) {
+    const v = $('video');
+    if (v.src !== fileURL) { v.srcObject = null; v.src = fileURL; v.loop = true; v.muted = true; }
+    await v.play(); camErr = null; refreshUI();
+    return true;
+  }
+  if (stream) return true;
+  try {
+    if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) throw Object.assign(new Error('getUserMedia unavailable'), { name: 'Insecure' });
+    stream = await navigator.mediaDevices.getUserMedia({ video: { width: { ideal: 1280 }, height: { ideal: 720 } }, audio: false });
+    $('video').srcObject = stream; await $('video').play();
+    camErr = null; refreshUI();
+    return true;
+  } catch (e) {
+    if (stream) { stream.getTracks().forEach((t) => t.stop()); stream = null; }
+    camErr = e; $('status').textContent = 'Camera unavailable: ' + e.message; refreshUI(); return false;
+  }
+}
+
+function closeStream() {
+  // Release the webcam completely (its light goes off): an "off" camera isn't even capturing.
+  if (stream) stream.getTracks().forEach((t) => t.stop());
+  stream = null; $('video').srcObject = null;
+  if (fileURL) $('video').pause();   // a recorded video just pauses while the camera is off
+}
+
+async function applyActive(isActive, reason) {
+  if (!isActive) pausedReason = reason || '';
+  if (isActive === active) return;
+  active = isActive; tracks = [];
+  $('off').hidden = active;
+  if (!active) {
+    $('off-why').textContent = (reason === 'turned off' ? 'Turned off. ' : `Paused: ${reason}. `) + 'The webcam is released and nothing is analysed.';
+    closeStream();
+    $('status').textContent = 'Camera off'; $('dot').className = 'dot'; $('people').textContent = '0';
+    $('fps').textContent = '–'; $('ms').textContent = '–'; sent = []; lastPeople = 0;
+  } else if (wanted) {
+    await openStream();
+  }
+  refreshUI();
+}
+
+$('power').onchange = () => post('/api/camera/config', { camera: $('cam').value, enabled: $('power').checked, by: 'camera page' }).then(poll);
+$('schedule').onchange = () => post('/api/camera/config', { camera: $('cam').value, schedule: $('schedule').value, by: 'camera page' }).then(poll);
+
+async function startCamera() {
+  if (running) return true;
+  try {
+    wanted = true;
+    if (!active) { refreshUI(); return false; }   // camera is off/paused: the overlay offers to turn it on
+    if (!(await openStream())) return false;
+    running = true; $('start').textContent = 'Camera on'; $('start').disabled = true; loop();
+    if (!door) $('hint').textContent = 'Click "Draw doorway" and mark the door on the floor for precise detection.';
+    refreshUI();
+    return true;
+  } catch (e) { $('status').textContent = 'Camera unavailable: ' + e.message; camErr = e; refreshUI(); return false; }
+}
+$('start').onclick = startCamera;
+
+// Recorded footage instead of the webcam: the same detector, tracker and doorway logic run on it live.
+$('use-file').onclick = () => $('file-input').click();
+$('file-input').onchange = async () => {
+  const f = $('file-input').files[0];
+  if (!f) return;
+  if (stream) { stream.getTracks().forEach((t) => t.stop()); stream = null; }
+  if (fileURL) URL.revokeObjectURL(fileURL);
+  fileURL = URL.createObjectURL(f);
+  $('file-badge').hidden = false;
+  $('video').srcObject = null; $('video').removeAttribute('src');
+  $('use-file').textContent = 'Change video';
+  if (running) { await openStream(); return; }
+  await startCamera();
+};
+
+async function poll() {
+  try {
+    const s = await (await fetch('/api/state')).json();
+    serverDown = false;
+    $('clock').textContent = s.clock.slice(0, 5);
+    $('mode').innerHTML = window.NW ? NW.icon(s.night ? 'moon' : 'sun') + (s.night ? ' NIGHT' : ' DAY') : (s.night ? 'NIGHT' : 'DAY');
+    $('mode').className = 'nw-mode ' + (s.night ? 'is-night' : 'is-day');
+    window.nwNight = !!s.night;
+    const me = (s.cameras || []).find((c) => c.id === $('cam').value);
+    if (me) {
+      $('power').checked = me.enabled;
+      $('schedule').value = me.schedule;
+      $('power-label').textContent = me.enabled ? (me.active ? 'Camera ON' : 'Camera ON · paused') : 'Camera OFF';
+      $('power-sub').textContent = me.active ? 'Analysing frames on this laptop' : `Not watching: ${me.paused_reason}`;
+      applyActive(me.active, me.paused_reason);
+    }
+    if (!$('cam').options.length) {
+      $('cam').innerHTML = (s.cameras || []).map((c) => `<option value="${c.id}">${c.label.replace(/</g, '&lt;')}</option>`).join('');
+      door = load(); if (door) pushDoor();
+      if (!haveCams && $('cam').options.length) { haveCams = true; if (!setupDone()) openWiz(0); else markGuide(); }
+    }
+  } catch { if (!running) serverDown = true; }
+  refreshUI();
+}
+
+// ---------------------------------------------------------------- setup guide
+const wiz = { open: false, step: 0, shown: -1, out: null, in: null, t0: 0, seenAny: false };
+const okBox = (cls, ico, html) => `<div class="wiz-state ${cls}">${ico}<div>${html}</div></div>`;
+const STEPS = [
+  { label: 'Camera', title: 'Start the camera',
+    html: () => `<p>Press <b>Start camera</b>. The browser asks <b>“Allow this site to use your camera?”</b>: choose <b>Allow</b>.
+      The video never leaves this laptop: each frame is analysed in memory and dropped.</p>
+      <label class="f">Which doorway is this camera watching?<select id="w-cam"></select></label>
+      <div id="w-st"></div>
+      <div class="row" id="w-acts"></div>`,
+    update() {
+      const sel = $('w-cam');
+      if (sel.options.length !== $('cam').options.length) sel.innerHTML = $('cam').innerHTML;
+      sel.value = $('cam').value;
+      let st, acts = '';
+      if (serverDown) st = okBox('err', ICON('wifiOff'), '<b>Server not reachable.</b> Start <code>nightwatch/server.py</code>, then reload this page.');
+      else if (!active) {
+        st = okBox('warn', SVG.pause, `<b>This camera is ${pausedReason === 'turned off' ? 'turned off' : 'paused (' + esc(pausedReason) + ')'}.</b> Turn it on to set it up.`);
+        acts = '<button class="nw-btn nw-btn--primary" id="w-on">Turn on · watch always</button>';
+      } else if (camErr) { const i = camErrorInfo(camErr); st = okBox('err', SVG.camOff, `<b>${esc(i.title)}.</b> ${esc(i.text)} See the steps on the camera view.`); acts = '<button class="nw-btn nw-btn--primary" id="w-start">Try again</button>'; }
+      else if (running && $('video').readyState >= 2) st = okBox('ok', ICON('check'), '<b>Camera running.</b> You should see the live view on the left.');
+      else if (running) st = okBox('', SVG.ring, 'Starting the camera…');
+      else { st = okBox('', ICON('camera'), 'Camera not started yet.'); acts = '<button class="nw-btn nw-btn--primary" id="w-start">Start camera</button>'; }
+      setHTML('w-st', st); setHTML('w-acts', acts);
+    },
+    ok: () => running && active && !camErr && !serverDown },
+  { label: 'Aim', title: 'Point it at the doorway',
+    enter() { aim = true; $('aimbadge').hidden = false; },
+    leave() { aim = false; $('aimbadge').hidden = true; },
+    html: () => `<div class="wiz-note">${ICON('eye')}<div><b>Blur is off for this step only</b> so you can aim. Nothing is recorded; blur comes back as soon as you continue.</div></div>
+      <ul class="chk"><li>The whole doorway is in view, <b>including the floor</b> at the threshold. Feet are what count.</li>
+      <li>Camera steady, above waist height, looking slightly down at the door.</li>
+      <li>No bright window or lamp shining straight into the lens.</li></ul>
+      <div id="w-live"></div>`,
+    update() {
+      const light = lastGain <= 1 ? okBox('ok', ICON('sun'), '<b>Lighting: good.</b>')
+        : lastGain < 2 ? okBox('ok', ICON('bulb'), `<b>Lighting: dim.</b> Night boost is brightening it (×${lastGain.toFixed(1)}).`)
+        : okBox('warn', ICON('moon'), `<b>Lighting: dark.</b> Night boost ×${lastGain.toFixed(1)}. A small night light helps if detection is patchy.`);
+      const who = lastPeople ? okBox('ok', ICON('user'), `<b>${lastPeople} ${lastPeople === 1 ? 'person' : 'people'} detected</b>: the detector can see this spot.`)
+        : okBox('', ICON('user'), 'No one detected right now. Step into view to check.');
+      setHTML('w-live', light + who);
+    },
+    ok: () => true },
+  { label: 'Line', title: 'Draw the doorway line on the floor',
+    enter() { if (!door) startDrawing(); },
+    leave() { if (drawing) cancelDrawing(); },
+    html: () => `<p>Click (or tap) <b>one side of the door frame where it meets the floor</b>, then the other side.
+      Only <b>feet crossing this line</b> count, so people walking past along the hallway don’t.</p>
+      <div id="w-st"></div>
+      <div class="row" style="margin-bottom:8px"><button class="nw-btn" id="w-undo">Undo</button><button class="nw-btn" id="w-redraw">Redraw line</button></div>
+      <p class="small">Fine-tune: drag the round ends <b>A</b> and <b>B</b>, or Tab to an end and use the arrow keys (Shift = bigger steps).</p>`,
+    update() {
+      const st = drawing ? okBox('', ICON('pin'), drawing.length ? '<b>Point 2 of 2:</b> now click the other side of the door.' : '<b>Point 1 of 2:</b> click one side of the door, on the floor.')
+        : door ? okBox('ok', ICON('check'), '<b>Doorway line set.</b> Drag the ends to adjust, or continue.') : okBox('warn', ICON('pin'), 'No line yet. Press <b>Redraw line</b>.');
+      setHTML('w-st', st);
+      $('w-undo').disabled = $('undo').disabled;
+    },
+    ok: () => !!door && !drawing },
+  { label: 'Room side', title: 'Which side is the room?',
+    html: () => `<p>The tinted side marked <b>ROOM</b> must be the resident’s room. The other side is the <b>HALLWAY</b>.
+      Feet going from ROOM to HALLWAY count as <b>leaving</b>.</p>
+      <div id="w-st"></div>
+      <div class="row"><button class="nw-btn" id="w-flip">Flip room side</button></div>`,
+    update() { setHTML('w-st', door ? okBox('', ICON('door'), 'Look at the camera view: is <b>ROOM</b> on the resident’s side of the line? If not, press <b>Flip room side</b>.') : okBox('warn', ICON('pin'), 'Draw the doorway line first (go Back).')); },
+    next: 'Yes, that’s the room',
+    ok: () => !!door },
+  { label: 'Test walk', title: 'Test walk',
+    enter() { wiz.out = null; wiz.in = null; wiz.t0 = performance.now(); wiz.seenAny = false; },
+    html: () => `<p>Ask someone to <b>walk out of the room across the line</b>, pause in the hallway, then <b>walk back in</b>.</p>
+      <ul class="walks" aria-live="polite"><li id="w-out"></li><li id="w-in"></li></ul>
+      <div id="w-live"></div>
+      <p class="small" id="w-night"></p>
+      <div class="row"><button class="nw-btn" id="w-reset">Reset test</button></div>`,
+    update() {
+      const row = (r, lbl) => (r ? `${ICON('check')}<div><b>${lbl} ✓</b><span>Seen at ${esc(r.time)} (person #${r.track})</span></div>` : `${SVG.ring}<div><b>${lbl}</b><span>Waiting…</span></div>`);
+      const o = $('w-out'), i = $('w-in');
+      o.className = wiz.out ? 'seen' : ''; setHTML('w-out', row(wiz.out, 'Walked out'));
+      i.className = wiz.in ? 'seen' : ''; setHTML('w-in', row(wiz.in, 'Came back in'));
+      if (lastPeople) wiz.seenAny = true;
+      const waited = (performance.now() - wiz.t0) / 1000;
+      let help = lastPeople ? okBox('ok', ICON('user'), `<b>Seeing ${lastPeople} ${lastPeople === 1 ? 'person' : 'people'}.</b> Watch for the dot at their feet crossing the line.`)
+        : okBox('', ICON('user'), 'No one in view right now.');
+      if (!wiz.out && !wiz.in && waited > 15) {
+        help += !wiz.seenAny ? okBox('warn', ICON('bulb'), '<b>Not seeing anyone?</b> Walk fully into view, check the lighting (Back to Aim), and keep “Zoom on the doorway” on.')
+          : okBox('warn', ICON('bulb'), '<b>Seen, but no crossing yet?</b> The dot at the feet must pass the line, and the line should span the whole doorway. Walk a step or two past it.');
+      }
+      setHTML('w-live', help);
+      setHTML('w-night', window.nwNight ? '<b>Night mode is on:</b> the walk-out raises a real alert on the nurse station and staff phone. That’s the demo working; resolve it there afterwards.'
+        : 'Daytime: crossings are logged here but no night alert is raised.');
+    },
+    next: 'Finish', skip: true,
+    ok: () => !!(wiz.out && wiz.in) },
+  { label: 'Done', title: 'Camera ready',
+    enter() { markSetup(!!(wiz.out && wiz.in)); markGuide(); },
+    html: () => `<div id="w-st"></div><ul class="chk" id="w-sum"></ul>
+      <p class="small">You can reopen this guide any time from <b>Setup guide</b> at the top.</p>`,
+    update() {
+      setHTML('w-st', okBox('ok', ICON('check'), `<b>${esc(camLabel())} is set up.</b>`));
+      setHTML('w-sum', [
+        door ? 'Doorway line drawn on the floor.' : 'No doorway line (anyone in view counts).',
+        wiz.out && wiz.in ? 'Test walk: walked out and came back in, both seen.' : 'Test walk skipped. Try one before the demo.',
+        $('privacy').checked ? 'Privacy view (blur) is on.' : 'Privacy view is off: turn it on before residents are in view.',
+        $('schedule').value === 'night' ? 'Watching at night only (21:00-05:00).' : 'Watching always.',
+      ].map((t) => `<li>${t}</li>`).join(''));
+    },
+    next: 'Close', ok: () => true },
+];
+const setHTML = (id, html) => { const el = $(id); if (el && el.dataset.h !== html) { el.dataset.h = html; el.innerHTML = html; } };
+
+function wizShell() {
+  const s = STEPS[wiz.step], n = STEPS.length - 1;
+  $('wiz').innerHTML = `<div class="wiz-top"><span class="kick">${wiz.step < n ? `Setup guide · step ${wiz.step + 1} of ${n}` : 'Setup guide · done'}</span>
+      <button class="nw-btn nw-btn--ghost wiz-x" id="w-close" type="button">Close guide</button></div>
+    <ol class="wiz-steps" aria-label="Setup steps">${STEPS.slice(0, n).map((x, i) => `<li class="${i < wiz.step ? 'done' : ''}" ${i === wiz.step ? 'aria-current="step"' : ''}>${x.label}${i < wiz.step ? '<span class="nw-sr-only"> (done)</span>' : ''}</li>`).join('')}</ol>
+    <h3 id="wiz-title" tabindex="-1">${s.title}</h3>
+    <div>${s.html()}</div>
+    <div class="wiz-foot">
+      <button class="nw-btn" id="w-back" type="button" ${wiz.step === 0 || wiz.step === n ? 'hidden' : ''}>${ICON('back')}Back</button>
+      <div class="r">${s.skip ? '<button class="linkish" id="w-skip" type="button">Skip test</button>' : ''}
+        <button class="nw-btn nw-btn--primary" id="w-next" type="button">${s.next || 'Next'}${wiz.step < n ? ICON('next') : ''}</button></div>
+    </div>`;
+}
+function goStep(i) {
+  const prev = STEPS[wiz.step];
+  if (wiz.open && prev.leave) prev.leave();
+  wiz.step = i; wiz.shown = -1;
+  if (STEPS[i].enter) STEPS[i].enter();
+  wizShell(); wiz.shown = i; wizUpdate();
+  $('wiz-title').focus({ preventScroll: true });
+  // Phones: keep the live view and the step's heading together on screen.
+  if (window.innerWidth <= 980) $('stage').scrollIntoView({ block: 'start', behavior: matchMedia('(prefers-reduced-motion: reduce)').matches || document.documentElement.classList.contains('nw-rm') ? 'auto' : 'smooth' });
+}
+function openWiz(i = 0) {
+  if (wiz.open) { goStep(i); return; }
+  wiz.open = true; $('wiz').hidden = false; $('main').classList.add('wiz-on'); wiz.step = i; wiz.shown = -1;
+  if (STEPS[i].enter) STEPS[i].enter();
+  wizShell(); wiz.shown = i; wizUpdate(); $('wiz-title').focus({ preventScroll: true });
+}
+function closeWiz() {
+  if (!wiz.open) return;
+  const s = STEPS[wiz.step]; if (s.leave) s.leave();
+  wiz.open = false; $('wiz').hidden = true; $('main').classList.remove('wiz-on'); $('guide').focus();
+}
+function wizUpdate() {
+  if (!wiz.open || wiz.shown !== wiz.step) return;
+  const s = STEPS[wiz.step];
+  if (s.update) s.update();
+  const nx = $('w-next'); if (nx) nx.disabled = !s.ok();
+}
+function wizCrossing(c) {
+  if (!wiz.open || wiz.step !== 4) return;
+  const rec = { track: c.track, time: $('clock').textContent };
+  if (c.direction === 'out' && !wiz.out) wiz.out = rec;
+  if (c.direction === 'in' && wiz.out && !wiz.in) wiz.in = rec;   // "back in" counts after the walk-out
+  wizUpdate();
+  if (wiz.out && wiz.in) say('Test walk complete: walked out and came back in were both seen.');
+}
+function markGuide() {
+  const g = $('guide'), done = setupDone();
+  g.innerHTML = ICON('help') + 'Setup guide' + (done ? '' : '<span class="guide-dot" aria-hidden="true"></span><span class="nw-sr-only"> (not finished for this camera)</span>');
+}
+$('wiz').addEventListener('click', async (e) => {
+  const b = e.target.closest('button'); if (!b) return;
+  const n = STEPS.length - 1;
+  switch (b.id) {
+    case 'w-close': closeWiz(); break;
+    case 'w-back': goStep(Math.max(0, wiz.step - 1)); break;
+    case 'w-next': if (wiz.step === n) closeWiz(); else goStep(wiz.step + 1); break;
+    case 'w-skip': goStep(n); break;
+    case 'w-start': await startCamera(); wizUpdate(); break;
+    case 'w-on': await setPower({ enabled: true, schedule: 'always' }); break;
+    case 'w-undo': undo(); break;
+    case 'w-redraw': if (drawing) { drawing = []; setDrawHint(); } else startDrawing(); wizUpdate(); break;
+    case 'w-flip': $('flip').click(); break;
+    case 'w-reset': wiz.out = null; wiz.in = null; wiz.t0 = performance.now(); wiz.seenAny = false; wizUpdate(); break;
+  }
+});
+$('wiz').addEventListener('change', (e) => { if (e.target.id === 'w-cam') { $('cam').value = e.target.value; $('cam').onchange(); poll(); } });
+document.addEventListener('keydown', (e) => {
+  if (e.key !== 'Escape') return;
+  if (drawing) { undo(); return; }
+  if (wiz.open && $('wiz').contains(document.activeElement)) closeWiz();
+});
+$('guide').onclick = () => (wiz.open ? closeWiz() : openWiz(0));
+$('guide2').onclick = () => openWiz(0);
+setInterval(() => { if (wiz.open) wizUpdate(); if (running) renderPeople(); }, 1000);
+
+if (window.NW) { $('aimbadge').querySelector('.ico-eye').innerHTML = NW.icon('eye'); }
+markGuide(); refreshUI(); drawTimeline();
+setInterval(poll, 1000); poll(); render();
+</script>
+</body>
+</html>

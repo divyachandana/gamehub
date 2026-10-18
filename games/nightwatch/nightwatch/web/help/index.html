@@ -1,0 +1,541 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>NightWatch · Help</title>
+<script src="/assets/auth.js"></script>
+<link rel="stylesheet" href="/assets/theme.css">
+<style>
+  .nw-topbar { justify-content: space-between; flex-wrap: wrap; gap: 10px 16px; }
+  .nav { display: flex; gap: 8px; flex-wrap: wrap; }
+  .nav .nw-btn { min-height: 36px; font-size: 13.5px; }
+  .layout { max-width: 1240px; margin: 0 auto; padding: 18px 24px 48px; display: grid; grid-template-columns: 250px minmax(0, 1fr); gap: 28px; align-items: start; }
+  .layout > * { min-width: 0; }
+
+  /* ------------------------------------------------------------ table of contents + search */
+  .side { position: sticky; top: 14px; display: grid; gap: 12px; max-height: calc(100vh - 28px); overflow: auto; padding-bottom: 6px; }
+  .search { position: relative; }
+  .search .nw-ico { position: absolute; left: 11px; top: 50%; transform: translateY(-50%); color: var(--nw-faint); pointer-events: none; }
+  .search input { width: 100%; font: inherit; font-size: 15px; padding: 10px 36px 10px 36px; border-radius: 11px; border: 1px solid var(--nw-line-strong);
+                  background: var(--nw-bg-2); color: var(--nw-ink); }
+  .search input::placeholder { color: var(--nw-faint); }
+  .search .kh { position: absolute; right: 9px; top: 50%; transform: translateY(-50%); }
+  .search input:not(:placeholder-shown) + .kh { display: none; }
+  .found { font-size: 13px; color: var(--nw-muted); min-height: 18px; }
+  .toc summary { display: none; }
+  .toc ol { list-style: none; margin: 0; padding: 0; display: grid; gap: 2px; }
+  .toc a { display: flex; gap: 10px; align-items: center; padding: 8px 10px; border-radius: 9px; color: var(--nw-ink-2); text-decoration: none; font-size: 14.5px; font-weight: 600; }
+  .toc a .n { color: var(--nw-faint); font: 700 12px/1 var(--nw-mono); width: 16px; }
+  .toc a:hover { background: var(--nw-surface-2); color: var(--nw-ink); }
+  .toc a[aria-current="true"] { background: var(--nw-surface-2); color: var(--nw-ink); box-shadow: inset 3px 0 0 var(--nw-accent); }
+  .toc ol ol { margin: 2px 0 6px 26px; }
+  .toc ol ol a { font-size: 13px; font-weight: 500; padding: 5px 10px; color: var(--nw-muted); }
+  .toc li.is-hidden { display: none; }
+  .side .foot { font-size: 12.5px; color: var(--nw-faint); padding: 0 10px; }
+
+  @media (max-width: 900px) {
+    .layout { grid-template-columns: minmax(0, 1fr); padding: 14px 16px 32px; gap: 16px; }
+    .nw-topbar { padding: 12px 16px; }
+    .side { position: static; max-height: none; overflow: visible; }
+    .toc { border: 1px solid var(--nw-line); border-radius: 12px; background: var(--nw-surface); }
+    .toc summary { display: flex; align-items: center; justify-content: space-between; gap: 10px; padding: 12px 14px; cursor: pointer; font-weight: 700; list-style: none; }
+    .toc summary::-webkit-details-marker { display: none; }
+    .toc summary::after { content: "▾"; color: var(--nw-muted); transition: transform .2s; }
+    .toc[open] summary::after { transform: rotate(180deg); }
+    .toc > ol { padding: 0 6px 8px; }
+    .search .kh { display: none; }
+  }
+
+  /* ------------------------------------------------------------ content */
+  .intro h1 { font: 800 30px/1.15 var(--nw-font-display); letter-spacing: -.02em; margin: 0 0 6px; }
+  .intro p { margin: 0; color: var(--nw-ink-2); max-width: 70ch; }
+  .content { display: grid; gap: 22px; }
+  section.part { scroll-margin-top: 12px; }
+  section.part > h2 { display: flex; align-items: center; gap: 10px; font: 750 22px/1.2 var(--nw-font-display); margin: 6px 0 12px; }
+  section.part > h2 .nw-ico { color: var(--nw-accent); }
+  .qa { background: var(--nw-surface); border: 1px solid var(--nw-line); border-radius: var(--nw-radius); padding: 16px 18px; margin-bottom: 12px; scroll-margin-top: 12px; }
+  .qa > h3 { font: 700 17px/1.3 var(--nw-font-display); margin: 0 0 8px; }
+  .qa p, .qa li { color: var(--nw-ink-2); line-height: 1.55; font-size: 15px; }
+  .qa p { margin: 0 0 8px; } .qa p:last-child { margin-bottom: 0; }
+  .qa ul, .qa ol { margin: 0 0 8px; padding-left: 22px; display: grid; gap: 4px; }
+  .qa b, .qa strong { color: var(--nw-ink); }
+  .qa.is-hidden, section.part.is-hidden { display: none; }
+  code, .cmd { font-family: var(--nw-mono); font-size: .9em; color: var(--nw-ink); overflow-wrap: anywhere; }
+  pre.cmd { margin: 6px 0 10px; white-space: pre-wrap; background: var(--nw-bg); border: 1px solid var(--nw-line); border-radius: 10px; padding: 10px 12px; font-size: 13px; color: var(--nw-ink-2); }
+  .live { color: var(--nw-accent); font-weight: 750; font-variant-numeric: tabular-nums; }
+  .src { font-size: 12.5px; color: var(--nw-faint); }
+  mark { background: rgba(138, 180, 255, .28); color: inherit; border-radius: 3px; padding: 0 1px; }
+  .note { display: flex; gap: 10px; align-items: flex-start; padding: 10px 12px; border-radius: 10px; background: var(--nw-bg-2); border: 1px solid var(--nw-line); font-size: 14px; color: var(--nw-ink-2); margin-top: 8px; }
+  .note .nw-ico { color: var(--nw-l1); margin-top: 2px; }
+  .note.ok .nw-ico { color: var(--nw-ok); }
+
+  /* Quick card: the three levels */
+  .card-q { border-color: var(--nw-line-strong); background: linear-gradient(160deg, rgba(138,180,255,.06), transparent 50%), var(--nw-surface); }
+  .levels { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 12px; margin: 10px 0 14px; }
+  .lvl { border: 1px solid color-mix(in srgb, var(--lvl) 45%, transparent); background: var(--lvl-bg); border-radius: 14px; padding: 12px 14px; display: grid; gap: 8px; align-content: start; }
+  .lvl .what { font-size: 14px; color: var(--nw-ink-2); line-height: 1.45; }
+  .lvl .do { font-size: 14px; color: var(--nw-ink); line-height: 1.45; }
+  .lvl .do b { color: var(--lvl); }
+  @media (max-width: 760px) { .levels { grid-template-columns: minmax(0, 1fr); } }
+  .climb { list-style: none; padding: 0 !important; margin: 6px 0 12px !important; display: flex !important; flex-wrap: wrap; align-items: center; gap: 6px 4px !important; }
+  .climb li { display: inline-flex; align-items: center; gap: 6px; font-size: 13.5px !important; }
+  .climb .arrow { color: var(--nw-faint); padding: 0 2px; }
+  .climb .wait { font: 650 12.5px/1 var(--nw-font); color: var(--nw-muted); border: 1px dashed var(--nw-line-strong); border-radius: 999px; padding: 5px 9px; }
+  .acts { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 10px; margin: 8px 0 12px; }
+  .act { border: 1px solid var(--nw-line); border-radius: 12px; padding: 12px; background: var(--nw-bg-2); }
+  .act .nw-btn { pointer-events: none; width: 100%; min-height: 44px; font-size: 15px; margin-bottom: 8px; }
+  .act p { font-size: 14px !important; margin: 0 !important; }
+  .nw-btn--backup { background: var(--nw-l2-bg); border-color: var(--nw-l2); color: #ffd1ad; }
+  @media (max-width: 760px) { .acts { grid-template-columns: minmax(0, 1fr); } }
+  .sevs { display: grid; gap: 8px; margin: 8px 0; }
+  .sevs > div { display: flex; flex-wrap: wrap; align-items: center; gap: 6px 12px; font-size: 14px; color: var(--nw-ink-2); }
+  .sevs .nw-sev { min-width: 150px; }
+  .chipline { display: flex; flex-wrap: wrap; gap: 6px; margin: 4px 0 8px; }
+  .chipline span { font-size: 12.5px; padding: 4px 9px; border-radius: 999px; border: 1px solid var(--nw-line-strong); color: var(--nw-ink-2); background: var(--nw-bg-2); }
+
+  /* Shortcuts */
+  .keys { display: grid; grid-template-columns: auto minmax(0, 1fr); gap: 8px 14px; align-items: center; margin: 4px 0 10px; font-size: 14.5px; color: var(--nw-ink-2); }
+  .keys .k { display: inline-flex; gap: 4px; flex-wrap: wrap; }
+
+  .empty { display: none; padding: 18px; border: 1px dashed var(--nw-line-strong); border-radius: var(--nw-radius); color: var(--nw-muted); }
+  .empty.is-on { display: block; }
+  .nw-btn:focus-visible, a:focus-visible, input:focus-visible, summary:focus-visible { outline: 3px solid var(--nw-accent); outline-offset: 2px; }
+  .skip { position: absolute; left: -9999px; top: 8px; z-index: 10; }
+  .skip:focus { left: 12px; }
+
+  @media (prefers-reduced-motion: reduce) { html { scroll-behavior: auto !important; } .toc summary::after { transition: none; } }
+
+  /* ------------------------------------------------------------ print: black on white, everything expanded */
+  @media print {
+    @page { margin: 14mm; }
+    :root { --nw-ink: #000; --nw-ink-2: #222; --nw-muted: #444; --nw-faint: #555; --nw-line: #bbb; --nw-line-strong: #888;
+            --nw-surface: #fff; --nw-surface-2: #fff; --nw-bg: #fff; --nw-bg-2: #fff; --nw-accent: #1a4fb5; }
+    body.nw { background: #fff !important; color: #000; }
+    .nw-topbar .nav, .side, .skip, .empty { display: none !important; }
+    .nw-topbar { border: 0; padding: 0 0 8px; }
+    .layout { display: block; padding: 0; max-width: none; }
+    .qa, section.part, .qa.is-hidden, section.part.is-hidden { display: block !important; }
+    .qa { break-inside: avoid; box-shadow: none; padding: 10px 12px; }
+    section.part > h2 { break-after: avoid; }
+    #quick { break-after: page; }
+    .lvl, .nw-badge, .nw-sev .n, .act .nw-btn { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+    mark { background: none; }
+    a { color: #000; text-decoration: none; }
+  }
+</style>
+</head>
+<body class="nw">
+<a class="skip nw-btn" href="#content">Skip to help content</a>
+<header class="nw-topbar">
+  <div class="nw-brand"><div class="nw-brand-mark" id="logo"></div><div><div class="nw-brand-name">Help center</div>
+    <div class="nw-brand-sub">NightWatch for night staff, managers and families</div></div></div>
+  <nav class="nav" aria-label="Other screens">
+    <a class="nw-btn nw-btn--ghost" href="/dashboard/">Nurse station</a>
+    <a class="nw-btn nw-btn--ghost" href="/staff/">Staff phone</a>
+    <a class="nw-btn nw-btn--ghost" href="/camera/">Camera</a>
+    <button class="nw-btn" id="print" type="button">Print</button>
+  </nav>
+</header>
+
+<div class="layout">
+  <aside class="side" aria-label="Help navigation">
+    <div class="search" role="search">
+      <svg class="nw-ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg>
+      <label class="nw-sr-only" for="q">Search help</label>
+      <input id="q" type="search" placeholder="Search help" autocomplete="off" aria-describedby="found" aria-controls="content">
+      <span class="nw-kbd kh" aria-hidden="true">/</span>
+    </div>
+    <div class="found" id="found" role="status" aria-live="polite"></div>
+    <details class="toc" id="toc" open>
+      <summary>Contents</summary>
+      <ol id="toc-list"></ol>
+    </details>
+    <div class="foot">Works offline: served by the nurse-station laptop.</div>
+  </aside>
+
+  <main class="content" id="content" tabindex="-1">
+    <div class="intro">
+      <h1>How NightWatch works, and what to do</h1>
+      <p>NightWatch watches for residents leaving their rooms or heading for an exit at night, and keeps raising the alarm until a person responds.
+        Everything runs on the nurse-station laptop. Start with the quick card; the rest is for setting up and fixing things.</p>
+    </div>
+
+    <!-- ============================================================ 1 -->
+    <section class="part" id="quick" data-title="On shift tonight">
+      <h2><span data-ic="moon"></span>On shift tonight</h2>
+
+      <article class="qa card-q" id="levels" data-title="The three levels">
+        <h3>The three levels, and what to do</h3>
+        <div class="levels">
+          <div class="lvl nw-l1"><span data-badge="1"></span>
+            <div class="what">At night, a resident is up and it is unusual <b>for them, at this time</b>, or the hallway camera saw them step out of their room.</div>
+            <div class="do"><b>Do:</b> go and check when you can. Tap <b>I'm going</b>. The phone shows what has calmed this resident before.</div></div>
+          <div class="lvl nw-l2"><span data-badge="2"></span>
+            <div class="what">An exit door or window opened at night, the entrance camera saw someone, or a heads-up got no response.</div>
+            <div class="do"><b>Do:</b> go now. Tap <b>I'm going</b> to stop the climb.</div></div>
+          <div class="lvl nw-l3"><span data-badge="3"></span>
+            <div class="what">Still nobody answered, or a resident is confirmed <b>outside</b>.</div>
+            <div class="do"><b>Do:</b> respond immediately and follow your facility's missing-resident procedure. All phones alarm; the contact chain starts.</div></div>
+        </div>
+        <p><b>Night</b> is <span class="live" data-live="night">21:00-05:00</span> on this system. During the day, doors opening are logged as visits and nothing alarms.</p>
+        <p class="src" data-live-src>Times on this page come from the running system.</p>
+      </article>
+
+      <article class="qa" id="climb" data-title="How escalation climbs">
+        <h3>Escalation climbs only if nobody responds</h3>
+        <ul class="climb" aria-label="Escalation ladder">
+          <li><span data-badge="1"></span></li>
+          <li class="arrow" aria-hidden="true">→</li>
+          <li class="wait">no response for <span class="live" data-live="l1">45</span> s</li>
+          <li class="arrow" aria-hidden="true">→</li>
+          <li><span data-badge="2"></span></li>
+          <li class="arrow" aria-hidden="true">→</li>
+          <li class="wait">not acknowledged in <span class="live" data-live="ack">25</span> s</li>
+          <li class="arrow" aria-hidden="true">→</li>
+          <li><span data-badge="3"></span></li>
+        </ul>
+        <ul>
+          <li>A heads-up waits <b><span class="live" data-live="l1">45</span> seconds</b>. If nobody taps <i>I'm going</i> and the resident is still up and unusual, it becomes urgent.</li>
+          <li>An urgent alert waits <b><span class="live" data-live="ack">25</span> seconds</b> for an acknowledgement, then becomes an emergency.</li>
+          <li>At emergency, one contact step happens every <b><span class="live" data-live="ack">25</span> seconds</b> until someone acknowledges:
+            all staff phones alarm → on-call supervisor → emergency services per facility policy. <b>In this build those calls are simulated</b>: shown and logged, never dialled.</li>
+          <li>The ring on each alert counts down to the next step.</li>
+          <li>Once someone taps <i>I'm going</i>, the climb stops. If something new and urgent happens (for example the front door opens while you're on the way), it needs a fresh acknowledgement.</li>
+          <li>A heads-up clears itself if the resident settles back into bed on their own. A short ensuite trip normally stays quiet.</li>
+        </ul>
+      </article>
+
+      <article class="qa" id="buttons" data-title="I'm going, Found safe, Need backup">
+        <h3>"I'm going" vs "Found safe" vs "Need backup"</h3>
+        <div class="acts">
+          <div class="act"><span class="nw-btn nw-btn--primary" aria-hidden="true" data-ic="walk">I'm going</span>
+            <p><b>You're on your way.</b> Stops the escalation and tells everyone you're responding. The alert stays open.</p></div>
+          <div class="act"><span class="nw-btn nw-btn--safe" aria-hidden="true" data-ic="check">Found safe</span>
+            <p><b>The resident is safe.</b> Closes the alert and drafts the care record. NightWatch stays quiet about that resident for about 2 minutes while you settle them.</p></div>
+          <div class="act"><span class="nw-btn nw-btn--backup" aria-hidden="true" data-ic="phone">Need backup</span>
+            <p><b>You need another person.</b> Tap twice (the first tap arms it). Every staff phone is alerted, and the alert goes to at least urgent.</p></div>
+        </div>
+        <p>On the nurse-station laptop the same actions are buttons on each alert, or keys <span class="nw-kbd">A</span> (acknowledge) and <span class="nw-kbd">F</span> (found safe) for the top alert.</p>
+      </article>
+
+      <article class="qa" id="record" data-title="Filing the care record">
+        <h3>Filing the care record</h3>
+        <p>When an alert closes, NightWatch drafts a care-record entry in the care team's own format: behaviour, location as a <b>type</b> (never a room number), the night band and the severity. You confirm the two things it can't know:</p>
+        <ol>
+          <li><b>How were they?</b> (affect) <span class="chipline" data-tax="affect"><span>Calm</span><span>Unsettled-agitated</span><span>Distressed-tearful</span><span>Drowsy</span><span>Withdrawn</span><span>Confused-disoriented</span><span>Content-engaged</span></span></li>
+          <li><b>What did you do?</b> (intervention) <span class="chipline" data-tax="intervention"><span>Reassurance</span><span>Reorientation</span><span>Music/sensory</span><span>Repositioning</span><span>Presence / 1-to-1</span><span>Direct care provided</span><span>Clinical review</span></span></li>
+          <li>Optional: a non-drug alternative you tried, and a short note.</li>
+        </ol>
+        <p>On the phone, the record sheet opens after <i>Found safe</i>. Tap <b>Later</b> if you're busy: it waits under <b>Records to file</b>. You can also file from the nurse station or the shift report. Your name is attached to the record.</p>
+        <div class="sevs" aria-label="Severity badges">
+          <div><span class="nw-sev nw-sev--1"><span class="n" aria-hidden="true">1</span>Severity 1 · routine</span>The highest level reached was a heads-up.</div>
+          <div><span class="nw-sev nw-sev--2"><span class="n" aria-hidden="true">2</span>Severity 2 · notable</span>It reached urgent (an exit, or no response to a heads-up).</div>
+          <div><span class="nw-sev nw-sev--3"><span class="n" aria-hidden="true">3</span>Severity 3 · escalation</span>It reached emergency (nobody answered in time, or the resident got outside).</div>
+        </div>
+        <p class="src">Severity comes from the highest level the alert reached, not from how long it lasted. Staff can always add context in the note.</p>
+      </article>
+    </section>
+
+    <!-- ============================================================ 2 -->
+    <section class="part" id="setup" data-title="Setting up">
+      <h2><span data-ic="chip"></span>Setting up</h2>
+
+      <article class="qa" id="pair" data-title="Pairing a staff phone">
+        <h3>Pair a staff phone with the PIN</h3>
+        <ol>
+          <li>Connect the phone to the <b>same Wi-Fi</b> as the nurse-station laptop.</li>
+          <li>Open <code data-live="staffurl">http://&lt;laptop address&gt;:8000/staff/</code> in the phone's browser. The address is printed when NightWatch starts.</li>
+          <li>Enter the <b>6-digit PIN</b> shown on the nurse-station dashboard (also printed at startup), give the phone a name, and tap <b>Pair</b>.</li>
+          <li>Tap <b>Start shift</b> to turn on sound and vibration, and enter your name. English and Spanish are available (EN / ES).</li>
+        </ol>
+        <p>You only pair once. The phone keeps a random token; the laptop stores only a hash of it. After 5 wrong PINs a phone must wait 60 seconds. The laptop itself never needs a PIN.</p>
+        <p class="src">For demos: <code>--pin 123456</code> fixes the PIN; <code>--unpair-all</code> forgets every phone.</p>
+      </article>
+
+      <article class="qa" id="demo" data-title="Starting the demo">
+        <h3>Start the demo</h3>
+        <p>From the repository folder, one command starts the server on the local network with the best models available (NPU if built, otherwise CPU) and opens the nurse station, presenter and camera pages:</p>
+        <pre class="cmd">powershell -ExecutionPolicy Bypass -File demo.ps1          # Windows (Snapdragon laptop)
+powershell -ExecutionPolicy Bypass -File demo.ps1 -Pin 246810
+./demo.sh                                                  # macOS / Linux
+PIN=246810 ./demo.sh</pre>
+        <p>Not sure what works on this machine? Run <code>python nightwatch/check.py</code>: it checks the models and prints the start command. To start by hand:</p>
+        <pre class="cmd">python nightwatch/server.py --lan --model models/normal_pattern_xnnpack.pte --camera-model models/person_ssdlite_xnnpack.pte</pre>
+        <p>The demo uses short waits (<code>--l1-timeout 20 --ack-timeout 15</code>) so the ladder climbs quickly. Add <code>--fresh</code> to start a clean night instead of restoring tonight's saved alerts.</p>
+      </article>
+
+      <article class="qa" id="camera" data-title="Camera setup">
+        <h3>Set up a hallway camera</h3>
+        <p>Open <code>/camera/</code> <b>on the laptop itself</b> (browsers only allow webcams on <code>localhost</code>) and press <b>Start camera</b>. The setup guide walks you through it:</p>
+        <ol>
+          <li><b>Draw the doorway line.</b> Press <i>Draw doorway</i> and click the two sides of the resident's doorway on the floor.</li>
+          <li><b>Flip room side</b> if needed: the side marked <b>ROOM</b> must be the resident's room. Only feet crossing from ROOM to HALLWAY count as leaving, so staff walking along the hallway don't trigger it. Crossing back in closes the heads-up.</li>
+          <li><b>Test walk.</b> Ask someone to walk out across the line, pause, and walk back in. The guide confirms both were seen. Do this before every demo.</li>
+        </ol>
+        <ul>
+          <li><b>Privacy view (blurred)</b> is on by default. It only changes what this page shows; detection works the same.</li>
+          <li><b>Zoom on the doorway</b> sends a crop around the door to the detector once a line is drawn, so people there are detected more reliably.</li>
+          <li><b>Night boost</b> brightens dark hallway frames (capped, to avoid amplifying noise) before detection.</li>
+          <li><b>On / Off / Night only</b>: each camera can be switched off or set to watch only at night (<span class="live" data-live="night">21:00-05:00</span>), from the camera page or the nurse station. Off releases the webcam (its light goes off) and the server drops frames without looking at them. Every switch is logged with who did it.</li>
+        </ul>
+        <p>With no line drawn, a person seen in three frames in a row counts. The hallway camera outside room 12 means R-07 left their room (heads-up); the front-entrance camera means someone is at the exit (urgent).</p>
+      </article>
+
+      <article class="qa" id="settings" data-title="Settings page">
+        <h3>Settings page</h3>
+        <p><code>/settings/</code> (laptop only) edits the facility and night shift (name, night hours, waits), residents (including what has worked to calm them before and their spot on the floor plan), exits and cameras, with a live floor-plan preview.</p>
+        <ul>
+          <li><b>Save and restart night</b> applies the changes straight away and clears current alerts. Paired phones stay paired.</li>
+          <li>Settings are saved to <code>data/facility.local.json</code> on the laptop (never uploaded) and win over the demo file on the next start.</li>
+          <li>In a public demo, never type real resident names, health details or room numbers: demo residents are synthetic.</li>
+        </ul>
+      </article>
+
+      <article class="qa" id="report" data-title="Shift report">
+        <h3>Shift report</h3>
+        <p><code>/report/</code> is the morning handover: every alert tonight with response times, severity of closed alerts, alerts by resident, the care records (filed or still to file) and every camera privacy switch. Press <b>Print</b> for paper or PDF. Unfiled records can be filed right there.</p>
+      </article>
+
+      <article class="qa" id="perf" data-title="Performance page">
+        <h3>Performance page</h3>
+        <p><code>/perf/</code> shows how long each check and each camera frame takes on this laptop right now, and the latest benchmark runs (NPU vs CPU, energy, whether both give the same outputs). <b>Benchmark the camera model</b> runs a measurement while the demo keeps going. Unplug the laptop to measure energy.</p>
+      </article>
+    </section>
+
+    <!-- ============================================================ 3 -->
+    <section class="part" id="trouble" data-title="Troubleshooting">
+      <h2><span data-ic="bulb"></span>Troubleshooting</h2>
+
+      <article class="qa" id="t-connect" data-title="Phone can't connect">
+        <h3>The phone can't connect ("Server not reachable")</h3>
+        <ul>
+          <li><b>Same Wi-Fi:</b> the phone must be on the same network as the laptop, not mobile data. Guest networks often block devices from reaching each other; use the staff network.</li>
+          <li><b>Started with <code>--lan</code>?</b> Without it the server only answers the laptop itself. <code>demo.ps1</code> and <code>demo.sh</code> add it for you.</li>
+          <li><b>Firewall:</b> on Windows, allow Python on <b>private networks</b> when asked the first time (or in Windows Defender Firewall settings). Port 8000 must be reachable.</li>
+          <li><b>Right address:</b> use the laptop's Wi-Fi address with <code>:8000/staff/</code>, printed at startup. <code>localhost</code> on a phone means the phone itself.</li>
+        </ul>
+      </article>
+
+      <article class="qa" id="t-pair" data-title="Pair this device prompt">
+        <h3>"Pair this phone" keeps appearing</h3>
+        <p>The laptop doesn't recognise this device. Enter the PIN from the nurse-station dashboard. This happens on a new phone, after clearing the browser's site data or using a private tab, or after someone ran <code>--unpair-all</code>. If it says to wait, 5 wrong PINs were entered: try again in 60 seconds.</p>
+      </article>
+
+      <article class="qa" id="t-cam" data-title="Camera permission or in use">
+        <h3>Camera permission blocked, or camera in use</h3>
+        <ul>
+          <li><b>Permission blocked:</b> click the camera or lock icon left of the address bar, set Camera to <b>Allow</b>, press <b>Try again</b>. On Windows also check Settings → Privacy &amp; security → Camera.</li>
+          <li><b>In use by another app:</b> Windows lets one app use the webcam at a time. Close Teams, Zoom, the Camera app or another tab using it, then <b>Try again</b>.</li>
+          <li><b>Needs localhost:</b> open the camera page on the laptop at <code>http://localhost:8000/camera/</code>, not from another device.</li>
+          <li><b>No camera found:</b> plug in the USB webcam or enable the built-in one.</li>
+        </ul>
+      </article>
+
+      <article class="qa" id="t-model" data-title="Model not loaded">
+        <h3>Model not loaded (rule fallback)</h3>
+        <p>If the pattern model fails to load, the server says so at startup and <b>keeps watching with fixed night rules</b> (left the room, exit opened, outside). Doors and the escalation ladder still work; only the "unusual for right now" judgement is missing. The dashboard always shows which model and device are live.</p>
+        <p>If the camera page says the <b>detector is not loaded</b>, start the server with <code>--camera-model models/person_ssdlite_xnnpack.pte</code> (the demo scripts do). Run <code>python nightwatch/check.py</code> to see what's missing.</p>
+      </article>
+
+      <article class="qa" id="t-restart" data-title="Server restarted">
+        <h3>The server restarted</h3>
+        <p>Tonight's alerts (with history, acknowledgements and care records), events, camera switches, doorway lines and the clock are saved on the laptop about a second after every change, and restored when the server starts again on the same night. Paired phones stay paired; open pages reconnect by themselves. If the PIN was random it will be new, but already-paired phones don't need it.</p>
+        <p>The camera page must be started again on the laptop after a restart. Use <code>--fresh</code> only if you want an empty night.</p>
+      </article>
+
+      <article class="qa" id="t-wifi" data-title="Wi-Fi or internet is off">
+        <h3>Wi-Fi or the internet is off</h3>
+        <p>NightWatch needs no internet. The models, pages and alerts all run on the laptop, so the nurse station keeps working with Wi-Fi off and shows <b>Offline · still protecting</b>. Phones need the local Wi-Fi to reach the laptop: if the facility Wi-Fi itself is down, watch the nurse-station screen and follow your facility's backup procedure.</p>
+      </article>
+    </section>
+
+    <!-- ============================================================ 4 -->
+    <section class="part" id="privacy" data-title="Privacy and families">
+      <h2><span data-ic="shield"></span>Privacy and families</h2>
+
+      <article class="qa" id="p-camera" data-title="What the camera sees">
+        <h3>What does the camera see, and what does it keep?</h3>
+        <p>A camera frame goes from the browser to the laptop's memory, a person detector finds where people are, and the frame is <b>dropped straight away</b>. <b>Nothing is recorded</b>: no video, no photos, nothing sent anywhere.</p>
+        <p>What's kept is only where a person is and whether their feet crossed the doorway line, for the last few seconds. The nurse station shows <b>a dot on a floor plan, never video</b>. The camera page on the laptop shows a live view for setup, blurred by default. NightWatch does not recognise faces or identify people; it only knows which camera saw a person.</p>
+      </article>
+
+      <article class="qa" id="p-who" data-title="Who can see alerts">
+        <h3>Who can see alerts?</h3>
+        <p>The nurse-station laptop and staff phones that were paired with the PIN, on the facility's own Wi-Fi. Any other device is refused. Alerts show a resident's code and name as set up by the facility, what happened, and what has helped before.</p>
+      </article>
+
+      <article class="qa" id="p-where" data-title="Where data lives">
+        <h3>Where does the data live?</h3>
+        <ul>
+          <li><b>On one laptop in the building.</b> Nothing goes to the cloud; no internet is needed.</li>
+          <li>Tonight's alerts, events and care-record drafts are kept on the laptop so a restart doesn't lose the night, and replaced as the next night begins (or when a demo scenario or new settings restart the night).</li>
+          <li>Facility settings and the list of paired phones (hashes only) are files on the laptop.</li>
+          <li>Care records are drafts for staff to confirm; the facility decides what goes into its official records.</li>
+        </ul>
+      </article>
+
+      <article class="qa" id="p-off" data-title="Turning cameras off">
+        <h3>How do I turn cameras off, or night only?</h3>
+        <p>Each camera has an <b>On / Off</b> switch and <b>Always / Night only</b> on the camera page and the nurse station. Off means off: the webcam is released (its light goes off) and nothing is analysed. Night only watches <span class="live" data-live="night">21:00-05:00</span>. Every change is logged with who made it and appears in the shift report. Families can ask the facility for a camera near their relative to be night-only or off.</p>
+      </article>
+
+      <article class="qa" id="p-sim" data-title="What is simulated in this demo">
+        <h3>What is simulated in this demo?</h3>
+        <ul>
+          <li><b>Residents are synthetic.</b> Every name and number is invented.</li>
+          <li><b>The contact chain is simulated:</b> it never calls or texts anyone. Steps are shown and logged as "(simulated)".</li>
+          <li>The presenter's camera walk-out scenario uses <b>simulated camera data</b> and is labelled SIMULATED on screen.</li>
+          <li>Sensors (doors, bed, heart rate) come from the simulator unless real hardware is connected.</li>
+          <li>The "is this unusual for right now?" model learned normal from <b>simulated days</b>; in a facility it would learn each resident's own pattern.</li>
+        </ul>
+        <div class="note"><span data-ic="shield"></span><span><b>Not a medical device.</b> NightWatch supports night staff; it does not replace them, their judgement or the facility's procedures.</span></div>
+        <p class="src" style="margin-top:8px">A plain-language notice for families is in the repository at <code>docs/PRIVACY_NOTICE.md</code> (a template to adapt with the facility's privacy officer).</p>
+      </article>
+    </section>
+
+    <!-- ============================================================ 5 -->
+    <section class="part" id="keys" data-title="Keyboard shortcuts">
+      <h2><span data-ic="help"></span>Keyboard shortcuts</h2>
+
+      <article class="qa" id="k-dash" data-title="Nurse station shortcuts">
+        <h3>Nurse station (<code>/dashboard/</code>)</h3>
+        <div class="keys">
+          <span class="k"><span class="nw-kbd">A</span></span><span>Acknowledge the top alert ("I'm going")</span>
+          <span class="k"><span class="nw-kbd">F</span></span><span>Found safe: close the top alert</span>
+          <span class="k"><span class="nw-kbd">R</span></span><span>Open the top alert's resident</span>
+          <span class="k"><span class="nw-kbd">M</span></span><span>Sound on / off</span>
+          <span class="k"><span class="nw-kbd">/</span></span><span>Search the event log</span>
+          <span class="k"><span class="nw-kbd">?</span></span><span>Show the shortcuts</span>
+          <span class="k"><span class="nw-kbd">Esc</span></span><span>Close a drawer or the shortcuts</span>
+          <span class="k"><span class="nw-kbd">Tab</span><span class="nw-kbd">Enter</span></span><span>Move to a resident on the floor plan and open their details</span>
+        </div>
+        <p class="src">Shortcuts don't fire while you type in a field. Press <span class="nw-kbd">?</span> on the dashboard for the current list.</p>
+      </article>
+
+      <article class="qa" id="k-other" data-title="Other screens and this page">
+        <h3>Other screens, and this page</h3>
+        <div class="keys">
+          <span class="k"><span class="nw-kbd">/</span></span><span>Help: search</span>
+          <span class="k"><span class="nw-kbd">Esc</span></span><span>Help: clear the search</span>
+          <span class="k"><span class="nw-kbd">←</span><span class="nw-kbd">→</span></span><span>Presenter (<code>/sim/</code>): previous / next demo step; <span class="nw-kbd">Enter</span> runs it</span>
+          <span class="k"><span class="nw-kbd">F</span></span><span>Wall screen (<code>/wall/</code>): full screen</span>
+          <span class="k"><span class="nw-kbd">Esc</span></span><span>Staff phone: close the care-record sheet</span>
+        </div>
+      </article>
+    </section>
+
+    <div class="empty" id="empty" role="status">No help matches your search. Try "PIN", "camera", "backup" or "severity".</div>
+  </main>
+</div>
+
+<script src="/assets/nw.js"></script>
+<script>
+const $ = (id) => document.getElementById(id);
+const { icon, badge, esc, nightBand } = NW;
+$('logo').innerHTML = icon('help');
+document.querySelectorAll('[data-ic]').forEach((el) => { el.insertAdjacentHTML('afterbegin', icon(el.dataset.ic)); el.removeAttribute('data-ic'); });
+document.querySelectorAll('[data-badge]').forEach((el) => { el.outerHTML = badge(+el.dataset.badge); });
+$('print').onclick = () => window.print();
+
+/* ------------------------------------------------------------------ table of contents */
+const parts = [...document.querySelectorAll('section.part')];
+$('toc-list').innerHTML = parts.map((s, i) => `<li data-for="${s.id}"><a href="#${s.id}"><span class="n">${i + 1}</span>${esc(s.dataset.title)}</a>
+  <ol>${[...s.querySelectorAll('.qa')].map((q) => `<li data-for="${q.id}"><a href="#${q.id}">${esc(q.dataset.title)}</a></li>`).join('')}</ol></li>`).join('');
+const mobile = matchMedia('(max-width: 900px)');
+const syncToc = () => { $('toc').open = !mobile.matches; };
+mobile.addEventListener('change', syncToc); syncToc();
+$('toc-list').addEventListener('click', (e) => { if (e.target.closest('a') && mobile.matches) $('toc').open = false; });
+// Highlight the section being read.
+const tocLinks = new Map([...document.querySelectorAll('.toc > ol > li')].map((li) => [li.dataset.for, li.querySelector('a')]));
+const spy = new IntersectionObserver((entries) => {
+  entries.forEach((en) => { if (en.isIntersecting) tocLinks.forEach((a, id) => a.setAttribute('aria-current', String(id === en.target.id))); });
+}, { rootMargin: '-20% 0px -70% 0px' });
+parts.forEach((s) => spy.observe(s));
+
+/* ------------------------------------------------------------------ search */
+// Filters cards by their text; whole sections hide when nothing in them matches. Matches are highlighted.
+const cards = [...document.querySelectorAll('.qa')];
+const original = new Map(cards.map((c) => [c, c.innerHTML]));
+const words = (q) => q.toLowerCase().split(/\s+/).filter(Boolean);
+function highlight(card, ws) {
+  const walker = document.createTreeWalker(card, NodeFilter.SHOW_TEXT);
+  const re = new RegExp(`(${ws.map((w) => w.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')).join('|')})`, 'gi');
+  const nodes = []; while (walker.nextNode()) nodes.push(walker.currentNode);
+  nodes.forEach((n) => {
+    if (!re.test(n.nodeValue) || n.parentElement.closest('svg')) return;
+    const span = document.createElement('span');
+    span.innerHTML = esc(n.nodeValue).replace(re, '<mark>$1</mark>');
+    n.replaceWith(...span.childNodes);
+  });
+}
+function search() {
+  const ws = words($('q').value);
+  let shown = 0;
+  cards.forEach((c) => {
+    if (c.dataset.hl) { c.innerHTML = original.get(c); delete c.dataset.hl; }
+    const text = (c.textContent + ' ' + c.closest('section').dataset.title).toLowerCase();
+    const hit = ws.every((w) => text.includes(w));
+    c.classList.toggle('is-hidden', !hit);
+    document.querySelector(`.toc li[data-for="${c.id}"]`).classList.toggle('is-hidden', !hit);
+    if (hit) { shown++; if (ws.length) { highlight(c, ws); c.dataset.hl = '1'; } }
+  });
+  parts.forEach((s) => {
+    const any = s.querySelector('.qa:not(.is-hidden)');
+    s.classList.toggle('is-hidden', !any);
+    document.querySelector(`.toc li[data-for="${s.id}"]`).classList.toggle('is-hidden', !any);
+  });
+  $('empty').classList.toggle('is-on', !shown);
+  $('found').textContent = ws.length ? `${shown} of ${cards.length} topics match` : '';
+  if (ws.length && mobile.matches) $('toc').open = false;
+  applyLive();   // highlighting rebuilt the cards; put the live values back
+}
+$('q').addEventListener('input', search);
+$('q').addEventListener('keydown', (e) => {
+  if (e.key === 'Escape') { e.preventDefault(); $('q').value = ''; search(); }
+  if (e.key === 'Enter') { e.preventDefault(); const first = document.querySelector('.qa:not(.is-hidden)'); if (first) { first.scrollIntoView({ block: 'start' }); first.setAttribute('tabindex', '-1'); first.focus({ preventScroll: true }); } }
+});
+document.addEventListener('keydown', (e) => {
+  if (e.key === '/' && !NW.typing(e) && !e.metaKey && !e.ctrlKey && !e.altKey) { e.preventDefault(); $('q').focus(); $('q').select(); }
+});
+
+/* ------------------------------------------------------------------ live values from the running system */
+// Read with XHR on purpose: the help page must stay readable on a phone that isn't paired yet, so a 401
+// here should quietly fall back to the defaults instead of opening the pairing prompt that auth.js shows.
+let live = null;
+function getJSON(url) {
+  return new Promise((resolve) => {
+    const x = new XMLHttpRequest();
+    x.open('GET', url); x.timeout = 4000;
+    try { const t = localStorage.getItem('nw-token'); if (t) x.setRequestHeader('X-NightWatch-Token', t); } catch {}
+    x.onload = () => { try { resolve(x.status === 200 ? JSON.parse(x.responseText) : null); } catch { resolve(null); } };
+    x.onerror = x.ontimeout = () => resolve(null);
+    x.send();
+  });
+}
+function applyLive() {
+  if (!live) return;
+  const set = (k, v) => document.querySelectorAll(`[data-live="${k}"]`).forEach((el) => { el.textContent = v; });
+  if (live.timeouts) { set('l1', Math.round(live.timeouts.l1)); set('ack', Math.round(live.timeouts.ack)); }
+  set('night', nightBand(live).label);
+  if (live.staffurl) set('staffurl', live.staffurl);
+  if (live.taxonomy) for (const k of ['affect', 'intervention']) {
+    document.querySelectorAll(`[data-tax="${k}"]`).forEach((el) => { el.innerHTML = (live.taxonomy[k] || []).map((v) => `<span>${esc(v)}</span>`).join(''); });
+  }
+}
+async function loadLive() {
+  const [s, h] = await Promise.all([getJSON('/api/state'), getJSON('/api/health')]);
+  const src = document.querySelector('[data-live-src]');
+  if (!s) { src.textContent = 'Could not read the running system: times shown are the server defaults. The demo scripts use 20 s and 15 s.'; return; }
+  live = { timeouts: s.timeouts, night_hours: s.night_hours, taxonomy: s.taxonomy,
+           staffurl: h && h.phones && h.phones.url ? (/\/staff\/?$/.test(h.phones.url) ? h.phones.url : h.phones.url.replace(/\/?$/, '/staff/')) : null };
+  src.textContent = `Times on this page are read from the running system (${s.facility || 'NightWatch'}). A manager can change them in Settings.`;
+  // Re-apply to the pristine copies too, so clearing a search keeps live values.
+  cards.forEach((c) => { if (!c.dataset.hl) original.set(c, c.innerHTML); });
+  applyLive();
+  cards.forEach((c) => { if (!c.dataset.hl) original.set(c, c.innerHTML); });
+}
+loadLive();
+</script>
+</body>
+</html>

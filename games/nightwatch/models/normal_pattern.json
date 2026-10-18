@@ -1,0 +1,14 @@
+{
+  "features": [
+    "hour_sin",
+    "hour_cos",
+    "out_of_bed",
+    "motion",
+    "hr_delta",
+    "in_corridor",
+    "near_exit",
+    "minutes_up"
+  ],
+  "output": "logit that the moment is normal; unusual = sigmoid(-logit)",
+  "trained_on": "simulated normal days vs feature-shuffled negatives"
+}
