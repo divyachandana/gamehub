@@ -50,9 +50,36 @@ With no `.env` file it runs in **mock mode**: scripted answers, no AI. Use it to
 npm run mock
 ```
 
+## On the Snapdragon NPU (the game hub)
+
+In the [game hub](../../hub/README.md) the game starts with `--npu`, and all three AI jobs run on the
+laptop's Hexagon NPU through ExecuTorch + QNN, with the same models and model hosts as the racing games:
+
+| Job | Model on the NPU | How |
+|---|---|---|
+| The suspect (big brain) | **Gemma-4-E2B** | `qnn_llm_host` on the pipe `rally_gemma`; the interview so far is folded into each one-shot prompt and trimmed to the 4k context |
+| The note-taker (fast brain) | **Qwen3-1.7B** (`/no_think`) | `qnn_llm_host` on the pipe `rally_qwen`; returns the notes JSON, repaired if the small model breaks it |
+| The stress meter | **Laya** (ModernBERT) | one forward pass: *did this answer sound nervous, evasive or like a changed story?*, run in parallel with the notes |
+
+![Interrogating the judges on the NPU](../../docs/images/alibi-race.jpg)
+
+Each answer shows its NPU timing (time to first token, tokens/s, Laya's ms). If a model host is
+already running (another game started it), the game reuses it; otherwise it starts it. On its own,
+after the repo's `.\setup.ps1`:
+
+```powershell
+cd games\alibi-breaker
+node server.js --npu --port 8003     # http://localhost:8003
+```
+
+`src/npu.js` talks to the model hosts. `src/laya.js` runs Laya through `scripts/laya_bridge.py` in a
+Python with torch + transformers (`LAYA_PYTHON` in `.env`, set by `setup.ps1`). Paths default to the
+repo's `npu/` folder; override them with `NPU_DIR`, `LAYA_DIR` and `QNN_SDK_ROOT`. `NPU_DEBUG=1`
+prints the raw model replies.
+
 ## Pick your models
 
-Copy `.env.example` to `.env` and choose one setup:
+Copy `.env.example` to `.env` and choose one setup (or `PROVIDER=npu`, above):
 
 **Claude (cloud)**
 ```
@@ -131,7 +158,9 @@ and copy its new tiles from `Inference-Rally/maps/tiles` into `maps/tiles`. Map 
 
 ```
 server.js          HTTP server + API
-src/llm.js         the model switch (claude / ollama / local / mock)
+src/llm.js         the model switch (claude / ollama / local / npu / mock)
+src/npu.js         Gemma-4-E2B + Qwen3-1.7B on the NPU (ExecuTorch qnn_llm_host pipes)
+src/laya.js        Laya on the NPU: the stress meter
 src/game.js        prompts, one interrogation turn, the alibi checker
 src/map.js         street graph + shortest walking time
 src/case.js        loads and validates case files

@@ -55,13 +55,24 @@ async function api(method, url, body) {
   return data;
 }
 
+// "Gemma-4-E2B on the NPU: 0.21 s to first token · 12.6 tok/s · notes by Qwen3-1.7B: 9.8 tok/s · stress by Laya: 300 ms"
+function speedText(speed) {
+  if (!speed?.suspect) return "";
+  const one = (s) => `${(s.firstTokenMs / 1000).toFixed(2)} s to first token${s.tokensPerSec ? ` · ${s.tokensPerSec} tok/s` : ""}`;
+  const notes = speed.notes ? ` · notes by ${speed.notes.model}: ${speed.notes.tokensPerSec ?? "?"} tok/s` : "";
+  const stress = speed.stress ? ` · stress by ${speed.stress.model}: ${Math.round(speed.stress.npuMs ?? 0)} ms` : "";
+  return `${speed.suspect.model} on the NPU: ${one(speed.suspect)}${notes}${stress}`;
+}
+
 // ------------------------------------------------------------ case library
 
 async function boot() {
   try {
     const h = await api("GET", "/api/health");
     const mock = h.big.provider === "mock";
-    $("#model-status").textContent = mock ? "Offline demo mode" : `${h.big.model} · ${h.fast.model}`;
+    const name = (t) => t.label ?? t.model;
+    const npu = h.big.provider === "npu" && h.fast.provider === "npu";
+    $("#model-status").textContent = mock ? "Offline demo mode" : `${npu ? "NPU · " : ""}${name(h.big)} · ${name(h.fast)}${h.laya ? " · Laya" : ""}`;
     $("#model-status").title = `Subject model: ${h.big.provider}/${h.big.model}. Note-taker: ${h.fast.provider}/${h.fast.model}.`;
     $("#model-status").classList.toggle("mock", mock);
   } catch {
@@ -165,7 +176,8 @@ function renderTranscript() {
           <div class="who">${esc(s.name)}<span class="q">A${q}</span></div>
           <div class="text line">${m.animate ? "" : esc(m.text)}</div>
           ${m.tell ? `<div class="observed">Observed: <i>${esc(m.tell)}</i></div>` : ""}
-          ${rec ? `<div class="recorded">${rec}</div>` : ""}</div></div>`;
+          ${rec ? `<div class="recorded">${rec}</div>` : ""}
+          ${m.speed ? `<div class="speed">${esc(m.speed)}</div>` : ""}</div></div>`;
       }
       return `<div class="notice ${m.kind}">${m.title ? `<b>${esc(m.title)}</b>` : ""}${esc(m.text)}</div>`;
     })
@@ -379,7 +391,7 @@ $("#ask-form").addEventListener("submit", async (e) => {
   try {
     const r = await api("POST", "/api/ask", { sessionId: state.sessionId, suspectId, question, evidenceId: evidence?.id });
     chat.splice(chat.indexOf(pending), 1);
-    chat.push({ kind: "them", text: r.reply, tell: r.tell, claims: r.claims, animate: suspectId === state.active });
+    chat.push({ kind: "them", text: r.reply, tell: r.tell, claims: r.claims, speed: speedText(r.speed), animate: suspectId === state.active });
     state.stress[suspectId] = r.stress;
     state.claims.push(...r.claims);
     state.contradictions.push(...r.contradictions);
@@ -443,6 +455,16 @@ function openBriefing() {
   $("#briefing-dialog").showModal();
 }
 $("#btn-briefing").addEventListener("click", openBriefing);
+
+// Back to the game hub (gamehub repo), like the racing games' HUB button.
+const HUB_PORT = 8000;
+const toHub = () => (location.href = `${location.protocol}//${location.hostname}:${HUB_PORT}/`);
+$("#btn-hub").addEventListener("click", toHub);
+document.addEventListener("keydown", (e) => {
+  if (e.key.toLowerCase() !== "h" || e.ctrlKey || e.metaKey || e.altKey) return;
+  if (e.target.closest("input, textarea, select, [contenteditable]") || document.querySelector("dialog[open]")) return;
+  toHub();
+});
 $("#btn-cases").addEventListener("click", () => showWorkspace(false));
 
 $("#btn-accuse").addEventListener("click", () => {

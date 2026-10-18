@@ -5,7 +5,8 @@
 //      No AI here, so a "lie caught" is always provably true.
 
 import { randomUUID } from "node:crypto";
-import { complete } from "./llm.js";
+import { complete, config, stats } from "./llm.js";
+import { rattled, stressFrom } from "./laya.js";
 import { shortestPath } from "./map.js";
 import { mentionsPlace, mockNotes, mockSuspectReply, statesTime } from "./mock.js";
 
@@ -149,6 +150,8 @@ export async function ask(session, { suspectId, question, evidenceId }) {
     ? `[The ${c.labels.role.toLowerCase()} shows you evidence: "${evidence.title}": ${evidence.detail}]\n\n${question}`
     : question;
 
+  stats.big = stats.fast = null;
+
   // 1. Suspect answers.
   let reply = await complete({
     tier: "big",
@@ -162,6 +165,8 @@ export async function ask(session, { suspectId, question, evidenceId }) {
 
   // 2. Note-taker reads the answer. A failure here shouldn't kill the turn.
   const prevStress = session.stress[suspect.id];
+  // On the NPU, Laya rates how rattled the answer sounds, alongside the note-taker.
+  const gut = config.big.provider === "npu" ? rattled({ sensitiveAbout: suspect.stressHint, question: content, reply }).catch(() => null) : null;
   let notes = { claims: [], stress: prevStress, tell: "" };
   try {
     notes = await complete({
@@ -176,17 +181,23 @@ export async function ask(session, { suspectId, question, evidenceId }) {
     console.warn(`Note-taker failed: ${err.message}`);
   }
 
-  const stress = Math.max(0, Math.min(100, Math.round(Number(notes.stress) || prevStress)));
+  const laya = await gut;
+  const stress = laya ? stressFrom(prevStress, laya.p) : Math.max(0, Math.min(100, Math.round(Number(notes.stress) || prevStress)));
   session.stress[suspect.id] = stress;
 
   const stays = statedStays(reply);
   const newClaims = [];
   for (const claim of Array.isArray(notes.claims) ? notes.claims : []) {
+    if (!claim || typeof claim !== "object") continue;
+    claim.time = eveningTime(claim.time);
+    claim.until = eveningTime(claim.until);
     if (!c.places.has(claim.place) || !HHMM.test(claim.time ?? "")) continue;
     // Small models sometimes invent places or copy times from the question. Keep only what was said.
     if (!mentionsPlace(c, suspect, claim.place, reply)) continue;
     const time = toMin(claim.time);
     if (!statesTime(reply, time)) continue;
+    // Small NPU note-takers copy example times ("9:10") into answers that state none.
+    if (config.fast.provider === "npu" && !/\d{1,2}:\d{2}/.test(reply)) continue;
     let until = HHMM.test(claim.until ?? "") ? toMin(claim.until) : time;
     if (until < time || !statesTime(reply, until)) until = time;
     // Small note-takers often drop the end of "from 10:30 to 11:15". If the answer
@@ -218,7 +229,18 @@ export async function ask(session, { suspectId, question, evidenceId }) {
     claims: newClaims.map((x) => publicPoint(c, x)),
     contradictions,
     suspicions,
+    // Speed of this turn's models on the NPU (null for other backends).
+    speed: config.big.provider === "npu" || config.fast.provider === "npu" ? { suspect: stats.big, notes: stats.fast, stress: laya && { model: "Laya", p: laya.p, npuMs: laya.npuMs } } : null,
   };
+}
+
+// Small note-takers write "10:30:00", or keep 12-hour times ("10:40" for 10:40 pm).
+// Every case happens in the evening, so 1:00-11:59 mean 13:00-23:59.
+function eveningTime(t) {
+  const m = String(t ?? "").trim().match(/^(\d{1,2}):(\d{2})(?::\d{2})?$/);
+  if (!m) return t;
+  const h = Number(m[1]);
+  return `${String(h >= 1 && h <= 11 ? h + 12 : h).padStart(2, "0")}:${m[2]}`;
 }
 
 // "from 10:30 to 11:15", "from about 8 until 9:10" -> [{start, end}] in evening minutes.

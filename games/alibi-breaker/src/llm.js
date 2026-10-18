@@ -1,4 +1,4 @@
-// One function, two "brains", three backends.
+// One function, two "brains", four backends.
 //
 //   complete({ tier: "big" | "fast", system, messages, schema? })
 //
@@ -9,6 +9,7 @@
 // model is running. See .env.example.
 
 import Anthropic from "@anthropic-ai/sdk";
+import { npuComplete, NpuError, NPU_MODELS } from "./npu.js";
 
 const DEFAULT_MODELS = {
   claude: { big: "claude-opus-5-5", fast: "claude-haiku-5-5" },
@@ -16,6 +17,8 @@ const DEFAULT_MODELS = {
   // Any OpenAI-compatible local server: LM Studio, Nexa, Foundry Local,
   // llama.cpp, AnythingLLM... (e.g. Gemma + Laya on a Snapdragon X laptop).
   local: { big: "gemma-3-4b", fast: "laya" },
+  // ExecuTorch + QNN on the Snapdragon NPU, the same hosts as the racing games (src/npu.js).
+  npu: { big: "gemma-4-e2b", fast: "qwen3-1.7b" },
   mock: { big: "scripted-suspect", fast: "regex-notes" },
 };
 
@@ -23,6 +26,7 @@ export class LLMError extends Error {}
 
 function pickBaseProvider() {
   if (process.argv.includes("--mock")) return "mock";
+  if (process.argv.includes("--npu")) return "npu";
   if (process.env.PROVIDER) return process.env.PROVIDER.trim().toLowerCase();
   if (process.env.ANTHROPIC_API_KEY || process.env.ANTHROPIC_AUTH_TOKEN) return "claude";
   return "mock";
@@ -30,11 +34,12 @@ function pickBaseProvider() {
 
 function tierConfig(tier, base) {
   const upper = tier.toUpperCase();
-  const provider = (process.argv.includes("--mock") ? "mock" : process.env[`${upper}_PROVIDER`] ?? base)
+  const forced = ["mock", "npu"].find((p) => process.argv.includes(`--${p}`));
+  const provider = (forced ?? process.env[`${upper}_PROVIDER`] ?? base)
     .trim()
     .toLowerCase();
   if (!DEFAULT_MODELS[provider]) {
-    throw new Error(`Unknown provider "${provider}". Use claude, ollama, local or mock.`);
+    throw new Error(`Unknown provider "${provider}". Use claude, ollama, local, npu or mock.`);
   }
   const model = provider === "mock" ? DEFAULT_MODELS.mock[tier] : process.env[`${upper}_MODEL`] ?? DEFAULT_MODELS[provider][tier];
   return { provider, model };
@@ -42,6 +47,15 @@ function tierConfig(tier, base) {
 
 const base = pickBaseProvider();
 export const config = { big: tierConfig("big", base), fast: tierConfig("fast", base) };
+for (const tier of ["big", "fast"]) {
+  if (config[tier].provider === "npu") config[tier].label = NPU_MODELS[config[tier].model]?.label ?? config[tier].model;
+}
+
+// Speed of the latest NPU call per tier (time to first token, tokens/s), for the UI.
+export const stats = { big: null, fast: null };
+
+// Reply ceilings on the NPU: the host stops at end-of-turn, these just bound it.
+const NPU_REPLY_TOKENS = { big: 200, fast: 400 };
 
 export async function complete({ tier, system, messages, schema, maxTokens = 4000, mock }) {
   const { provider, model } = config[tier];
@@ -51,6 +65,12 @@ export async function complete({ tier, system, messages, schema, maxTokens = 400
     return schema ? out : String(out);
   } else if (provider === "claude") {
     text = await claudeComplete({ model, system, messages, schema, maxTokens });
+  } else if (provider === "npu") {
+    const out = await npuComplete({ model, system, messages, schema, replyTokens: NPU_REPLY_TOKENS[tier] }).catch((err) => {
+      throw err instanceof NpuError ? new LLMError(err.message) : err;
+    });
+    stats[tier] = out.stats;
+    text = out.text;
   } else if (provider === "ollama") {
     text = await ollamaComplete({ model, system, messages, schema });
   } else {
@@ -64,7 +84,7 @@ export async function complete({ tier, system, messages, schema, maxTokens = 400
 export async function warmUp() {
   for (const tier of ["big", "fast"]) {
     const { provider, model } = config[tier];
-    if (provider !== "ollama" && provider !== "local") continue;
+    if (provider !== "ollama" && provider !== "local" && provider !== "npu") continue;
     if (tier === "fast" && provider === config.big.provider && model === config.big.model) continue;
     const started = Date.now();
     try {

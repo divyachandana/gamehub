@@ -1,5 +1,5 @@
 // Game hub page: lists the games from /api/games; picking one asks the hub to start that
-// game's server (stopping the other) and then opens it. Keys: 1 / 2 pick a game.
+// game's server (stopping the other) and then opens it. Keys: 1 / 2 / 3 pick a game.
 
 const gamesEl = document.querySelector('#games');
 const loading = document.querySelector('#loading');

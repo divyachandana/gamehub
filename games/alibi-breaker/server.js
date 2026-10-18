@@ -2,14 +2,16 @@ import http from "node:http";
 import { readFile } from "node:fs/promises";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
-import { config, LLMError, warmUp } from "./src/llm.js";
+import { config, LLMError, stats, warmUp } from "./src/llm.js";
 import { listCases, loadCase, publicCase } from "./src/case.js";
 import { accuse, ask, collect, createSession, getSession, route } from "./src/game.js";
+import { layaAvailable, startLaya } from "./src/laya.js";
 
 const here = path.dirname(fileURLToPath(import.meta.url));
 const publicDir = path.join(here, "public");
 const tilesDir = path.join(here, "maps", "tiles");
-const PORT = Number(process.env.PORT ?? 3000);
+const portArg = process.argv.indexOf("--port");
+const PORT = Number(portArg > 0 ? process.argv[portArg + 1] : process.env.PORT ?? 3000);
 const TYPES = { ".html": "text/html", ".css": "text/css", ".js": "text/javascript", ".svg": "image/svg+xml", ".png": "image/png" };
 
 function send(res, status, body) {
@@ -48,7 +50,7 @@ async function serveStatic(res, pathname) {
 }
 
 const routes = {
-  "GET /api/health": async () => ({ ok: true, big: config.big, fast: config.fast }),
+  "GET /api/health": async () => ({ ok: true, big: config.big, fast: config.fast, laya: config.big.provider === "npu" && layaAvailable(), stats }),
   "GET /api/cases": async () => ({ cases: await listCases() }),
   "POST /api/new": async (body) => {
     const caseData = await loadCase(body.caseId);
@@ -80,10 +82,11 @@ const server = http.createServer(async (req, res) => {
 });
 
 server.listen(PORT, () => {
-  const tier = (t) => `${config[t].provider} / ${config[t].model}`;
+  const tier = (t) => `${config[t].provider} / ${config[t].label ?? config[t].model}`;
   console.log(`\n  Alibi Breaker running at http://localhost:${PORT}\n`);
   console.log(`  Suspect (big brain):    ${tier("big")}`);
   console.log(`  Note-taker (fast brain): ${tier("fast")}\n`);
   if (config.big.provider === "mock") console.log("  Mock mode: scripted answers. Set PROVIDER in .env to use real models.\n");
   warmUp();
+  if (config.big.provider === "npu") startLaya();
 });

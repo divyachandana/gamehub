@@ -4,9 +4,9 @@
 
 .DESCRIPTION
   1. Python env (.venv, ARM64 Python 3.12) with both games installed.
-  2. Builds both games' frontends (Node.js / npm).
-  3. Writes this clone's paths (NPU bundle, Laya, QAIRT SDK, Laya's Python) into both games'
-     racers.yaml.
+  2. Builds the racing games' frontends and installs Alibi Breaker's packages (Node.js / npm).
+  3. Writes this clone's paths (NPU bundle, Laya, QAIRT SDK, Laya's Python) into the racing
+     games' racers.yaml, and the QAIRT SDK into Alibi Breaker's .env.
   4. Checks every NPU prerequisite and says what is missing and where to get it
      (docs/models.md, docs/npu-setup.md). Missing NPU pieces don't stop the games: they still
      run with simulated racers.
@@ -43,6 +43,11 @@ if (-not $CheckOnly) {
     npm run build
     Pop-Location
   }
+
+  Step "Alibi Breaker (Node.js)"
+  Push-Location "$Root\games\alibi-breaker"
+  npm install --no-audit --no-fund
+  Pop-Location
 }
 
 Step "Paths in racers.yaml"
@@ -58,6 +63,11 @@ foreach ($game in $Games) {
   [System.IO.File]::WriteAllText($file, $text)
   Write-Host "  $game\racers.yaml"
 }
+# Alibi Breaker finds npu/ itself; it only needs the SDK and Laya's Python (in its git-ignored .env).
+$envFile = "$Root\games\alibi-breaker\.env"
+$lines = @(if (Test-Path $envFile) { [System.IO.File]::ReadAllLines($envFile) | Where-Object { $_ -notmatch '^(QNN_SDK_ROOT|LAYA_PYTHON)=' } })
+[System.IO.File]::WriteAllLines($envFile, [string[]]($lines + "QNN_SDK_ROOT=$(& $fwd $QnnSdk)" + "LAYA_PYTHON=$(& $fwd $LayaPython)"))
+Write-Host "  alibi-breaker\.env"
 
 Step "NPU prerequisites"
 $gemma = "$Root\npu\models\gemma4_e2b_sc8380xp_ctxt_4000_ar_l-128"
@@ -94,8 +104,8 @@ if (Test-Path $LayaPython) {
 }
 
 if ($missing) {
-  Write-Host "`n$missing NPU piece(s) missing. The games still run with simulated racers; see docs/models.md." -ForegroundColor Yellow
+  Write-Host "`n$missing NPU piece(s) missing. The racing games still run with simulated racers; see docs/models.md." -ForegroundColor Yellow
 } else {
-  Write-Host "`nAll set: every racer will run on the NPU." -ForegroundColor Green
+  Write-Host "`nAll set: every model will run on the NPU." -ForegroundColor Green
 }
 Write-Host "Start the hub:  .\run.ps1   ->  http://localhost:8000"

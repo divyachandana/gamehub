@@ -1,7 +1,7 @@
-# The game hub: two separate games, started on demand. Picking a game stops the other one first,
-# because each game loads the NPU models (Gemma-4-E2B, Qwen3-1.7B, Laya). Both games use the same
-# NPU model hosts (named pipes rally_gemma / rally_qwen), so after a switch the models are still
-# loaded and the next game starts in seconds.
+# The game hub: three separate games, started on demand. Picking a game stops the running one
+# first, because each game uses the NPU models (Gemma-4-E2B, Qwen3-1.7B, and Laya in the racing
+# games). All games use the same NPU model hosts (named pipes rally_gemma / rally_qwen), so after a
+# switch the models are still loaded and the next game starts in seconds.
 #
 # cwd is relative to this file; "python" in a command means the Python running the hub.
 
@@ -27,6 +27,16 @@ games:
     port: 8002
     cwd: ../games/san-francisco
     command: [python, -m, san_francisco.server, --port, "8002"]
+
+  alibi:
+    title: Alibi Breaker
+    tagline: Interrogate AI suspects and break their alibis on a real SF map
+    detail: Gemma-4-E2B plays the suspect · Qwen3-1.7B takes notes
+    image: alibi.jpg
+    accent: "#e05d5d"
+    port: 8003
+    cwd: ../games/alibi-breaker
+    command: [node, --env-file-if-exists=.env, server.js, --npu, --port, "8003"]
 
 # NPU model hosts the games share; the hub shuts them down when it exits.
 npu_pipes: [rally_gemma, rally_qwen]
