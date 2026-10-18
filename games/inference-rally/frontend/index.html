@@ -1,0 +1,36 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Inference Rally</title>
+  </head>
+  <body>
+    <header class="topbar">
+      <div class="logo">INFERENCE <span>RALLY</span></div>
+      <div id="matchup" class="matchup">GEMMA NPU VS QWEN3 NPU</div>
+      <div class="spacer"></div>
+      <div id="timer" class="timer">00:00.0</div>
+      <button id="btn-start" title="Enter">START</button>
+      <button id="btn-stop" title="S">STOP</button>
+      <button id="btn-new" title="N">NEW MAZE</button>
+      <button id="btn-mode" title="G">MODE: DEMO</button>
+      <button id="btn-sound" title="M">SOUND ON</button>
+      <button id="btn-retro" title="P">RETRO ON</button>
+      <div id="status" class="status">OFFLINE</div>
+    </header>
+
+    <main class="stage">
+      <canvas id="scene"></canvas>
+      <div class="panes">
+        <section class="pane" data-state="ready"></section>
+        <section class="pane" data-state="ready"></section>
+        <section class="pane" data-state="ready"></section>
+        <section class="pane overview" data-state="overview"></section>
+      </div>
+      <div id="overlay" class="overlay hidden"></div>
+    </main>
+
+    <script type="module" src="/src/main.js"></script>
+  </body>
+</html>

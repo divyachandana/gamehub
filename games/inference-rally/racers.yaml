@@ -1,0 +1,128 @@
+# Inference Rally configuration.
+# Switch machines by changing `active_profile` — no code changes needed.
+
+race:
+  maze_width: 7          # junction columns
+  maze_height: 7         # junction rows
+  loop_ratio: 0.06       # 0 = single route, higher = more alternative routes
+  branchiness: 0.6       # 0 = long corridors, 1 = many short side branches
+  seed: 16               # same seed => same maze for every rerun (16 = close race, all make mistakes)
+  segment_time_s: 1.4    # seconds to drive one road
+  uturn_penalty_s: 0.6   # extra time for turning around
+  max_decisions: 80      # DNF after this many junctions
+  countdown_s: 3
+
+# Models on the Snapdragon NPU: ExecuTorch + QNN, each served by its own qnn_llm_host.exe over a
+# named pipe (\\.\pipe\rally_<model key>). The game server launches the hosts itself (or reuses
+# ones already serving those pipes) and keeps the models loaded across races. Paths point at the
+# gemma4_e2b_executorch_x_elite bundle; racers pick a model with `qnn_model: <key>`.
+qnn:
+  bundle_dir: C:/Users/qc_de/Desktop/gemma4_e2b_executorch_x_elite-001/gemma4_e2b_executorch_x_elite
+  qnn_sdk: C:/Qualcomm/AIStack/QAIRT/2.46.0.260424
+  hexagon_arch: v73      # Snapdragon X Elite (SC8380XP)
+  models:
+    gemma:
+      model_dir: models/gemma4_e2b_sc8380xp_ctxt_4000_ar_l-128
+      pte: gemma4_e2b_sc8380xp_ctxt_4000-001.pte
+      decoder_model_version: gemma4
+      max_seq_len: 3800  # compiled context is 4000
+    qwen:
+      model_dir: models/sc8380_qwen3-1_7b_ctxt-8000
+      pte: sc8380_qwen3-1_7b_ctxt-8000.pte
+      decoder_model_version: qwen3
+      max_seq_len: 7800  # compiled context is 8000
+      prompt_suffix: " /no_think"  # Qwen3 otherwise reasons for hundreds of tokens first
+
+# Laya (laya_x_elite) on the NPU decides when the UNFAIR mode's rogue cheats. Its host code
+# needs torch + transformers, so it runs in that Python via scripts/laya_bridge.py.
+laya:
+  laya_dir: C:/Users/qc_de/Desktop/laya_x_elite
+  python: C:/dev/et-venv/Scripts/python.exe
+
+active_profile: demo
+
+profiles:
+  # DEMO mode: real Gemma vs real Qwen3, both on the NPU.
+  demo:
+    - id: gemma
+      name: Gemma-4-E2B
+      label: GEMMA NPU
+      device: NPU
+      runtime: qnn
+      color: "#1D9E75"
+      qnn_model: gemma
+    - id: qwen
+      name: Qwen3-1.7B
+      label: QWEN3 NPU
+      device: NPU
+      runtime: qnn
+      color: "#3FA7D6"
+      qnn_model: qwen
+
+  # PLAY mode: you (DC) vs real Gemma and real Qwen3 on the NPU.
+  play:
+    - id: dc
+      name: DC
+      label: DC
+      device: HUMAN
+      runtime: human
+      color: "#F2C14E"
+    - id: gemma
+      name: Gemma-4-E2B
+      label: GEMMA NPU
+      device: NPU
+      runtime: qnn
+      color: "#1D9E75"
+      qnn_model: gemma
+    - id: qwen
+      name: Qwen3-1.7B
+      label: QWEN3 NPU
+      device: NPU
+      runtime: qnn
+      color: "#3FA7D6"
+      qnn_model: qwen
+
+  # UNFAIR mode: honest Gemma vs a rogue Qwen3 that may cheat. At each junction where a cheat
+  # would help (a hedge jump that saves 2+ blocks, or a drone when circling), Laya on the NPU
+  # answers "should it cheat now?" and the rogue cheats if Laya says yes with p >= threshold
+  # (drone_threshold for the drone).
+  unfair:
+    - id: gemma
+      name: Gemma-4-E2B
+      label: GEMMA NPU
+      device: NPU
+      runtime: qnn
+      color: "#1D9E75"
+      qnn_model: gemma
+    - id: rogue
+      name: Qwen3-1.7B
+      label: ROGUE QWEN
+      device: NPU
+      runtime: qnn
+      color: "#E5484D"
+      qnn_model: qwen
+      rogue:
+        threshold: 0.4         # Laya yes-probability needed to jump
+        drone_threshold: 0.15  # ... and to fly the drone (Laya rates drones lower)
+        jumps: 3
+        drones: 2
+        jump_penalty_s: 1.5
+        drone_time_s: 2.0
+
+  # Everything simulated: works on any machine, no NPU needed (UI work, tests). Speeds are
+  # estimates from the measured NPU runs (~170 ms to first token, ~12-14 tokens/s alone).
+  sim:
+    - id: gemma
+      name: Gemma-4-E2B
+      label: SIM GEMMA
+      device: NPU
+      runtime: simulated
+      color: "#1D9E75"
+      sim: {tps: 13.7, ttft_ms: 170, accuracy: 0.6, reply_tokens: [15, 25]}
+    - id: qwen
+      name: Qwen3-1.7B
+      label: SIM QWEN3
+      device: NPU
+      runtime: simulated
+      color: "#3FA7D6"
+      sim: {tps: 12.0, ttft_ms: 175, accuracy: 0.6, reply_tokens: [15, 25]}

@@ -1,0 +1,30 @@
+diff --git a/examples/qualcomm/oss_scripts/llama/runner/runner.cpp b/examples/qualcomm/oss_scripts/llama/runner/runner.cpp
+index e2477c51f0..a24d5b998e 100644
+--- a/examples/qualcomm/oss_scripts/llama/runner/runner.cpp
++++ b/examples/qualcomm/oss_scripts/llama/runner/runner.cpp
+@@ -247,10 +247,12 @@ Error Runner::load() {
+   int32_t token_generator_ar_len = 0;
+   int32_t max_cache_len = 0;
+   int32_t max_ar_len = 0;
+-  // atten mask: [1, 1, AR-N, CL]
++  // atten mask: [1, 1, AR-N, CL] or, from older exports, [1, AR-N, CL]. Index
++  // from the end so both ranks give the right AR length and context length.
+   auto atten_mask_meta_token = method_meta->input_tensor_meta(1);
+-  token_generator_ar_len = atten_mask_meta_token->sizes()[2];
+-  context_len_ = atten_mask_meta_token->sizes()[3];
++  auto token_mask_sizes = atten_mask_meta_token->sizes();
++  token_generator_ar_len = token_mask_sizes[token_mask_sizes.size() - 2];
++  context_len_ = token_mask_sizes[token_mask_sizes.size() - 1];
+   if (eval_mode_ == EvalMode::kKVCached) {
+     prompt_processor_ar_len = token_generator_ar_len;
+   } else if (
+@@ -259,7 +261,8 @@ Error Runner::load() {
+     auto atten_mask_meta_prompt =
+         module_->method_meta(prompt_processor_method_name)
+             ->input_tensor_meta(1);
+-    prompt_processor_ar_len = atten_mask_meta_prompt->sizes()[2];
++    auto prompt_mask_sizes = atten_mask_meta_prompt->sizes();
++    prompt_processor_ar_len = prompt_mask_sizes[prompt_mask_sizes.size() - 2];
+   }
+   if (prompt_processor_ar_len == context_len_)
+     max_cache_len = context_len_;
