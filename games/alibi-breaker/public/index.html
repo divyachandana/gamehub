@@ -1,0 +1,145 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Alibi Breaker</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <header class="appbar">
+    <a class="brand" href="/" aria-label="Alibi Breaker home">
+      <svg class="mark" viewBox="0 0 24 24" aria-hidden="true"><rect x="2" y="2" width="20" height="20" rx="5"/><path d="M8 15.5 11 9l2.2 4.2L15 11l1.5 4.5"/></svg>
+      <span>Alibi Breaker</span>
+    </a>
+    <div id="appbar-case" class="appbar-case" hidden>
+      <span class="sep" aria-hidden="true">/</span>
+      <span id="case-title" class="crumb"></span>
+      <span id="case-meta" class="meta-chip"></span>
+    </div>
+    <div class="appbar-actions">
+      <span id="model-status" class="status"></span>
+      <button id="btn-briefing" class="btn" hidden>Case file</button>
+      <button id="btn-cases" class="btn" hidden>All cases</button>
+      <button id="btn-accuse" class="btn danger" hidden>Make accusation</button>
+    </div>
+  </header>
+
+  <!-- Case library -->
+  <section id="start" class="library">
+    <div class="library-head">
+      <h1>Case library</h1>
+      <p>Interview each subject. Every place and time they state is recorded and checked against real walking times on San Francisco streets and the evidence on file. Statements that cannot be physically true are flagged automatically.</p>
+    </div>
+    <div class="table-card">
+      <table class="cases">
+        <thead><tr><th>Case</th><th>Type</th><th>Location</th><th class="num">Subjects</th><th class="num">Evidence</th><th></th></tr></thead>
+        <tbody id="case-list"><tr><td colspan="6" class="muted">Loading cases…</td></tr></tbody>
+      </table>
+    </div>
+    <ol class="steps">
+      <li><b>Interview</b><span>Ask where each subject was and when. Stated places and times are logged to the case timeline.</span></li>
+      <li><b>Verify</b><span>Each statement is checked against walking times on real streets and against the evidence on file.</span></li>
+      <li><b>Conclude</b><span>Accuse a subject once at least one of their statements is proven impossible.</span></li>
+    </ol>
+  </section>
+
+  <!-- Workspace -->
+  <section id="game" class="workspace" hidden>
+    <div class="col-left">
+      <section class="card">
+        <header class="card-head"><h2 id="subjects-title">Subjects</h2></header>
+        <div id="suspects" class="subjects"></div>
+      </section>
+
+      <section class="card interview">
+        <header class="card-head">
+          <h2>Interview</h2>
+          <span id="interview-with" class="muted small"></span>
+        </header>
+        <div id="chat" class="transcript" aria-live="polite"></div>
+        <form id="ask-form" class="ask" autocomplete="off">
+          <div id="evidence-chip" class="attached" hidden>
+            <span>Presenting: <b id="evidence-chip-title"></b></span>
+            <button type="button" id="evidence-chip-clear" class="link">Remove</button>
+          </div>
+          <div class="ask-row">
+            <input id="question" maxlength="600" placeholder="Ask a question…">
+            <button id="btn-ask" class="btn primary" type="submit">Ask</button>
+          </div>
+          <p id="ask-error" class="error" hidden></p>
+          <div class="suggest"><span class="muted small">Suggested:</span><span id="quick"></span></div>
+        </form>
+      </section>
+    </div>
+
+    <div class="col-right">
+      <section class="card map-card">
+        <header class="card-head">
+          <h2 id="map-title">Map</h2>
+          <span id="route-readout" class="muted small">Select two locations to measure walking time.</span>
+        </header>
+        <div class="map-frame"><svg id="map" role="img" aria-label="Street map with recorded statements and evidence"></svg></div>
+        <footer class="map-foot">
+          <span class="legend"><i class="lg lg-scene"></i><span id="legend-crime">Incident location</span></span>
+          <span class="legend"><i class="lg lg-claim"></i>Statement</span>
+          <span class="legend"><i class="lg lg-fact"></i>Evidence</span>
+          <span id="map-attribution" class="attribution"></span>
+        </footer>
+      </section>
+
+      <div class="grid-2">
+        <section class="card">
+          <header class="card-head"><h2>Findings</h2><span id="findings-count" class="count"></span></header>
+          <div id="alerts" class="findings"></div>
+        </section>
+        <section class="card">
+          <header class="card-head"><h2>Timeline</h2><span id="timeline-who" class="muted small"></span></header>
+          <ol id="timeline" class="timeline"></ol>
+        </section>
+      </div>
+
+      <section class="card">
+        <header class="card-head"><h2>Evidence on file</h2><span id="evidence-count" class="count"></span></header>
+        <div id="evidence" class="evidence"></div>
+      </section>
+    </div>
+  </section>
+
+  <dialog id="briefing-dialog" class="dialog">
+    <p class="eyebrow" id="briefing-kicker"></p>
+    <h2 id="briefing-title"></h2>
+    <p id="briefing-text" class="body"></p>
+    <h3 class="sub">Subjects</h3>
+    <div id="briefing-people" class="people"></div>
+    <form method="dialog" class="dialog-actions"><button class="btn primary">Begin interviews</button></form>
+  </dialog>
+
+  <dialog id="accuse-dialog" class="dialog">
+    <div id="accuse-pick">
+      <h2 id="accuse-heading">Make accusation</h2>
+      <p class="body muted">An accusation requires at least one statement proven impossible.</p>
+      <div id="accuse-options" class="accuse-options"></div>
+      <form method="dialog" class="dialog-actions"><button class="btn">Cancel</button></form>
+    </div>
+    <div id="accuse-result" hidden>
+      <p class="eyebrow" id="result-kicker"></p>
+      <h2 id="result-title"></h2>
+      <p id="result-text" class="quote"></p>
+      <h3 class="sub" id="result-proof-title">Supporting findings</h3>
+      <ul id="result-proof" class="proof"></ul>
+      <h3 class="sub">Case summary</h3>
+      <p id="result-solution" class="body"></p>
+      <p id="result-stats" class="muted small"></p>
+      <div class="dialog-actions">
+        <button id="btn-result-close" class="btn">Return to case</button>
+        <button id="btn-result-new" class="btn primary">Case library</button>
+      </div>
+    </div>
+  </dialog>
+
+  <script src="app.js" type="module"></script>
+</body>
+</html>

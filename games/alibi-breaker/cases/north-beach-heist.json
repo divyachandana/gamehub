@@ -1,0 +1,382 @@
+{
+  "id": "north-beach-heist",
+  "title": "The North Beach Heist",
+  "category": "Crime",
+  "icon": "💎",
+  "area": "North Beach, San Francisco",
+  "tagline": "Diamond theft at Ravenna Jewelers. Three subjects, three alibis.",
+  "map": "sf-north-beach",
+  "labels": {
+    "role": "Detective",
+    "subjects": "Suspects",
+    "accuse": "Accuse",
+    "win": "Case closed",
+    "wrong": "Wrong suspect"
+  },
+  "briefing": "Saturday, 9:00 PM. Someone opened the back door of Ravenna Jewelers on Stockton & Union with an old staff code and walked out with $400,000 in diamonds. Three people had a reason to be nearby, and all three have an alibi. Everyone in North Beach gets around on foot, so every alibi has to fit the real walking time between corners. Find the one that doesn't.",
+  "crime": {
+    "place": "jewelers",
+    "time": "21:00",
+    "window": [
+      "20:50",
+      "21:10"
+    ],
+    "label": "Crime scene",
+    "icon": "💎",
+    "summary": "the robbery of Ravenna Jewelers (Stockton & Union, North Beach) at 9:00 PM tonight"
+  },
+  "watch": {
+    "place": "jewelers",
+    "window": [
+      "20:50",
+      "21:10"
+    ],
+    "label": "the robbery happened there at 9:00"
+  },
+  "places": [
+    {
+      "id": "cafe",
+      "name": "Joe's Café",
+      "icon": "☕",
+      "corner": [
+        "Jones Street",
+        "Chestnut Street"
+      ],
+      "aliases": [
+        "joe's",
+        "joes",
+        "the café",
+        "the cafe",
+        "café",
+        "cafe"
+      ]
+    },
+    {
+      "id": "jewelers",
+      "name": "Ravenna Jewelers",
+      "icon": "💎",
+      "corner": [
+        "Stockton Street",
+        "Union Street"
+      ],
+      "aliases": [
+        "ravenna",
+        "the store",
+        "the jewelry store",
+        "jewelers"
+      ]
+    },
+    {
+      "id": "marco_home",
+      "name": "Kestrel Court",
+      "icon": "🏠",
+      "corner": [
+        "Kearny Street",
+        "Vallejo Street"
+      ],
+      "aliases": [
+        "kestrel",
+        "my building"
+      ]
+    },
+    {
+      "id": "cinema",
+      "name": "Rialto Cinema",
+      "icon": "🎬",
+      "corner": [
+        "Jones Street",
+        "Vallejo Street"
+      ],
+      "aliases": [
+        "rialto",
+        "the cinema",
+        "the movies",
+        "the theater",
+        "the theatre",
+        "cinema",
+        "movie"
+      ]
+    },
+    {
+      "id": "lena_home",
+      "name": "Lena's flat",
+      "icon": "🏡",
+      "corner": [
+        "Mason Street",
+        "Chestnut Street"
+      ],
+      "aliases": []
+    },
+    {
+      "id": "bar",
+      "name": "The Green Door",
+      "icon": "🍸",
+      "corner": [
+        "Grant Avenue",
+        "Chestnut Street"
+      ],
+      "aliases": [
+        "green door",
+        "the bar",
+        "bar"
+      ]
+    },
+    {
+      "id": "camera",
+      "name": "Stockton & Filbert camera",
+      "icon": "📷",
+      "corner": [
+        "Stockton Street",
+        "Filbert Street"
+      ],
+      "aliases": [
+        "stockton and filbert",
+        "filbert"
+      ]
+    }
+  ],
+  "suspects": [
+    {
+      "id": "marco",
+      "name": "Marco Vale",
+      "role": "Former sales clerk, fired three weeks ago",
+      "color": "#3f7fd9",
+      "avatar": "🧔",
+      "bio": "Worked at Ravenna Jewelers for two years until he was let go. Lives at Kestrel Court (Kearny & Vallejo). Usually wears a grey hoodie.",
+      "home": "marco_home",
+      "guilty": true,
+      "voice": "Charming at first, then prickly and sarcastic. Short sentences. Calls the detective 'detective'. Bitter about being fired.",
+      "truth": "You paid at Joe's Café (Jones & Chestnut) at 8:38 PM and left at 8:40. You walked down to Ravenna Jewelers on Stockton & Union, passing the corner camera at Stockton & Filbert at 8:58, and at 9:00 you used your old staff door code (they never deactivated it) to get in. You took the diamond tray, left at 9:04 and walked home to Kestrel Court; the concierge logged you at 9:11. The diamonds are in a cereal box in your kitchen. You did it because they fired you with a week's notice and you owe money.",
+      "cover": "You were at Joe's Café the whole evening, from about 8:00 until 9:10. Then you walked straight home to Kestrel Court and were home by 9:15, watching the game on TV.",
+      "pressure": "If the detective shows your times don't work (the walk is too long, or the concierge log says 9:11), do not confess. Adjust: say you must have left Joe's earlier, around 8:50, and walked home down Stockton Street, getting home around 9:10. Get irritated. Deny going near Ravenna Jewelers and say half of North Beach owns a grey hoodie.",
+      "stressHint": "Hiding that he robbed the store. Pressure points: exact times he left Joe's and got home, the walking time, Stockton Street, the corner camera, his grey hoodie, the door code, the concierge log. Small talk about being fired makes him bitter, not scared.",
+      "confession": "Marco stares at the route on the map for a long time. \"They gave me a week's notice after two years. And they never even changed the door code.\" He laughs, once. \"Check the cereal box in my kitchen.\"",
+      "mock": {
+        "alibi": "I was at Joe's Café all evening, from about 8:00 until 9:10. Then I walked straight home, I was home by 9:15 watching the game.",
+        "cornered": "Okay, fine, maybe I left Joe's earlier. Around 8:50. I walked down Stockton like always and got home around 9:10. I didn't stop anywhere, detective.",
+        "evidence": "Half of North Beach owns a grey hoodie, detective. That proves nothing.",
+        "deflect": [
+          "I already told you. Joe's, then home.",
+          "Am I under arrest? Because this is starting to feel like harassment.",
+          "Ask Joe. He'll tell you I was there."
+        ],
+        "triggers": [
+          "minute",
+          "impossible",
+          "walk",
+          "lie",
+          "lying",
+          "route",
+          "takes",
+          "how did",
+          "concierge",
+          "9:11",
+          "doesn't add up",
+          "can't be"
+        ]
+      }
+    },
+    {
+      "id": "lena",
+      "name": "Lena Ortiz",
+      "role": "Store manager, locked up at 8:00 PM",
+      "color": "#d6457a",
+      "avatar": "👩",
+      "bio": "Manager of Ravenna Jewelers for six years. Locked up tonight at 8:00 PM. Lives on Mason & Chestnut.",
+      "home": "lena_home",
+      "guilty": false,
+      "voice": "Polite, anxious, over-explains, apologizes a lot.",
+      "truth": "You locked the store at 8:00 PM and were in such a hurry for your movie that you forgot to set the vault alarm. You bought a ticket at the Rialto Cinema (Jones & Vallejo) at 8:24, watched the 8:30 show, went to the snack bar and were back in your seat at 8:55, and stayed until it ended at 10:10. You walked home to Mason & Chestnut and got in around 10:25. You had nothing to do with the robbery, but you're terrified you'll be blamed for the alarm.",
+      "cover": "You were at the Rialto Cinema for the 8:30 show. You got there around 8:25 and stayed until it ended at 10:10, then walked home, arriving about 10:25. You say you set the alarm when you locked up at 8:00, like always.",
+      "pressure": "If the detective pushes about the alarm, closing up, or the staff roster more than once, crack and admit you might not have set the vault alarm. Insist you never went near the store after 8:00.",
+      "stressHint": "Innocent of the robbery but hiding that she forgot to set the vault alarm. Pressure points: the alarm, closing up, the staff roster. Questions about the movie are easy for her.",
+      "innocentReveal": "Lena was back in her seat at the Rialto at 8:55 PM, a 10-minute walk from the store. She couldn't have been there at 9:00. Her only mistake: forgetting the vault alarm.",
+      "mock": {
+        "alibi": "I was at the Rialto Cinema, the 8:30 show. I got there around 8:25 and stayed until it ended at 10:10, then I walked home and got in about 10:25.",
+        "cornered": "I... okay. When I locked up at 8:00, I don't think I set the vault alarm. I was rushing to the movie. I'm so sorry. But I never went back there, I swear.",
+        "evidence": "That's me, yes. I was at the movie the whole time, I promise.",
+        "deflect": [
+          "I'm sorry, I've told you everything I know.",
+          "I just went to see a movie, that's all.",
+          "Can I call someone? I'm really nervous."
+        ],
+        "triggers": [
+          "alarm",
+          "vault",
+          "lock",
+          "closing",
+          "close up",
+          "roster",
+          "hiding",
+          "truth"
+        ]
+      }
+    },
+    {
+      "id": "dez",
+      "name": "Dez Okafor",
+      "role": "Security guard, rostered to patrol the store",
+      "color": "#2f9e6e",
+      "avatar": "💂",
+      "bio": "Contract security guard. Tonight's roster had him patrolling Ravenna Jewelers from 8:30 to 10:00 PM. Also works door shifts at The Green Door bar.",
+      "home": null,
+      "guilty": false,
+      "voice": "Gruff, few words, ex-army. Gets defensive about money.",
+      "truth": "You were rostered to patrol Ravenna Jewelers from 8:30 to 10:00 PM, but you skipped it to work the door at The Green Door bar (Grant & Chestnut), which pays double. You signed in at 8:44, were on the bar's door camera at 8:58, and stayed until 11:00. You had nothing to do with the robbery, but you're afraid of losing your job: your absence is why the store was unguarded.",
+      "cover": "You were working the door at The Green Door bar: you signed in at 8:44 and stayed until 11:00. Avoid mentioning that you were supposed to be at the jewelry store.",
+      "pressure": "If the detective brings up the staff roster or asks why you weren't at the jewelry store, admit you skipped the store patrol for the bar shift. Insist you never left the bar.",
+      "stressHint": "Innocent of the robbery but hiding that he skipped his store patrol for a bar shift. Pressure points: the roster, his patrol shift, money. Questions about the bar are easy.",
+      "innocentReveal": "Dez was on The Green Door's camera at 8:58 PM, a 7-minute walk from the store. He skipped his patrol for extra cash, which was careless but not criminal.",
+      "mock": {
+        "alibi": "The Green Door. Signed in at 8:44, worked the door till 11:00. Ask the manager.",
+        "cornered": "Fine. I was supposed to be on the jewelry store patrol tonight. Took the bar shift instead, it pays double. That's why nobody was there. But I didn't rob anybody.",
+        "evidence": "Yeah, that's me. Told you. I was at the bar.",
+        "deflect": [
+          "Already told you where I was.",
+          "I've got nothing else to say.",
+          "Ask the bar."
+        ],
+        "triggers": [
+          "roster",
+          "patrol",
+          "shift",
+          "supposed to",
+          "schedule",
+          "why weren't you",
+          "money"
+        ]
+      }
+    }
+  ],
+  "evidence": [
+    {
+      "id": "receipt",
+      "icon": "🧾",
+      "place": "cafe",
+      "start": true,
+      "title": "Joe's Café receipt",
+      "detail": "Card payment by Marco Vale: one espresso, one slice of pie. Timestamp 8:38 PM.",
+      "facts": [
+        {
+          "suspect": "marco",
+          "place": "cafe",
+          "time": "20:38",
+          "label": "Paid at Joe's Café"
+        }
+      ]
+    },
+    {
+      "id": "camera",
+      "icon": "📷",
+      "place": "camera",
+      "title": "Stockton & Filbert corner camera",
+      "detail": "8:58 PM: a man in a grey hoodie walking south on Stockton toward Ravenna Jewelers. Face hidden.",
+      "facts": [
+        {
+          "suspect": null,
+          "place": "camera",
+          "time": "20:58",
+          "label": "Man in grey hoodie"
+        }
+      ]
+    },
+    {
+      "id": "concierge",
+      "icon": "📋",
+      "place": "marco_home",
+      "title": "Kestrel Court concierge log",
+      "detail": "Resident M. Vale, apt 9C, came in through the lobby at 9:11 PM.",
+      "facts": [
+        {
+          "suspect": "marco",
+          "place": "marco_home",
+          "time": "21:11",
+          "label": "Entered Kestrel Court lobby"
+        }
+      ]
+    },
+    {
+      "id": "keypad",
+      "icon": "🔢",
+      "place": "jewelers",
+      "start": true,
+      "title": "Back door keypad log",
+      "detail": "Back door opened with an old staff code at 9:00 PM. The code was never deactivated after a recent staff change.",
+      "facts": []
+    },
+    {
+      "id": "ticket",
+      "icon": "🎟️",
+      "place": "cinema",
+      "title": "Rialto Cinema ticket",
+      "detail": "One adult ticket, 8:30 PM screening, bought at the box office at 8:24 PM by L. Ortiz.",
+      "facts": [
+        {
+          "suspect": "lena",
+          "place": "cinema",
+          "time": "20:24",
+          "label": "Bought cinema ticket"
+        }
+      ]
+    },
+    {
+      "id": "usher",
+      "icon": "🗣️",
+      "place": "cinema",
+      "title": "Rialto usher statement",
+      "detail": "\"Ms. Ortiz came back from the snack bar at about 8:55 and sat through the rest of the film.\"",
+      "facts": [
+        {
+          "suspect": "lena",
+          "place": "cinema",
+          "time": "20:55",
+          "label": "Seen by usher"
+        }
+      ]
+    },
+    {
+      "id": "signin",
+      "icon": "✍️",
+      "place": "bar",
+      "title": "Green Door staff sign-in",
+      "detail": "D. Okafor, door staff, signed in at 8:44 PM.",
+      "facts": [
+        {
+          "suspect": "dez",
+          "place": "bar",
+          "time": "20:44",
+          "label": "Signed in for door shift"
+        }
+      ]
+    },
+    {
+      "id": "doorcam",
+      "icon": "📹",
+      "place": "bar",
+      "title": "Green Door door camera",
+      "detail": "Dez Okafor checking IDs at the door, 8:58 PM.",
+      "facts": [
+        {
+          "suspect": "dez",
+          "place": "bar",
+          "time": "20:58",
+          "label": "On the bar's door camera"
+        }
+      ]
+    },
+    {
+      "id": "roster",
+      "icon": "🗓️",
+      "place": "jewelers",
+      "start": true,
+      "title": "Ravenna staff roster",
+      "detail": "Security patrol tonight: D. Okafor, 8:30 to 10:00 PM. Vault alarm set by: L. Ortiz at close (8:00 PM), no confirmation recorded.",
+      "facts": []
+    }
+  ],
+  "solution": {
+    "suspect": "marco",
+    "explanation": "Marco Vale. He said he was at Joe's Café until 9:10 and home by 9:15, but that's an 18-minute walk, and the concierge logged him at 9:11. His real walk ran down Stockton Street, right past Ravenna Jewelers at 9:00, where the corner camera caught a man in a grey hoodie two minutes before the robbery.",
+    "weakCase": "You like Marco for it, but the DA wants proof. Catch Marco in a timeline the map says is impossible, then accuse."
+  }
+}

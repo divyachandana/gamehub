@@ -1,0 +1,14 @@
+{
+  "name": "alibi-breaker",
+  "version": "0.1.0",
+  "description": "Detective game: interrogate AI suspects and break their alibis with a map.",
+  "type": "module",
+  "private": true,
+  "scripts": {
+    "start": "node --env-file-if-exists=.env server.js",
+    "mock": "node --env-file-if-exists=.env server.js --mock"
+  },
+  "dependencies": {
+    "@anthropic-ai/sdk": "^0.70.0"
+  }
+}

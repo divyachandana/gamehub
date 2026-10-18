@@ -1,0 +1,1140 @@
+{
+ "id": "sf-mission",
+ "name": "San Francisco · Mission",
+ "attribution": "Map © OpenStreetMap contributors",
+ "travel": {
+  "mode": "walk",
+  "metersPerMinute": 80
+ },
+ "width": 1058,
+ "height": 1157,
+ "tiles": {
+  "zoom": 17,
+  "left": 5365962,
+  "top": 12970578
+ },
+ "corners": [
+  {
+   "id": "j_0_0",
+   "name": "Church St & 21st St",
+   "streets": [
+    "Church Street",
+    "21st Street"
+   ],
+   "x": 145.5,
+   "y": 1082.7,
+   "lat": 37.756496,
+   "lon": -122.427916
+  },
+  {
+   "id": "j_0_1",
+   "name": "Church St & Liberty St",
+   "streets": [
+    "Church Street",
+    "Liberty Street"
+   ],
+   "x": 138.4,
+   "y": 988.7,
+   "lat": 37.757293,
+   "lon": -122.427992
+  },
+  {
+   "id": "j_0_2",
+   "name": "Church St & 20th St",
+   "streets": [
+    "Church Street",
+    "20th Street"
+   ],
+   "x": 131.2,
+   "y": 894.4,
+   "lat": 37.758093,
+   "lon": -122.428068
+  },
+  {
+   "id": "j_0_3",
+   "name": "Church St & 19th St",
+   "streets": [
+    "Church Street",
+    "19th Street"
+   ],
+   "x": 117,
+   "y": 705.8,
+   "lat": 37.759693,
+   "lon": -122.428221
+  },
+  {
+   "id": "j_0_4",
+   "name": "Church St & 18th St",
+   "streets": [
+    "Church Street",
+    "18th Street"
+   ],
+   "x": 102.8,
+   "y": 517.5,
+   "lat": 37.76129,
+   "lon": -122.428374
+  },
+  {
+   "id": "j_0_5",
+   "name": "Church St & 17th St",
+   "streets": [
+    "Church Street",
+    "17th Street"
+   ],
+   "x": 88.5,
+   "y": 328.6,
+   "lat": 37.762892,
+   "lon": -122.428527
+  },
+  {
+   "id": "j_0_6",
+   "name": "Church St & 16th St",
+   "streets": [
+    "Church Street",
+    "16th Street"
+   ],
+   "x": 74.1,
+   "y": 138.3,
+   "lat": 37.764506,
+   "lon": -122.428681
+  },
+  {
+   "id": "j_1_0",
+   "name": "Dolores St & 21st St",
+   "streets": [
+    "Dolores Street",
+    "21st Street"
+   ],
+   "x": 364.9,
+   "y": 1065.9,
+   "lat": 37.756639,
+   "lon": -122.425561
+  },
+  {
+   "id": "j_1_1",
+   "name": "Dolores St & Liberty St",
+   "streets": [
+    "Dolores Street",
+    "Liberty Street"
+   ],
+   "x": 357.8,
+   "y": 971.9,
+   "lat": 37.757436,
+   "lon": -122.425638
+  },
+  {
+   "id": "j_1_2",
+   "name": "Dolores St & 20th St",
+   "streets": [
+    "Dolores Street",
+    "20th Street"
+   ],
+   "x": 350.7,
+   "y": 877.6,
+   "lat": 37.758236,
+   "lon": -122.425714
+  },
+  {
+   "id": "j_1_3",
+   "name": "Dolores St & 19th St",
+   "streets": [
+    "Dolores Street",
+    "19th Street"
+   ],
+   "x": 336.4,
+   "y": 689,
+   "lat": 37.759835,
+   "lon": -122.425867
+  },
+  {
+   "id": "j_1_4",
+   "name": "Dolores St & 18th St",
+   "streets": [
+    "Dolores Street",
+    "18th Street"
+   ],
+   "x": 322.2,
+   "y": 500.7,
+   "lat": 37.761432,
+   "lon": -122.426019
+  },
+  {
+   "id": "j_1_5",
+   "name": "Dolores St & 17th St",
+   "streets": [
+    "Dolores Street",
+    "17th Street"
+   ],
+   "x": 308,
+   "y": 311.8,
+   "lat": 37.763035,
+   "lon": -122.426172
+  },
+  {
+   "id": "j_1_6",
+   "name": "Dolores St & 16th St",
+   "streets": [
+    "Dolores Street",
+    "16th Street"
+   ],
+   "x": 293.6,
+   "y": 121.5,
+   "lat": 37.764649,
+   "lon": -122.426327
+  },
+  {
+   "id": "j_2_0",
+   "name": "Guerrero St & 21st St",
+   "streets": [
+    "Guerrero Street",
+    "21st Street"
+   ],
+   "x": 575.8,
+   "y": 1049.8,
+   "lat": 37.756775,
+   "lon": -122.423299
+  },
+  {
+   "id": "j_2_1",
+   "name": "Guerrero St & Liberty St",
+   "streets": [
+    "Guerrero Street",
+    "Liberty Street"
+   ],
+   "x": 568.7,
+   "y": 955.8,
+   "lat": 37.757573,
+   "lon": -122.423375
+  },
+  {
+   "id": "j_2_2",
+   "name": "Guerrero St & 20th St",
+   "streets": [
+    "Guerrero Street",
+    "20th Street"
+   ],
+   "x": 561.6,
+   "y": 861.5,
+   "lat": 37.758373,
+   "lon": -122.423451
+  },
+  {
+   "id": "j_2_3",
+   "name": "Guerrero St & 19th St",
+   "streets": [
+    "Guerrero Street",
+    "19th Street"
+   ],
+   "x": 547.3,
+   "y": 672.9,
+   "lat": 37.759972,
+   "lon": -122.423604
+  },
+  {
+   "id": "j_2_4",
+   "name": "Guerrero St & 18th St",
+   "streets": [
+    "Guerrero Street",
+    "18th Street"
+   ],
+   "x": 533.1,
+   "y": 484.6,
+   "lat": 37.761569,
+   "lon": -122.423757
+  },
+  {
+   "id": "j_2_5",
+   "name": "Guerrero St & 17th St",
+   "streets": [
+    "Guerrero Street",
+    "17th Street"
+   ],
+   "x": 518.8,
+   "y": 295.7,
+   "lat": 37.763172,
+   "lon": -122.42391
+  },
+  {
+   "id": "j_2_6",
+   "name": "Guerrero St & 16th St",
+   "streets": [
+    "Guerrero Street",
+    "16th Street"
+   ],
+   "x": 504.5,
+   "y": 105.4,
+   "lat": 37.764786,
+   "lon": -122.424064
+  },
+  {
+   "id": "j_3_0",
+   "name": "Valencia St & 21st St",
+   "streets": [
+    "Valencia Street",
+    "21st Street"
+   ],
+   "x": 777.5,
+   "y": 1034.3,
+   "lat": 37.756906,
+   "lon": -122.421135
+  },
+  {
+   "id": "j_3_1",
+   "name": "Valencia St & Liberty St",
+   "streets": [
+    "Valencia Street",
+    "Liberty Street"
+   ],
+   "x": 770.4,
+   "y": 940.4,
+   "lat": 37.757704,
+   "lon": -122.421211
+  },
+  {
+   "id": "j_3_2",
+   "name": "Valencia St & 20th St",
+   "streets": [
+    "Valencia Street",
+    "20th Street"
+   ],
+   "x": 763.3,
+   "y": 846.1,
+   "lat": 37.758503,
+   "lon": -122.421287
+  },
+  {
+   "id": "j_3_3",
+   "name": "Valencia St & 19th St",
+   "streets": [
+    "Valencia Street",
+    "19th Street"
+   ],
+   "x": 749,
+   "y": 657.5,
+   "lat": 37.760103,
+   "lon": -122.42144
+  },
+  {
+   "id": "j_3_4",
+   "name": "Valencia St & 18th St",
+   "streets": [
+    "Valencia Street",
+    "18th Street"
+   ],
+   "x": 734.8,
+   "y": 469.2,
+   "lat": 37.7617,
+   "lon": -122.421593
+  },
+  {
+   "id": "j_3_5",
+   "name": "Valencia St & 17th St",
+   "streets": [
+    "Valencia Street",
+    "17th Street"
+   ],
+   "x": 720.5,
+   "y": 280.2,
+   "lat": 37.763303,
+   "lon": -122.421746
+  },
+  {
+   "id": "j_3_6",
+   "name": "Valencia St & 16th St",
+   "streets": [
+    "Valencia Street",
+    "16th Street"
+   ],
+   "x": 706.2,
+   "y": 89.9,
+   "lat": 37.764917,
+   "lon": -122.4219
+  },
+  {
+   "id": "j_4_0",
+   "name": "Lexington St & 21st St",
+   "streets": [
+    "Lexington Street",
+    "21st Street"
+   ],
+   "x": 850.1,
+   "y": 1028.8,
+   "lat": 37.756954,
+   "lon": -122.420355
+  },
+  {
+   "id": "j_4_1",
+   "name": "Lexington St & Liberty St",
+   "streets": [
+    "Lexington Street",
+    "Liberty Street"
+   ],
+   "x": 843,
+   "y": 934.8,
+   "lat": 37.757751,
+   "lon": -122.420431
+  },
+  {
+   "id": "j_4_2",
+   "name": "Lexington St & 20th St",
+   "streets": [
+    "Lexington Street",
+    "20th Street"
+   ],
+   "x": 835.9,
+   "y": 840.5,
+   "lat": 37.758551,
+   "lon": -122.420508
+  },
+  {
+   "id": "j_4_3",
+   "name": "Lexington St & 19th St",
+   "streets": [
+    "Lexington Street",
+    "19th Street"
+   ],
+   "x": 821.7,
+   "y": 651.9,
+   "lat": 37.76015,
+   "lon": -122.420661
+  },
+  {
+   "id": "j_4_4",
+   "name": "Lexington St & 18th St",
+   "streets": [
+    "Lexington Street",
+    "18th Street"
+   ],
+   "x": 807.5,
+   "y": 463.6,
+   "lat": 37.761747,
+   "lon": -122.420813
+  },
+  {
+   "id": "j_4_5",
+   "name": "Lexington St & 17th St",
+   "streets": [
+    "Lexington Street",
+    "17th Street"
+   ],
+   "x": 793.2,
+   "y": 274.7,
+   "lat": 37.76335,
+   "lon": -122.420966
+  },
+  {
+   "id": "j_4_6",
+   "name": "Lexington St & 16th St",
+   "streets": [
+    "Lexington Street",
+    "16th Street"
+   ],
+   "x": 778.8,
+   "y": 84.4,
+   "lat": 37.764964,
+   "lon": -122.421121
+  },
+  {
+   "id": "j_5_0",
+   "name": "San Carlos St & 21st St",
+   "streets": [
+    "San Carlos Street",
+    "21st Street"
+   ],
+   "x": 912.2,
+   "y": 1024,
+   "lat": 37.756994,
+   "lon": -122.419689
+  },
+  {
+   "id": "j_5_1",
+   "name": "San Carlos St & Liberty St",
+   "streets": [
+    "San Carlos Street",
+    "Liberty Street"
+   ],
+   "x": 905.1,
+   "y": 930,
+   "lat": 37.757791,
+   "lon": -122.419765
+  },
+  {
+   "id": "j_5_2",
+   "name": "San Carlos St & 20th St",
+   "streets": [
+    "San Carlos Street",
+    "20th Street"
+   ],
+   "x": 898,
+   "y": 835.7,
+   "lat": 37.758591,
+   "lon": -122.419842
+  },
+  {
+   "id": "j_5_3",
+   "name": "San Carlos St & 19th St",
+   "streets": [
+    "San Carlos Street",
+    "19th Street"
+   ],
+   "x": 883.8,
+   "y": 647.1,
+   "lat": 37.760191,
+   "lon": -122.419994
+  },
+  {
+   "id": "j_5_4",
+   "name": "San Carlos St & 18th St",
+   "streets": [
+    "San Carlos Street",
+    "18th Street"
+   ],
+   "x": 869.6,
+   "y": 458.9,
+   "lat": 37.761788,
+   "lon": -122.420147
+  },
+  {
+   "id": "j_5_5",
+   "name": "San Carlos St & 17th St",
+   "streets": [
+    "San Carlos Street",
+    "17th Street"
+   ],
+   "x": 855.3,
+   "y": 269.9,
+   "lat": 37.76339,
+   "lon": -122.4203
+  },
+  {
+   "id": "j_5_6",
+   "name": "San Carlos St & 16th St",
+   "streets": [
+    "San Carlos Street",
+    "16th Street"
+   ],
+   "x": 840.9,
+   "y": 79.6,
+   "lat": 37.765004,
+   "lon": -122.420454
+  },
+  {
+   "id": "j_6_0",
+   "name": "Mission St & 21st St",
+   "streets": [
+    "Mission Street",
+    "21st Street"
+   ],
+   "x": 983.7,
+   "y": 1018.5,
+   "lat": 37.75704,
+   "lon": -122.418922
+  },
+  {
+   "id": "j_6_1",
+   "name": "Mission St & Liberty St",
+   "streets": [
+    "Mission Street",
+    "Liberty Street"
+   ],
+   "x": 976.6,
+   "y": 924.6,
+   "lat": 37.757838,
+   "lon": -122.418998
+  },
+  {
+   "id": "j_6_2",
+   "name": "Mission St & 20th St",
+   "streets": [
+    "Mission Street",
+    "20th Street"
+   ],
+   "x": 969.5,
+   "y": 830.3,
+   "lat": 37.758637,
+   "lon": -122.419075
+  },
+  {
+   "id": "j_6_3",
+   "name": "Mission St & 19th St",
+   "streets": [
+    "Mission Street",
+    "19th Street"
+   ],
+   "x": 955.3,
+   "y": 641.7,
+   "lat": 37.760237,
+   "lon": -122.419227
+  },
+  {
+   "id": "j_6_4",
+   "name": "Mission St & 18th St",
+   "streets": [
+    "Mission Street",
+    "18th Street"
+   ],
+   "x": 941.1,
+   "y": 453.4,
+   "lat": 37.761834,
+   "lon": -122.41938
+  },
+  {
+   "id": "j_6_5",
+   "name": "Mission St & 17th St",
+   "streets": [
+    "Mission Street",
+    "17th Street"
+   ],
+   "x": 926.8,
+   "y": 264.5,
+   "lat": 37.763437,
+   "lon": -122.419533
+  },
+  {
+   "id": "j_6_6",
+   "name": "Mission St & 16th St",
+   "streets": [
+    "Mission Street",
+    "16th Street"
+   ],
+   "x": 912.4,
+   "y": 74.1,
+   "lat": 37.765051,
+   "lon": -122.419687
+  }
+ ],
+ "roads": [
+  {
+   "from": "j_0_0",
+   "to": "j_0_1",
+   "name": "Church Street",
+   "meters": 88,
+   "minutes": 1.1
+  },
+  {
+   "from": "j_0_0",
+   "to": "j_1_0",
+   "name": "21st Street",
+   "meters": 208,
+   "minutes": 2.6
+  },
+  {
+   "from": "j_0_1",
+   "to": "j_0_2",
+   "name": "Church Street",
+   "meters": 89,
+   "minutes": 1.1
+  },
+  {
+   "from": "j_0_1",
+   "to": "j_1_1",
+   "name": "Liberty Street",
+   "meters": 208,
+   "minutes": 2.6
+  },
+  {
+   "from": "j_0_2",
+   "to": "j_0_3",
+   "name": "Church Street",
+   "meters": 177,
+   "minutes": 2.2
+  },
+  {
+   "from": "j_0_2",
+   "to": "j_1_2",
+   "name": "20th Street",
+   "meters": 208,
+   "minutes": 2.6
+  },
+  {
+   "from": "j_0_3",
+   "to": "j_0_4",
+   "name": "Church Street",
+   "meters": 177,
+   "minutes": 2.2
+  },
+  {
+   "from": "j_0_4",
+   "to": "j_0_5",
+   "name": "Church Street",
+   "meters": 178,
+   "minutes": 2.2
+  },
+  {
+   "from": "j_0_4",
+   "to": "j_1_4",
+   "name": "18th Street",
+   "meters": 208,
+   "minutes": 2.6
+  },
+  {
+   "from": "j_0_5",
+   "to": "j_0_6",
+   "name": "Church Street",
+   "meters": 179,
+   "minutes": 2.2
+  },
+  {
+   "from": "j_0_5",
+   "to": "j_1_5",
+   "name": "17th Street",
+   "meters": 208,
+   "minutes": 2.6
+  },
+  {
+   "from": "j_0_6",
+   "to": "j_1_6",
+   "name": "16th Street",
+   "meters": 208,
+   "minutes": 2.6
+  },
+  {
+   "from": "j_1_0",
+   "to": "j_1_1",
+   "name": "Dolores Street",
+   "meters": 88,
+   "minutes": 1.1
+  },
+  {
+   "from": "j_1_0",
+   "to": "j_2_0",
+   "name": "21st Street",
+   "meters": 200,
+   "minutes": 2.5
+  },
+  {
+   "from": "j_1_1",
+   "to": "j_1_2",
+   "name": "Dolores Street",
+   "meters": 89,
+   "minutes": 1.1
+  },
+  {
+   "from": "j_1_1",
+   "to": "j_2_1",
+   "name": "Liberty Street",
+   "meters": 200,
+   "minutes": 2.5
+  },
+  {
+   "from": "j_1_2",
+   "to": "j_1_3",
+   "name": "Dolores Street",
+   "meters": 177,
+   "minutes": 2.2
+  },
+  {
+   "from": "j_1_2",
+   "to": "j_2_2",
+   "name": "20th Street",
+   "meters": 200,
+   "minutes": 2.5
+  },
+  {
+   "from": "j_1_3",
+   "to": "j_1_4",
+   "name": "Dolores Street",
+   "meters": 177,
+   "minutes": 2.2
+  },
+  {
+   "from": "j_1_3",
+   "to": "j_2_3",
+   "name": "19th Street",
+   "meters": 200,
+   "minutes": 2.5
+  },
+  {
+   "from": "j_1_4",
+   "to": "j_1_5",
+   "name": "Dolores Street",
+   "meters": 178,
+   "minutes": 2.2
+  },
+  {
+   "from": "j_1_4",
+   "to": "j_2_4",
+   "name": "18th Street",
+   "meters": 200,
+   "minutes": 2.5
+  },
+  {
+   "from": "j_1_5",
+   "to": "j_1_6",
+   "name": "Dolores Street",
+   "meters": 179,
+   "minutes": 2.2
+  },
+  {
+   "from": "j_1_5",
+   "to": "j_2_5",
+   "name": "17th Street",
+   "meters": 200,
+   "minutes": 2.5
+  },
+  {
+   "from": "j_1_6",
+   "to": "j_2_6",
+   "name": "16th Street",
+   "meters": 200,
+   "minutes": 2.5
+  },
+  {
+   "from": "j_2_0",
+   "to": "j_2_1",
+   "name": "Guerrero Street",
+   "meters": 88,
+   "minutes": 1.1
+  },
+  {
+   "from": "j_2_0",
+   "to": "j_3_0",
+   "name": "21st Street",
+   "meters": 191,
+   "minutes": 2.4
+  },
+  {
+   "from": "j_2_1",
+   "to": "j_2_2",
+   "name": "Guerrero Street",
+   "meters": 89,
+   "minutes": 1.1
+  },
+  {
+   "from": "j_2_1",
+   "to": "j_3_1",
+   "name": "Liberty Street",
+   "meters": 191,
+   "minutes": 2.4
+  },
+  {
+   "from": "j_2_2",
+   "to": "j_2_3",
+   "name": "Guerrero Street",
+   "meters": 177,
+   "minutes": 2.2
+  },
+  {
+   "from": "j_2_2",
+   "to": "j_3_2",
+   "name": "20th Street",
+   "meters": 191,
+   "minutes": 2.4
+  },
+  {
+   "from": "j_2_3",
+   "to": "j_2_4",
+   "name": "Guerrero Street",
+   "meters": 177,
+   "minutes": 2.2
+  },
+  {
+   "from": "j_2_3",
+   "to": "j_3_3",
+   "name": "19th Street",
+   "meters": 191,
+   "minutes": 2.4
+  },
+  {
+   "from": "j_2_4",
+   "to": "j_2_5",
+   "name": "Guerrero Street",
+   "meters": 178,
+   "minutes": 2.2
+  },
+  {
+   "from": "j_2_4",
+   "to": "j_3_4",
+   "name": "18th Street",
+   "meters": 191,
+   "minutes": 2.4
+  },
+  {
+   "from": "j_2_5",
+   "to": "j_2_6",
+   "name": "Guerrero Street",
+   "meters": 179,
+   "minutes": 2.2
+  },
+  {
+   "from": "j_2_5",
+   "to": "j_3_5",
+   "name": "17th Street",
+   "meters": 191,
+   "minutes": 2.4
+  },
+  {
+   "from": "j_2_6",
+   "to": "j_3_6",
+   "name": "16th Street",
+   "meters": 191,
+   "minutes": 2.4
+  },
+  {
+   "from": "j_3_0",
+   "to": "j_3_1",
+   "name": "Valencia Street",
+   "meters": 88,
+   "minutes": 1.1
+  },
+  {
+   "from": "j_3_0",
+   "to": "j_4_0",
+   "name": "21st Street",
+   "meters": 69,
+   "minutes": 0.9
+  },
+  {
+   "from": "j_3_1",
+   "to": "j_3_2",
+   "name": "Valencia Street",
+   "meters": 89,
+   "minutes": 1.1
+  },
+  {
+   "from": "j_3_2",
+   "to": "j_3_3",
+   "name": "Valencia Street",
+   "meters": 177,
+   "minutes": 2.2
+  },
+  {
+   "from": "j_3_2",
+   "to": "j_4_2",
+   "name": "20th Street",
+   "meters": 69,
+   "minutes": 0.9
+  },
+  {
+   "from": "j_3_3",
+   "to": "j_3_4",
+   "name": "Valencia Street",
+   "meters": 177,
+   "minutes": 2.2
+  },
+  {
+   "from": "j_3_3",
+   "to": "j_4_3",
+   "name": "19th Street",
+   "meters": 69,
+   "minutes": 0.9
+  },
+  {
+   "from": "j_3_4",
+   "to": "j_3_5",
+   "name": "Valencia Street",
+   "meters": 178,
+   "minutes": 2.2
+  },
+  {
+   "from": "j_3_4",
+   "to": "j_4_4",
+   "name": "18th Street",
+   "meters": 69,
+   "minutes": 0.9
+  },
+  {
+   "from": "j_3_5",
+   "to": "j_3_6",
+   "name": "Valencia Street",
+   "meters": 179,
+   "minutes": 2.2
+  },
+  {
+   "from": "j_3_5",
+   "to": "j_4_5",
+   "name": "17th Street",
+   "meters": 69,
+   "minutes": 0.9
+  },
+  {
+   "from": "j_3_6",
+   "to": "j_4_6",
+   "name": "16th Street",
+   "meters": 69,
+   "minutes": 0.9
+  },
+  {
+   "from": "j_4_0",
+   "to": "j_4_1",
+   "name": "Lexington Street",
+   "meters": 88,
+   "minutes": 1.1
+  },
+  {
+   "from": "j_4_0",
+   "to": "j_5_0",
+   "name": "21st Street",
+   "meters": 59,
+   "minutes": 0.7
+  },
+  {
+   "from": "j_4_1",
+   "to": "j_4_2",
+   "name": "Lexington Street",
+   "meters": 89,
+   "minutes": 1.1
+  },
+  {
+   "from": "j_4_2",
+   "to": "j_4_3",
+   "name": "Lexington Street",
+   "meters": 177,
+   "minutes": 2.2
+  },
+  {
+   "from": "j_4_2",
+   "to": "j_5_2",
+   "name": "20th Street",
+   "meters": 59,
+   "minutes": 0.7
+  },
+  {
+   "from": "j_4_3",
+   "to": "j_4_4",
+   "name": "Lexington Street",
+   "meters": 177,
+   "minutes": 2.2
+  },
+  {
+   "from": "j_4_3",
+   "to": "j_5_3",
+   "name": "19th Street",
+   "meters": 59,
+   "minutes": 0.7
+  },
+  {
+   "from": "j_4_4",
+   "to": "j_5_4",
+   "name": "18th Street",
+   "meters": 59,
+   "minutes": 0.7
+  },
+  {
+   "from": "j_4_5",
+   "to": "j_5_5",
+   "name": "17th Street",
+   "meters": 59,
+   "minutes": 0.7
+  },
+  {
+   "from": "j_4_6",
+   "to": "j_5_6",
+   "name": "16th Street",
+   "meters": 59,
+   "minutes": 0.7
+  },
+  {
+   "from": "j_5_0",
+   "to": "j_5_1",
+   "name": "San Carlos Street",
+   "meters": 88,
+   "minutes": 1.1
+  },
+  {
+   "from": "j_5_0",
+   "to": "j_6_0",
+   "name": "21st Street",
+   "meters": 68,
+   "minutes": 0.8
+  },
+  {
+   "from": "j_5_1",
+   "to": "j_5_2",
+   "name": "San Carlos Street",
+   "meters": 89,
+   "minutes": 1.1
+  },
+  {
+   "from": "j_5_2",
+   "to": "j_5_3",
+   "name": "San Carlos Street",
+   "meters": 177,
+   "minutes": 2.2
+  },
+  {
+   "from": "j_5_2",
+   "to": "j_6_2",
+   "name": "20th Street",
+   "meters": 68,
+   "minutes": 0.8
+  },
+  {
+   "from": "j_5_3",
+   "to": "j_5_4",
+   "name": "San Carlos Street",
+   "meters": 177,
+   "minutes": 2.2
+  },
+  {
+   "from": "j_5_3",
+   "to": "j_6_3",
+   "name": "19th Street",
+   "meters": 68,
+   "minutes": 0.8
+  },
+  {
+   "from": "j_5_4",
+   "to": "j_6_4",
+   "name": "18th Street",
+   "meters": 68,
+   "minutes": 0.8
+  },
+  {
+   "from": "j_5_5",
+   "to": "j_6_5",
+   "name": "17th Street",
+   "meters": 68,
+   "minutes": 0.8
+  },
+  {
+   "from": "j_5_6",
+   "to": "j_6_6",
+   "name": "16th Street",
+   "meters": 68,
+   "minutes": 0.8
+  },
+  {
+   "from": "j_6_0",
+   "to": "j_6_1",
+   "name": "Mission Street",
+   "meters": 88,
+   "minutes": 1.1
+  },
+  {
+   "from": "j_6_1",
+   "to": "j_6_2",
+   "name": "Mission Street",
+   "meters": 89,
+   "minutes": 1.1
+  },
+  {
+   "from": "j_6_2",
+   "to": "j_6_3",
+   "name": "Mission Street",
+   "meters": 177,
+   "minutes": 2.2
+  },
+  {
+   "from": "j_6_3",
+   "to": "j_6_4",
+   "name": "Mission Street",
+   "meters": 177,
+   "minutes": 2.2
+  },
+  {
+   "from": "j_6_4",
+   "to": "j_6_5",
+   "name": "Mission Street",
+   "meters": 178,
+   "minutes": 2.2
+  },
+  {
+   "from": "j_6_5",
+   "to": "j_6_6",
+   "name": "Mission Street",
+   "meters": 179,
+   "minutes": 2.2
+  }
+ ]
+}

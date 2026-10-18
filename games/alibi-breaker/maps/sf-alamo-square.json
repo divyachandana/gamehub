@@ -1,0 +1,1161 @@
+{
+ "id": "sf-alamo-square",
+ "name": "San Francisco · Alamo Square",
+ "attribution": "Map © OpenStreetMap contributors",
+ "travel": {
+  "mode": "walk",
+  "metersPerMinute": 80
+ },
+ "width": 1178,
+ "height": 957,
+ "tiles": {
+  "zoom": 17,
+  "left": 5364884,
+  "top": 12968841
+ },
+ "corners": [
+  {
+   "id": "j_0_0",
+   "name": "Broderick St & Oak St",
+   "streets": [
+    "Broderick Street",
+    "Oak Street"
+   ],
+   "x": 179,
+   "y": 882.6,
+   "lat": 37.772925,
+   "lon": -122.439113
+  },
+  {
+   "id": "j_0_1",
+   "name": "Broderick St & Fell St",
+   "streets": [
+    "Broderick Street",
+    "Fell Street"
+   ],
+   "x": 161.5,
+   "y": 772.5,
+   "lat": 37.773858,
+   "lon": -122.439301
+  },
+  {
+   "id": "j_0_2",
+   "name": "Broderick St & Hayes St",
+   "streets": [
+    "Broderick Street",
+    "Hayes Street"
+   ],
+   "x": 144,
+   "y": 662.6,
+   "lat": 37.77479,
+   "lon": -122.439489
+  },
+  {
+   "id": "j_0_3",
+   "name": "Broderick St & Grove St",
+   "streets": [
+    "Broderick Street",
+    "Grove Street"
+   ],
+   "x": 126.5,
+   "y": 552.6,
+   "lat": 37.775722,
+   "lon": -122.439676
+  },
+  {
+   "id": "j_0_4",
+   "name": "Broderick St & Fulton St",
+   "streets": [
+    "Broderick Street",
+    "Fulton Street"
+   ],
+   "x": 109.1,
+   "y": 442.9,
+   "lat": 37.776653,
+   "lon": -122.439863
+  },
+  {
+   "id": "j_0_5",
+   "name": "Broderick St & McAllister St",
+   "streets": [
+    "Broderick Street",
+    "McAllister Street"
+   ],
+   "x": 91.6,
+   "y": 333.1,
+   "lat": 37.777584,
+   "lon": -122.440051
+  },
+  {
+   "id": "j_0_6",
+   "name": "Broderick St & Golden Gate Ave",
+   "streets": [
+    "Broderick Street",
+    "Golden Gate Avenue"
+   ],
+   "x": 74.2,
+   "y": 223.1,
+   "lat": 37.778517,
+   "lon": -122.440238
+  },
+  {
+   "id": "j_1_0",
+   "name": "Divisadero St & Oak St",
+   "streets": [
+    "Divisadero Street",
+    "Oak Street"
+   ],
+   "x": 338.7,
+   "y": 856.8,
+   "lat": 37.773143,
+   "lon": -122.4374
+  },
+  {
+   "id": "j_1_1",
+   "name": "Divisadero St & Fell St",
+   "streets": [
+    "Divisadero Street",
+    "Fell Street"
+   ],
+   "x": 321.2,
+   "y": 746.8,
+   "lat": 37.774076,
+   "lon": -122.437587
+  },
+  {
+   "id": "j_1_2",
+   "name": "Divisadero St & Hayes St",
+   "streets": [
+    "Divisadero Street",
+    "Hayes Street"
+   ],
+   "x": 303.8,
+   "y": 636.8,
+   "lat": 37.775008,
+   "lon": -122.437775
+  },
+  {
+   "id": "j_1_3",
+   "name": "Divisadero St & Grove St",
+   "streets": [
+    "Divisadero Street",
+    "Grove Street"
+   ],
+   "x": 286.3,
+   "y": 526.9,
+   "lat": 37.775941,
+   "lon": -122.437962
+  },
+  {
+   "id": "j_1_4",
+   "name": "Divisadero St & Fulton St",
+   "streets": [
+    "Divisadero Street",
+    "Fulton Street"
+   ],
+   "x": 268.8,
+   "y": 417.2,
+   "lat": 37.776871,
+   "lon": -122.43815
+  },
+  {
+   "id": "j_1_5",
+   "name": "Divisadero St & McAllister St",
+   "streets": [
+    "Divisadero Street",
+    "McAllister Street"
+   ],
+   "x": 251.4,
+   "y": 307.3,
+   "lat": 37.777803,
+   "lon": -122.438337
+  },
+  {
+   "id": "j_1_6",
+   "name": "Divisadero St & Golden Gate Ave",
+   "streets": [
+    "Divisadero Street",
+    "Golden Gate Avenue"
+   ],
+   "x": 233.9,
+   "y": 197.4,
+   "lat": 37.778735,
+   "lon": -122.438525
+  },
+  {
+   "id": "j_2_0",
+   "name": "Scott St & Oak St",
+   "streets": [
+    "Scott Street",
+    "Oak Street"
+   ],
+   "x": 490.2,
+   "y": 832.4,
+   "lat": 37.77335,
+   "lon": -122.435775
+  },
+  {
+   "id": "j_2_1",
+   "name": "Scott St & Fell St",
+   "streets": [
+    "Scott Street",
+    "Fell Street"
+   ],
+   "x": 472.7,
+   "y": 722.4,
+   "lat": 37.774283,
+   "lon": -122.435962
+  },
+  {
+   "id": "j_2_2",
+   "name": "Scott St & Hayes St",
+   "streets": [
+    "Scott Street",
+    "Hayes Street"
+   ],
+   "x": 455.2,
+   "y": 612.4,
+   "lat": 37.775215,
+   "lon": -122.43615
+  },
+  {
+   "id": "j_2_3",
+   "name": "Scott St & Grove St",
+   "streets": [
+    "Scott Street",
+    "Grove Street"
+   ],
+   "x": 437.7,
+   "y": 502.5,
+   "lat": 37.776148,
+   "lon": -122.436337
+  },
+  {
+   "id": "j_2_4",
+   "name": "Scott St & Fulton St",
+   "streets": [
+    "Scott Street",
+    "Fulton Street"
+   ],
+   "x": 420.3,
+   "y": 392.8,
+   "lat": 37.777078,
+   "lon": -122.436525
+  },
+  {
+   "id": "j_2_5",
+   "name": "Scott St & McAllister St",
+   "streets": [
+    "Scott Street",
+    "McAllister Street"
+   ],
+   "x": 402.8,
+   "y": 282.9,
+   "lat": 37.77801,
+   "lon": -122.436712
+  },
+  {
+   "id": "j_2_6",
+   "name": "Scott St & Golden Gate Ave",
+   "streets": [
+    "Scott Street",
+    "Golden Gate Avenue"
+   ],
+   "x": 385.3,
+   "y": 173,
+   "lat": 37.778942,
+   "lon": -122.4369
+  },
+  {
+   "id": "j_3_0",
+   "name": "Pierce St & Oak St",
+   "streets": [
+    "Pierce Street",
+    "Oak Street"
+   ],
+   "x": 643.6,
+   "y": 807.7,
+   "lat": 37.77356,
+   "lon": -122.434128
+  },
+  {
+   "id": "j_3_1",
+   "name": "Pierce St & Fell St",
+   "streets": [
+    "Pierce Street",
+    "Fell Street"
+   ],
+   "x": 626.1,
+   "y": 697.6,
+   "lat": 37.774493,
+   "lon": -122.434316
+  },
+  {
+   "id": "j_3_2",
+   "name": "Pierce St & Hayes St",
+   "streets": [
+    "Pierce Street",
+    "Hayes Street"
+   ],
+   "x": 608.7,
+   "y": 587.7,
+   "lat": 37.775425,
+   "lon": -122.434504
+  },
+  {
+   "id": "j_3_3",
+   "name": "Pierce St & Grove St",
+   "streets": [
+    "Pierce Street",
+    "Grove Street"
+   ],
+   "x": 591.2,
+   "y": 477.8,
+   "lat": 37.776357,
+   "lon": -122.434691
+  },
+  {
+   "id": "j_3_4",
+   "name": "Pierce St & Fulton St",
+   "streets": [
+    "Pierce Street",
+    "Fulton Street"
+   ],
+   "x": 573.7,
+   "y": 368,
+   "lat": 37.777288,
+   "lon": -122.434878
+  },
+  {
+   "id": "j_3_5",
+   "name": "Pierce St & McAllister St",
+   "streets": [
+    "Pierce Street",
+    "McAllister Street"
+   ],
+   "x": 556.3,
+   "y": 258.2,
+   "lat": 37.778219,
+   "lon": -122.435066
+  },
+  {
+   "id": "j_3_6",
+   "name": "Pierce St & Golden Gate Ave",
+   "streets": [
+    "Pierce Street",
+    "Golden Gate Avenue"
+   ],
+   "x": 538.8,
+   "y": 148.3,
+   "lat": 37.779152,
+   "lon": -122.435253
+  },
+  {
+   "id": "j_4_0",
+   "name": "Steiner St & Oak St",
+   "streets": [
+    "Steiner Street",
+    "Oak Street"
+   ],
+   "x": 796.6,
+   "y": 783,
+   "lat": 37.773769,
+   "lon": -122.432488
+  },
+  {
+   "id": "j_4_1",
+   "name": "Steiner St & Fell St",
+   "streets": [
+    "Steiner Street",
+    "Fell Street"
+   ],
+   "x": 779.1,
+   "y": 673,
+   "lat": 37.774702,
+   "lon": -122.432675
+  },
+  {
+   "id": "j_4_2",
+   "name": "Steiner St & Hayes St",
+   "streets": [
+    "Steiner Street",
+    "Hayes Street"
+   ],
+   "x": 761.6,
+   "y": 563.1,
+   "lat": 37.775634,
+   "lon": -122.432863
+  },
+  {
+   "id": "j_4_3",
+   "name": "Steiner St & Grove St",
+   "streets": [
+    "Steiner Street",
+    "Grove Street"
+   ],
+   "x": 744.1,
+   "y": 453.1,
+   "lat": 37.776566,
+   "lon": -122.43305
+  },
+  {
+   "id": "j_4_4",
+   "name": "Steiner St & Fulton St",
+   "streets": [
+    "Steiner Street",
+    "Fulton Street"
+   ],
+   "x": 726.7,
+   "y": 343.4,
+   "lat": 37.777497,
+   "lon": -122.433238
+  },
+  {
+   "id": "j_4_5",
+   "name": "Steiner St & McAllister St",
+   "streets": [
+    "Steiner Street",
+    "McAllister Street"
+   ],
+   "x": 709.2,
+   "y": 233.6,
+   "lat": 37.778428,
+   "lon": -122.433425
+  },
+  {
+   "id": "j_4_6",
+   "name": "Steiner St & Golden Gate Ave",
+   "streets": [
+    "Steiner Street",
+    "Golden Gate Avenue"
+   ],
+   "x": 691.7,
+   "y": 123.6,
+   "lat": 37.779361,
+   "lon": -122.433613
+  },
+  {
+   "id": "j_5_0",
+   "name": "Fillmore St & Oak St",
+   "streets": [
+    "Fillmore Street",
+    "Oak Street"
+   ],
+   "x": 950.1,
+   "y": 758.3,
+   "lat": 37.773979,
+   "lon": -122.43084
+  },
+  {
+   "id": "j_5_1",
+   "name": "Fillmore St & Fell St",
+   "streets": [
+    "Fillmore Street",
+    "Fell Street"
+   ],
+   "x": 932.6,
+   "y": 648.2,
+   "lat": 37.774912,
+   "lon": -122.431028
+  },
+  {
+   "id": "j_5_2",
+   "name": "Fillmore St & Hayes St",
+   "streets": [
+    "Fillmore Street",
+    "Hayes Street"
+   ],
+   "x": 915.1,
+   "y": 538.3,
+   "lat": 37.775844,
+   "lon": -122.431215
+  },
+  {
+   "id": "j_5_3",
+   "name": "Fillmore St & Grove St",
+   "streets": [
+    "Fillmore Street",
+    "Grove Street"
+   ],
+   "x": 897.7,
+   "y": 428.4,
+   "lat": 37.776776,
+   "lon": -122.431403
+  },
+  {
+   "id": "j_5_4",
+   "name": "Fillmore St & Fulton St",
+   "streets": [
+    "Fillmore Street",
+    "Fulton Street"
+   ],
+   "x": 880.2,
+   "y": 318.6,
+   "lat": 37.777707,
+   "lon": -122.43159
+  },
+  {
+   "id": "j_5_5",
+   "name": "Fillmore St & McAllister St",
+   "streets": [
+    "Fillmore Street",
+    "McAllister Street"
+   ],
+   "x": 862.7,
+   "y": 208.8,
+   "lat": 37.778638,
+   "lon": -122.431778
+  },
+  {
+   "id": "j_5_6",
+   "name": "Fillmore St & Golden Gate Ave",
+   "streets": [
+    "Fillmore Street",
+    "Golden Gate Avenue"
+   ],
+   "x": 845.3,
+   "y": 98.9,
+   "lat": 37.779571,
+   "lon": -122.431965
+  },
+  {
+   "id": "j_6_0",
+   "name": "Webster St & Oak St",
+   "streets": [
+    "Webster Street",
+    "Oak Street"
+   ],
+   "x": 1103.5,
+   "y": 733.6,
+   "lat": 37.774188,
+   "lon": -122.429195
+  },
+  {
+   "id": "j_6_1",
+   "name": "Webster St & Fell St",
+   "streets": [
+    "Webster Street",
+    "Fell Street"
+   ],
+   "x": 1086,
+   "y": 623.5,
+   "lat": 37.775121,
+   "lon": -122.429383
+  },
+  {
+   "id": "j_6_2",
+   "name": "Webster St & Hayes St",
+   "streets": [
+    "Webster Street",
+    "Hayes Street"
+   ],
+   "x": 1068.5,
+   "y": 513.6,
+   "lat": 37.776054,
+   "lon": -122.42957
+  },
+  {
+   "id": "j_6_3",
+   "name": "Webster St & Grove St",
+   "streets": [
+    "Webster Street",
+    "Grove Street"
+   ],
+   "x": 1051,
+   "y": 403.7,
+   "lat": 37.776986,
+   "lon": -122.429758
+  },
+  {
+   "id": "j_6_4",
+   "name": "Webster St & Fulton St",
+   "streets": [
+    "Webster Street",
+    "Fulton Street"
+   ],
+   "x": 1033.5,
+   "y": 293.9,
+   "lat": 37.777916,
+   "lon": -122.429945
+  },
+  {
+   "id": "j_6_5",
+   "name": "Webster St & McAllister St",
+   "streets": [
+    "Webster Street",
+    "McAllister Street"
+   ],
+   "x": 1016.1,
+   "y": 184.1,
+   "lat": 37.778848,
+   "lon": -122.430132
+  },
+  {
+   "id": "j_6_6",
+   "name": "Webster St & Golden Gate Ave",
+   "streets": [
+    "Webster Street",
+    "Golden Gate Avenue"
+   ],
+   "x": 998.6,
+   "y": 74.2,
+   "lat": 37.77978,
+   "lon": -122.43032
+  }
+ ],
+ "roads": [
+  {
+   "from": "j_0_0",
+   "to": "j_0_1",
+   "name": "Broderick Street",
+   "meters": 105,
+   "minutes": 1.3
+  },
+  {
+   "from": "j_0_0",
+   "to": "j_1_0",
+   "name": "Oak Street",
+   "meters": 153,
+   "minutes": 1.9
+  },
+  {
+   "from": "j_0_1",
+   "to": "j_0_2",
+   "name": "Broderick Street",
+   "meters": 104,
+   "minutes": 1.3
+  },
+  {
+   "from": "j_0_1",
+   "to": "j_1_1",
+   "name": "Fell Street",
+   "meters": 153,
+   "minutes": 1.9
+  },
+  {
+   "from": "j_0_2",
+   "to": "j_0_3",
+   "name": "Broderick Street",
+   "meters": 104,
+   "minutes": 1.3
+  },
+  {
+   "from": "j_0_2",
+   "to": "j_1_2",
+   "name": "Hayes Street",
+   "meters": 153,
+   "minutes": 1.9
+  },
+  {
+   "from": "j_0_3",
+   "to": "j_0_4",
+   "name": "Broderick Street",
+   "meters": 104,
+   "minutes": 1.3
+  },
+  {
+   "from": "j_0_3",
+   "to": "j_1_3",
+   "name": "Grove Street",
+   "meters": 153,
+   "minutes": 1.9
+  },
+  {
+   "from": "j_0_4",
+   "to": "j_0_5",
+   "name": "Broderick Street",
+   "meters": 104,
+   "minutes": 1.3
+  },
+  {
+   "from": "j_0_4",
+   "to": "j_1_4",
+   "name": "Fulton Street",
+   "meters": 153,
+   "minutes": 1.9
+  },
+  {
+   "from": "j_0_5",
+   "to": "j_0_6",
+   "name": "Broderick Street",
+   "meters": 104,
+   "minutes": 1.3
+  },
+  {
+   "from": "j_0_5",
+   "to": "j_1_5",
+   "name": "McAllister Street",
+   "meters": 153,
+   "minutes": 1.9
+  },
+  {
+   "from": "j_0_6",
+   "to": "j_1_6",
+   "name": "Golden Gate Avenue",
+   "meters": 153,
+   "minutes": 1.9
+  },
+  {
+   "from": "j_1_0",
+   "to": "j_1_1",
+   "name": "Divisadero Street",
+   "meters": 105,
+   "minutes": 1.3
+  },
+  {
+   "from": "j_1_0",
+   "to": "j_2_0",
+   "name": "Oak Street",
+   "meters": 145,
+   "minutes": 1.8
+  },
+  {
+   "from": "j_1_1",
+   "to": "j_1_2",
+   "name": "Divisadero Street",
+   "meters": 104,
+   "minutes": 1.3
+  },
+  {
+   "from": "j_1_1",
+   "to": "j_2_1",
+   "name": "Fell Street",
+   "meters": 145,
+   "minutes": 1.8
+  },
+  {
+   "from": "j_1_2",
+   "to": "j_1_3",
+   "name": "Divisadero Street",
+   "meters": 104,
+   "minutes": 1.3
+  },
+  {
+   "from": "j_1_2",
+   "to": "j_2_2",
+   "name": "Hayes Street",
+   "meters": 145,
+   "minutes": 1.8
+  },
+  {
+   "from": "j_1_3",
+   "to": "j_1_4",
+   "name": "Divisadero Street",
+   "meters": 104,
+   "minutes": 1.3
+  },
+  {
+   "from": "j_1_4",
+   "to": "j_1_5",
+   "name": "Divisadero Street",
+   "meters": 104,
+   "minutes": 1.3
+  },
+  {
+   "from": "j_1_4",
+   "to": "j_2_4",
+   "name": "Fulton Street",
+   "meters": 145,
+   "minutes": 1.8
+  },
+  {
+   "from": "j_1_5",
+   "to": "j_1_6",
+   "name": "Divisadero Street",
+   "meters": 104,
+   "minutes": 1.3
+  },
+  {
+   "from": "j_1_5",
+   "to": "j_2_5",
+   "name": "McAllister Street",
+   "meters": 145,
+   "minutes": 1.8
+  },
+  {
+   "from": "j_1_6",
+   "to": "j_2_6",
+   "name": "Golden Gate Avenue",
+   "meters": 145,
+   "minutes": 1.8
+  },
+  {
+   "from": "j_2_0",
+   "to": "j_2_1",
+   "name": "Scott Street",
+   "meters": 105,
+   "minutes": 1.3
+  },
+  {
+   "from": "j_2_0",
+   "to": "j_3_0",
+   "name": "Oak Street",
+   "meters": 147,
+   "minutes": 1.8
+  },
+  {
+   "from": "j_2_1",
+   "to": "j_2_2",
+   "name": "Scott Street",
+   "meters": 104,
+   "minutes": 1.3
+  },
+  {
+   "from": "j_2_1",
+   "to": "j_3_1",
+   "name": "Fell Street",
+   "meters": 147,
+   "minutes": 1.8
+  },
+  {
+   "from": "j_2_2",
+   "to": "j_2_3",
+   "name": "Scott Street",
+   "meters": 104,
+   "minutes": 1.3
+  },
+  {
+   "from": "j_2_2",
+   "to": "j_3_2",
+   "name": "Hayes Street",
+   "meters": 147,
+   "minutes": 1.8
+  },
+  {
+   "from": "j_2_3",
+   "to": "j_2_4",
+   "name": "Scott Street",
+   "meters": 104,
+   "minutes": 1.3
+  },
+  {
+   "from": "j_2_4",
+   "to": "j_2_5",
+   "name": "Scott Street",
+   "meters": 104,
+   "minutes": 1.3
+  },
+  {
+   "from": "j_2_4",
+   "to": "j_3_4",
+   "name": "Fulton Street",
+   "meters": 147,
+   "minutes": 1.8
+  },
+  {
+   "from": "j_2_5",
+   "to": "j_2_6",
+   "name": "Scott Street",
+   "meters": 104,
+   "minutes": 1.3
+  },
+  {
+   "from": "j_2_5",
+   "to": "j_3_5",
+   "name": "McAllister Street",
+   "meters": 147,
+   "minutes": 1.8
+  },
+  {
+   "from": "j_2_6",
+   "to": "j_3_6",
+   "name": "Golden Gate Avenue",
+   "meters": 147,
+   "minutes": 1.8
+  },
+  {
+   "from": "j_3_0",
+   "to": "j_3_1",
+   "name": "Pierce Street",
+   "meters": 105,
+   "minutes": 1.3
+  },
+  {
+   "from": "j_3_0",
+   "to": "j_4_0",
+   "name": "Oak Street",
+   "meters": 146,
+   "minutes": 1.8
+  },
+  {
+   "from": "j_3_1",
+   "to": "j_3_2",
+   "name": "Pierce Street",
+   "meters": 104,
+   "minutes": 1.3
+  },
+  {
+   "from": "j_3_1",
+   "to": "j_4_1",
+   "name": "Fell Street",
+   "meters": 146,
+   "minutes": 1.8
+  },
+  {
+   "from": "j_3_2",
+   "to": "j_4_2",
+   "name": "Hayes Street",
+   "meters": 146,
+   "minutes": 1.8
+  },
+  {
+   "from": "j_3_4",
+   "to": "j_3_5",
+   "name": "Pierce Street",
+   "meters": 104,
+   "minutes": 1.3
+  },
+  {
+   "from": "j_3_4",
+   "to": "j_4_4",
+   "name": "Fulton Street",
+   "meters": 146,
+   "minutes": 1.8
+  },
+  {
+   "from": "j_3_5",
+   "to": "j_3_6",
+   "name": "Pierce Street",
+   "meters": 104,
+   "minutes": 1.3
+  },
+  {
+   "from": "j_3_5",
+   "to": "j_4_5",
+   "name": "McAllister Street",
+   "meters": 146,
+   "minutes": 1.8
+  },
+  {
+   "from": "j_3_6",
+   "to": "j_4_6",
+   "name": "Golden Gate Avenue",
+   "meters": 146,
+   "minutes": 1.8
+  },
+  {
+   "from": "j_4_0",
+   "to": "j_4_1",
+   "name": "Steiner Street",
+   "meters": 105,
+   "minutes": 1.3
+  },
+  {
+   "from": "j_4_0",
+   "to": "j_5_0",
+   "name": "Oak Street",
+   "meters": 147,
+   "minutes": 1.8
+  },
+  {
+   "from": "j_4_1",
+   "to": "j_4_2",
+   "name": "Steiner Street",
+   "meters": 104,
+   "minutes": 1.3
+  },
+  {
+   "from": "j_4_1",
+   "to": "j_5_1",
+   "name": "Fell Street",
+   "meters": 147,
+   "minutes": 1.8
+  },
+  {
+   "from": "j_4_2",
+   "to": "j_4_3",
+   "name": "Steiner Street",
+   "meters": 104,
+   "minutes": 1.3
+  },
+  {
+   "from": "j_4_2",
+   "to": "j_5_2",
+   "name": "Hayes Street",
+   "meters": 147,
+   "minutes": 1.8
+  },
+  {
+   "from": "j_4_3",
+   "to": "j_4_4",
+   "name": "Steiner Street",
+   "meters": 104,
+   "minutes": 1.3
+  },
+  {
+   "from": "j_4_3",
+   "to": "j_5_3",
+   "name": "Grove Street",
+   "meters": 147,
+   "minutes": 1.8
+  },
+  {
+   "from": "j_4_4",
+   "to": "j_4_5",
+   "name": "Steiner Street",
+   "meters": 104,
+   "minutes": 1.3
+  },
+  {
+   "from": "j_4_4",
+   "to": "j_5_4",
+   "name": "Fulton Street",
+   "meters": 147,
+   "minutes": 1.8
+  },
+  {
+   "from": "j_4_5",
+   "to": "j_4_6",
+   "name": "Steiner Street",
+   "meters": 104,
+   "minutes": 1.3
+  },
+  {
+   "from": "j_4_5",
+   "to": "j_5_5",
+   "name": "McAllister Street",
+   "meters": 147,
+   "minutes": 1.8
+  },
+  {
+   "from": "j_4_6",
+   "to": "j_5_6",
+   "name": "Golden Gate Avenue",
+   "meters": 147,
+   "minutes": 1.8
+  },
+  {
+   "from": "j_5_0",
+   "to": "j_5_1",
+   "name": "Fillmore Street",
+   "meters": 105,
+   "minutes": 1.3
+  },
+  {
+   "from": "j_5_0",
+   "to": "j_6_0",
+   "name": "Oak Street",
+   "meters": 147,
+   "minutes": 1.8
+  },
+  {
+   "from": "j_5_1",
+   "to": "j_5_2",
+   "name": "Fillmore Street",
+   "meters": 104,
+   "minutes": 1.3
+  },
+  {
+   "from": "j_5_1",
+   "to": "j_6_1",
+   "name": "Fell Street",
+   "meters": 147,
+   "minutes": 1.8
+  },
+  {
+   "from": "j_5_2",
+   "to": "j_5_3",
+   "name": "Fillmore Street",
+   "meters": 104,
+   "minutes": 1.3
+  },
+  {
+   "from": "j_5_2",
+   "to": "j_6_2",
+   "name": "Hayes Street",
+   "meters": 147,
+   "minutes": 1.8
+  },
+  {
+   "from": "j_5_3",
+   "to": "j_5_4",
+   "name": "Fillmore Street",
+   "meters": 104,
+   "minutes": 1.3
+  },
+  {
+   "from": "j_5_3",
+   "to": "j_6_3",
+   "name": "Grove Street",
+   "meters": 147,
+   "minutes": 1.8
+  },
+  {
+   "from": "j_5_4",
+   "to": "j_5_5",
+   "name": "Fillmore Street",
+   "meters": 104,
+   "minutes": 1.3
+  },
+  {
+   "from": "j_5_4",
+   "to": "j_6_4",
+   "name": "Fulton Street",
+   "meters": 147,
+   "minutes": 1.8
+  },
+  {
+   "from": "j_5_5",
+   "to": "j_5_6",
+   "name": "Fillmore Street",
+   "meters": 104,
+   "minutes": 1.3
+  },
+  {
+   "from": "j_5_5",
+   "to": "j_6_5",
+   "name": "McAllister Street",
+   "meters": 147,
+   "minutes": 1.8
+  },
+  {
+   "from": "j_5_6",
+   "to": "j_6_6",
+   "name": "Golden Gate Avenue",
+   "meters": 147,
+   "minutes": 1.8
+  },
+  {
+   "from": "j_6_0",
+   "to": "j_6_1",
+   "name": "Webster Street",
+   "meters": 105,
+   "minutes": 1.3
+  },
+  {
+   "from": "j_6_1",
+   "to": "j_6_2",
+   "name": "Webster Street",
+   "meters": 104,
+   "minutes": 1.3
+  },
+  {
+   "from": "j_6_2",
+   "to": "j_6_3",
+   "name": "Webster Street",
+   "meters": 104,
+   "minutes": 1.3
+  },
+  {
+   "from": "j_6_3",
+   "to": "j_6_4",
+   "name": "Webster Street",
+   "meters": 104,
+   "minutes": 1.3
+  },
+  {
+   "from": "j_6_4",
+   "to": "j_6_5",
+   "name": "Webster Street",
+   "meters": 104,
+   "minutes": 1.3
+  },
+  {
+   "from": "j_6_5",
+   "to": "j_6_6",
+   "name": "Webster Street",
+   "meters": 104,
+   "minutes": 1.3
+  }
+ ]
+}

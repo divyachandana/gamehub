@@ -1,0 +1,407 @@
+{
+  "id": "executorch-missing-laptop",
+  "title": "The Missing Demo Laptop",
+  "category": "Hackathon mystery",
+  "icon": "💻",
+  "area": "Fort Mason, San Francisco",
+  "tagline": "ExecuTorch Hackathon, Night 1. Team Watchout Guardian AI's Copilot+ PC is gone. Three judges, three alibis.",
+  "map": "sf-fort-mason",
+  "labels": {
+    "role": "Detective",
+    "subjects": "Judges",
+    "accuse": "Accuse",
+    "win": "Case closed",
+    "wrong": "Wrong judge"
+  },
+  "briefing": "ExecuTorch Hackathon, Saturday night, Founders, Inc. San Francisco Lab (Building C, 3rd floor). At 10:50 PM Team Watchout Guardian AI (Compute Track) left their Copilot+ PC on their table to grab late-night tacos. The laptop held their only working build: models compiled to .pte and running on the Snapdragon X Elite NPU. When the team got back at 11:08 it was gone. Three judges were around Fort Mason that night: Adam, Derrick and Nick. Everyone moved on foot between Building C, Pier 2, the Great Meadow and the Marina streets, so every alibi has to fit the real walking times. Find the judge whose story can't be walked.",
+  "crime": {
+    "place": "lab",
+    "time": "23:00",
+    "window": [
+      "22:50",
+      "23:10"
+    ],
+    "label": "Incident location",
+    "icon": "💻",
+    "summary": "the disappearance of Team Watchout Guardian AI's Copilot+ PC from their table on the 3rd floor of Building C (Founders, Inc.) at about 11:00 PM tonight, during the ExecuTorch Hackathon"
+  },
+  "watch": {
+    "place": "lab",
+    "window": [
+      "22:50",
+      "23:10"
+    ],
+    "label": "the laptop vanished there around 11:00"
+  },
+  "places": [
+    {
+      "id": "lab",
+      "name": "Founders, Inc. · Bldg C, 3F",
+      "icon": "💻",
+      "at": [
+        37.80676,
+        -122.43149
+      ],
+      "aliases": [
+        "founders",
+        "founders inc",
+        "building c",
+        "bldg c",
+        "the lab",
+        "hack floor",
+        "3rd floor",
+        "third floor",
+        "the tables",
+        "team table",
+        "the hackathon"
+      ]
+    },
+    {
+      "id": "lounge",
+      "name": "Pier 2 · Judges' lounge",
+      "icon": "🎤",
+      "at": [
+        37.80841,
+        -122.43137
+      ],
+      "aliases": [
+        "pier 2",
+        "judges' lounge",
+        "judges lounge",
+        "the lounge",
+        "lounge",
+        "the pier"
+      ]
+    },
+    {
+      "id": "truck",
+      "name": "Taco truck",
+      "icon": "🌮",
+      "at": [
+        37.8053,
+        -122.43189
+      ],
+      "aliases": [
+        "taco truck",
+        "tacos",
+        "the truck",
+        "food truck"
+      ]
+    },
+    {
+      "id": "market",
+      "name": "Marina Market",
+      "icon": "🛒",
+      "at": [
+        37.80439,
+        -122.43301
+      ],
+      "aliases": [
+        "marina market",
+        "the market",
+        "market",
+        "grocery",
+        "the store"
+      ]
+    },
+    {
+      "id": "meadow",
+      "name": "Great Meadow",
+      "icon": "🌳",
+      "at": [
+        37.805,
+        -122.429
+      ],
+      "aliases": [
+        "great meadow",
+        "the meadow",
+        "meadow",
+        "the bench",
+        "the park"
+      ]
+    },
+    {
+      "id": "hotel",
+      "name": "Marina Motor Lodge",
+      "icon": "🏨",
+      "corner": [
+        "Octavia Street",
+        "Lombard Street"
+      ],
+      "aliases": [
+        "motor lodge",
+        "the hotel",
+        "hotel",
+        "my hotel",
+        "the lodge",
+        "lombard"
+      ]
+    }
+  ],
+  "paths": [
+    [
+      "lab",
+      "lounge"
+    ],
+    [
+      "lab",
+      "truck"
+    ],
+    [
+      "truck",
+      "market"
+    ],
+    [
+      "lab",
+      "meadow"
+    ],
+    [
+      "truck",
+      "meadow"
+    ]
+  ],
+  "suspects": [
+    {
+      "id": "derrick",
+      "name": "Derrick",
+      "role": "Judge, Compute Track",
+      "color": "#ea580c",
+      "bio": "Judging the Compute Track. Obsessed with NPU benchmarks. Staying at the Marina Motor Lodge on Lombard.",
+      "home": "hotel",
+      "guilty": true,
+      "voice": "Enthusiastic, nerdy, talks in benchmarks and tokens per second. Gets defensive and over-explains when he's caught.",
+      "truth": "You signed into the Pier 2 judges' lounge at 10:30 PM. You couldn't wait until Sunday to see whether Team Watchout Guardian AI's build really ran on the Snapdragon X Elite NPU. At 10:50 you walked to Building C, took the elevator to the 3rd floor (the elevator logged your judge badge at 10:56), and at 11:00, with the team out at the taco truck, you picked up their Copilot+ PC. You walked back to the judges' lounge by 11:04 and started running benchmarks on it; it joined the lounge Wi-Fi at 11:05. At 11:20 you walked to the Marina Motor Lodge, and the front desk issued your key card at 11:35. The laptop is still in the judges' lounge, plugged in and benchmarking under a pile of scoring sheets.",
+      "cover": "You were in the Pier 2 judges' lounge from 10:30 until 11:15 reviewing proposals, then walked straight to the Marina Motor Lodge and got there at 11:20.",
+      "pressure": "If shown the elevator log or the Wi-Fi log, do not confess. Adjust: say you popped over to Building C around 10:55 'just to check on the teams' and didn't touch anything. Never admit taking the laptop. If asked how fast you walked to the hotel, insist you're a fast walker.",
+      "stressHint": "Hiding that he took the team's laptop to benchmark it. Pressure points: Building C, the elevator log, the judges' lounge Wi-Fi, the walk to the hotel, NPU benchmarks, the team's .pte build. Talking about benchmarks in general makes him excited, not scared.",
+      "confession": "Derrick sighs and pulls a laptop out from under a stack of scoring sheets in the judges' lounge. It's still running. \"Okay. I had to know if your Gemma build really runs on the NPU. It does, by the way. Incredible tokens per second. I was going to put it back before breakfast.\"",
+      "mock": {
+        "alibi": "I was in the Pier 2 judges' lounge from 10:30 until 11:15 reviewing proposals. Then I walked straight to my hotel, the Marina Motor Lodge, got there at 11:20.",
+        "cornered": "Fine, I popped over to Building C around 10:55 just to check on the teams. I didn't touch anything. Then I went back to the judges' lounge.",
+        "evidence": "Lots of devices join that Wi-Fi. It's a hackathon.",
+        "deflect": [
+          "I was reviewing proposals, honestly.",
+          "Do you know how many proposals we had to read?",
+          "I'm a judge, not a suspect."
+        ],
+        "triggers": [
+          "minute",
+          "walk",
+          "impossible",
+          "elevator",
+          "badge",
+          "10:56",
+          "wi-fi",
+          "wifi",
+          "lie",
+          "lying",
+          "doesn't add up",
+          "can't be",
+          "how did",
+          "fast"
+        ]
+      }
+    },
+    {
+      "id": "adam",
+      "name": "Adam",
+      "role": "Judge, Mobile + XR Track",
+      "color": "#2563eb",
+      "bio": "Judging the Mobile + XR Track. Went out for snacks late Saturday night.",
+      "home": null,
+      "guilty": false,
+      "voice": "Friendly, chatty, loves talking shop about ExecuTorch with anyone. A little evasive about his scoring.",
+      "truth": "At 10:50 PM you walked to Marina Market for snacks. You paid for cold brew and gummy bears at 10:59 and chatted about ExecuTorch with the cashier until about 11:04, then walked back to Fort Mason. You had nothing to do with the laptop. Your secret: you've been quietly pre-scoring teams in a spreadsheet before the demos, which judges aren't supposed to do.",
+      "cover": "You were at Marina Market getting snacks from about 10:55 until 11:05, then walked back toward Fort Mason. Avoid talking about your scoring spreadsheet.",
+      "pressure": "If asked about scoring, spreadsheets, or whether you've already ranked teams, admit you've been pre-scoring teams in a spreadsheet and feel bad about it. Insist you were at the market at 11:00.",
+      "stressHint": "Innocent, but hiding that he pre-scored teams in a spreadsheet. Pressure points: scoring, rankings, spreadsheets, fairness. Questions about the snack run are easy.",
+      "innocentReveal": "Adam paid at Marina Market at 10:59 and was still chatting with the cashier at 11:04, a 5-minute walk from Building C. He couldn't have been at the team table at 11:00. His only sin was a secret scoring spreadsheet.",
+      "mock": {
+        "alibi": "I was at Marina Market getting snacks from about 10:55 until 11:05. Cold brew and gummy bears, the hackathon diet.",
+        "cornered": "Okay, confession: I've been pre-scoring teams in a spreadsheet. I know, I know. But I was at the market at 11:00, I promise.",
+        "evidence": "Yep, that's my receipt. Gummy bears are a judging essential.",
+        "deflect": [
+          "I just wanted snacks.",
+          "Have you tried the taco truck? Amazing.",
+          "I love this event, honestly."
+        ],
+        "triggers": [
+          "score",
+          "scoring",
+          "spreadsheet",
+          "rank",
+          "ranking",
+          "fair",
+          "already decided"
+        ]
+      }
+    },
+    {
+      "id": "nick",
+      "name": "Nick",
+      "role": "Judge, IoT Track",
+      "color": "#16a34a",
+      "bio": "Judging the IoT Track. Stepped out for a long phone call on Saturday night.",
+      "home": null,
+      "guilty": false,
+      "voice": "Calm, dry humor, short answers. Awkward when the scoring tablet comes up.",
+      "truth": "At 10:40 PM you walked up to the Great Meadow to take a long phone call on a bench. Fort Mason's night patrol saw you there at 10:59 and again at 11:08. You stayed until about 11:15, then walked back to Building C. You had nothing to do with the laptop. Your secret: earlier tonight you spilled coffee on the judges' scoring tablet and hid it in a drawer.",
+      "cover": "You were on a phone call on a bench at the Great Meadow from about 10:40 until 11:15, then walked back to Building C. Avoid mentioning the scoring tablet.",
+      "pressure": "If asked about the scoring tablet, coffee, or anything broken, admit you spilled coffee on the judges' scoring tablet and hid it in a drawer. Insist you were at the Great Meadow at 11:00.",
+      "stressHint": "Innocent, but hiding that he spilled coffee on the scoring tablet. Pressure points: the scoring tablet, coffee, a drawer, anything broken. Questions about the phone call are easy.",
+      "innocentReveal": "Night patrol logged Nick on a Great Meadow bench at 10:59 and again at 11:08 PM. The round trip to Building C takes nearly 10 minutes, so he couldn't have been at the team table. His only crime was spilling coffee on the scoring tablet.",
+      "mock": {
+        "alibi": "Phone call. Great Meadow, on a bench, from about 10:40 until 11:15. Then I walked back to Building C.",
+        "cornered": "Alright. I spilled coffee on the judges' scoring tablet and hid it in a drawer. But I was at the Great Meadow at 11:00. Ask the patrol.",
+        "evidence": "Yeah, that's me on the bench. Long call.",
+        "deflect": [
+          "I was on the phone.",
+          "Not much to tell.",
+          "Can we wrap this up?"
+        ],
+        "triggers": [
+          "tablet",
+          "coffee",
+          "drawer",
+          "broken",
+          "spill",
+          "scoring"
+        ]
+      }
+    }
+  ],
+  "evidence": [
+    {
+      "id": "report",
+      "icon": "📋",
+      "place": "lab",
+      "title": "Team Watchout Guardian AI report",
+      "detail": "Compute Track. Copilot+ PC (Snapdragon X Elite) left on the team table at 10:50 PM while the team went to the taco truck. Gone when they got back at 11:08 PM.",
+      "facts": []
+    },
+    {
+      "id": "schedule",
+      "icon": "🗓️",
+      "place": "lab",
+      "title": "Judging schedule",
+      "detail": "Demos and judging on Sunday afternoon. Judges on site Saturday night: Adam (Mobile + XR), Derrick (Compute), Nick (IoT).",
+      "facts": []
+    },
+    {
+      "id": "elevator",
+      "icon": "🛗",
+      "place": "lab",
+      "title": "Building C elevator log, 3rd floor",
+      "detail": "Judge badge \"Derrick\" arrived at the 3rd floor at 10:56 PM.",
+      "facts": [
+        {
+          "suspect": "derrick",
+          "place": "lab",
+          "time": "22:56",
+          "label": "Elevator to the 3rd floor"
+        }
+      ]
+    },
+    {
+      "id": "signin",
+      "icon": "✍️",
+      "place": "lounge",
+      "title": "Judges' lounge sign-in sheet",
+      "detail": "Derrick signed in at 10:30 PM. No sign-out recorded.",
+      "facts": [
+        {
+          "suspect": "derrick",
+          "place": "lounge",
+          "time": "22:30",
+          "label": "Signed into the judges' lounge"
+        }
+      ]
+    },
+    {
+      "id": "wifi",
+      "icon": "📶",
+      "place": "lounge",
+      "title": "Pier 2 Wi-Fi log",
+      "detail": "11:05 PM: an unregistered Snapdragon X Elite laptop joined the judges' lounge network.",
+      "facts": [
+        {
+          "suspect": null,
+          "place": "lounge",
+          "time": "23:05",
+          "label": "Unknown laptop joined Wi-Fi"
+        }
+      ]
+    },
+    {
+      "id": "keycard",
+      "icon": "🏨",
+      "place": "hotel",
+      "title": "Marina Motor Lodge front desk",
+      "detail": "Key card issued to Derrick at 11:35 PM.",
+      "facts": [
+        {
+          "suspect": "derrick",
+          "place": "hotel",
+          "time": "23:35",
+          "label": "Picked up key card"
+        }
+      ]
+    },
+    {
+      "id": "receipt",
+      "icon": "🧾",
+      "place": "market",
+      "title": "Marina Market receipt",
+      "detail": "Adam: cold brew and gummy bears, 10:59 PM.",
+      "facts": [
+        {
+          "suspect": "adam",
+          "place": "market",
+          "time": "22:59",
+          "label": "Paid for snacks"
+        }
+      ]
+    },
+    {
+      "id": "cashier",
+      "icon": "🗣️",
+      "place": "market",
+      "title": "Cashier statement",
+      "detail": "\"The judge with the gummy bears talked my ear off about ExecuTorch until about 11:04.\"",
+      "facts": [
+        {
+          "suspect": "adam",
+          "place": "market",
+          "time": "23:04",
+          "label": "Still chatting at the register"
+        }
+      ]
+    },
+    {
+      "id": "patrol",
+      "icon": "🔦",
+      "place": "meadow",
+      "title": "Fort Mason night patrol log",
+      "detail": "Man on a long phone call on a Great Meadow bench, identified as Nick from the hackathon. Seen at 10:59 PM and again on the return round at 11:08 PM.",
+      "facts": [
+        {
+          "suspect": "nick",
+          "place": "meadow",
+          "time": "22:59",
+          "label": "On a bench, on the phone"
+        },
+        {
+          "suspect": "nick",
+          "place": "meadow",
+          "time": "23:08",
+          "label": "Still on the bench"
+        }
+      ]
+    }
+  ],
+  "solution": {
+    "suspect": "derrick",
+    "explanation": "Derrick. He said he was in the Pier 2 judges' lounge from 10:30 until 11:15, but the Building C elevator logged his badge on the 3rd floor at 10:56, and he can't be in two places at once. He also claimed the walk from Pier 2 to the Marina Motor Lodge took 5 minutes; on real streets it's about 14 minutes. At 11:05 an unknown Snapdragon X Elite laptop joined the judges' lounge Wi-Fi, right where he took it to run benchmarks.",
+    "weakCase": "Derrick's love of NPU benchmarks is a motive, not proof. Find a statement the map shows to be impossible before you accuse a judge."
+  }
+}

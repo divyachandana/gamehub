@@ -1,0 +1,335 @@
+{
+  "id": "mission-claim-fraud",
+  "title": "The Valencia Street Hit-and-Run Claim",
+  "category": "Insurance fraud",
+  "icon": "🚗",
+  "area": "Mission, San Francisco",
+  "tagline": "Disputed $18,400 hit-and-run claim on a parked SUV.",
+  "map": "sf-mission",
+  "labels": {
+    "role": "Claims investigator",
+    "subjects": "Interviewees",
+    "accuse": "Flag as fraud",
+    "win": "Fraud confirmed",
+    "wrong": "Wrong call"
+  },
+  "briefing": "Claim #44-1093. Tom Reyes says his grey SUV (plate 8TRX221) sat in Mission Garage on Valencia & 18th all evening while he had dinner at Lucca Trattoria around the corner, and that someone smashed the rear and drove off. Damage estimate: $18,400. Your job as the claims investigator: interview the people involved, line their stories up against real walking times in the Mission, and decide whether to pay or flag the claim as fraud.",
+  "crime": {
+    "place": "garage",
+    "time": "22:00",
+    "label": "Claimed hit-and-run",
+    "icon": "🚗",
+    "summary": "insurance claim #44-1093, a reported hit-and-run on Tom Reyes's parked grey SUV at Mission Garage (Valencia & 18th) tonight"
+  },
+  "watch": {
+    "place": "park",
+    "window": [
+      "21:30",
+      "21:50"
+    ],
+    "label": "a grey SUV hit a bollard there at 9:40"
+  },
+  "places": [
+    {
+      "id": "lucca",
+      "name": "Lucca Trattoria",
+      "icon": "🍝",
+      "corner": [
+        "Valencia Street",
+        "17th Street"
+      ],
+      "aliases": [
+        "lucca",
+        "the trattoria",
+        "the restaurant",
+        "dinner"
+      ]
+    },
+    {
+      "id": "garage",
+      "name": "Mission Garage",
+      "icon": "🅿️",
+      "corner": [
+        "Valencia Street",
+        "18th Street"
+      ],
+      "aliases": [
+        "mission garage",
+        "the garage",
+        "garage",
+        "booth"
+      ]
+    },
+    {
+      "id": "store",
+      "name": "Dolores Corner Store",
+      "icon": "🏪",
+      "corner": [
+        "Church Street",
+        "20th Street"
+      ],
+      "aliases": [
+        "corner store",
+        "the store",
+        "store",
+        "the shop"
+      ]
+    },
+    {
+      "id": "park",
+      "name": "Dolores Park",
+      "icon": "🌳",
+      "corner": [
+        "Church Street",
+        "19th Street"
+      ],
+      "aliases": [
+        "dolores park",
+        "the park"
+      ]
+    },
+    {
+      "id": "taqueria",
+      "name": "Taqueria La Luna",
+      "icon": "🌮",
+      "corner": [
+        "Mission Street",
+        "16th Street"
+      ],
+      "aliases": [
+        "la luna",
+        "taqueria",
+        "the taqueria",
+        "tacos"
+      ]
+    }
+  ],
+  "suspects": [
+    {
+      "id": "tom",
+      "name": "Tom Reyes",
+      "role": "Claimant, owner of the grey SUV",
+      "color": "#e08a1e",
+      "avatar": "👨",
+      "bio": "Filed the claim at 10:40 PM. Drives a grey SUV, plate 8TRX221. Card ending 4471.",
+      "home": null,
+      "guilty": true,
+      "voice": "Friendly, talks fast, a bit too eager to help. Gets defensive and offended when doubted ('I've paid premiums for ten years').",
+      "truth": "You parked in Mission Garage (Valencia & 18th) around 8:25 PM and had a quick dinner at Lucca Trattoria (Valencia & 17th) with your friend Sam; you paid at 8:52. At 8:58 you drove the SUV out of the garage to pick up a speaker from a friend. At 9:40, turning onto Church Street by Dolores Park, you hit a concrete bollard and crushed your rear bumper. At 9:44 you bought a bag of ice at Dolores Corner Store (Church & 20th) with your card ending 4471, drove back, and re-entered the garage at 9:52. You walked back to Lucca, and at 10:40 reported a hit-and-run so insurance would pay instead of you covering a $2,500 deductible you can't afford.",
+      "cover": "You parked in Mission Garage around 8:25, had dinner at Lucca Trattoria with Sam from 8:30 until about 10:20, then walked back to the garage and found the back of your SUV smashed in. You called it in at 10:40. You say the car never moved and you never left dinner.",
+      "pressure": "If the detective shows your times don't work (the corner store receipt, the garage gate log), do not confess. Adjust: admit you 'popped out to grab ice from the corner store on Church' around 9:30 and walked straight back, and insist the car must have been hit while you were at dinner. Never mention driving, the bollard or Dolores Park unless shown the park report, and even then say lots of SUVs are grey.",
+      "stressHint": "Hiding that he damaged the SUV himself on Church Street and staged a hit-and-run claim. Pressure points: whether he ever left dinner, the garage gate log, the corner store receipt, Church Street, Dolores Park, the bollard, concrete dust in the dent. Questions about the food are easy.",
+      "confession": "Tom rubs his face with both hands. \"I clipped a bollard by Dolores Park. The deductible's $2,500 and I'm already behind on the car.\" He slides the claim form back across the table. \"Can I just withdraw it?\"",
+      "mock": {
+        "alibi": "I parked in Mission Garage around 8:25, then dinner at Lucca with my buddy Sam from 8:30 until about 10:20. Walked back to the garage and the whole back end was smashed. I never left dinner.",
+        "cornered": "Okay, okay. I popped out to grab ice from the corner store on Church around 9:30 and walked straight back. Somebody must have hit the car while I was at dinner.",
+        "evidence": "Lots of grey SUVs in this city. I've paid premiums for ten years, you know.",
+        "deflect": [
+          "I've told you everything. Dinner, then I found the car smashed.",
+          "Are you calling me a liar? I'm the victim here.",
+          "Ask Sam, he was with me."
+        ],
+        "triggers": [
+          "minute",
+          "impossible",
+          "walk",
+          "lie",
+          "lying",
+          "ice",
+          "store",
+          "gate",
+          "8:58",
+          "left",
+          "doesn't add up",
+          "can't be",
+          "receipt"
+        ]
+      }
+    },
+    {
+      "id": "sam",
+      "name": "Sam Park",
+      "role": "Tom's friend, dinner companion",
+      "color": "#1fa3a3",
+      "avatar": "🧑",
+      "bio": "Had dinner with Tom at Lucca Trattoria. Old college friend.",
+      "home": null,
+      "guilty": false,
+      "voice": "Easygoing, loyal to Tom, hesitant to say anything that gets him in trouble. Honest when asked a direct question.",
+      "truth": "You met Tom at Lucca Trattoria at 8:30 PM. He left suddenly at about 8:55, saying he had to pick something up. You stayed at the bar alone, and Tom came back to the restaurant around 9:55 looking rattled. You closed your tab at 10:28. You didn't see the car. You don't want to get your friend in trouble, but you won't lie outright.",
+      "cover": "You had dinner at Lucca Trattoria with Tom starting at 8:30 and stayed until about 10:30. At first, keep it vague and say 'we had dinner, it was a nice night'.",
+      "pressure": "If the detective asks directly whether Tom was with you the whole time, or whether he left, admit he left around 8:55 to 'pick something up' and came back around 9:55. Say you stayed at Lucca the whole evening.",
+      "stressHint": "Innocent, but uncomfortable because Tom left dinner and Sam doesn't want to snitch. Pressure points: whether Tom was there the whole time, when Tom left. Questions about Sam's own evening are easy.",
+      "innocentReveal": "Sam was at the Lucca bar until 10:28. Sam had no part in the claim, just a friend who didn't want to talk.",
+      "mock": {
+        "alibi": "We had dinner at Lucca from 8:30. I stayed until about 10:30. It was a nice night, honestly.",
+        "cornered": "Look... Tom left around 8:55. Said he had to pick something up. He came back around 9:55 and looked kind of shaken. I stayed at Lucca the whole time.",
+        "evidence": "Yeah, that's my tab. I was at the bar all night.",
+        "deflect": [
+          "I don't want to get anyone in trouble.",
+          "It was just dinner, man.",
+          "I didn't see the car at all."
+        ],
+        "triggers": [
+          "whole time",
+          "left",
+          "leave",
+          "with you",
+          "honest",
+          "truth",
+          "tom"
+        ]
+      }
+    },
+    {
+      "id": "rosa",
+      "name": "Rosa Diaz",
+      "role": "Mission Garage night attendant",
+      "color": "#8a63d2",
+      "avatar": "👩‍🦱",
+      "bio": "Night attendant at Mission Garage, on shift 8:00 PM to 2:00 AM.",
+      "home": null,
+      "guilty": false,
+      "voice": "Tired, blunt, a little nervous about her boss finding out things.",
+      "truth": "You were on shift at Mission Garage from 8:00 PM. You saw the grey SUV 8TRX221 drive out at 8:58 and come back in at 9:52 with its rear already crushed. At 10:00 you slipped out to Taqueria La Luna (Mission & 16th) for food until 10:20 and switched the booth camera off so your boss wouldn't see. You didn't see any collision in the garage.",
+      "cover": "You were in the booth at Mission Garage all night and saw nothing unusual. Avoid talking about the booth camera.",
+      "pressure": "If the detective asks about the booth camera or your break, admit you stepped out to Taqueria La Luna from 10:00 to 10:20 and switched the camera off. If asked whether the grey SUV left, admit it drove out at 8:58 and came back at 9:52 with the rear already smashed.",
+      "stressHint": "Innocent, but hiding an unapproved break and switching off the camera. Pressure points: the booth camera, her break, leaving the booth. Questions about the grey SUV make her think, not panic.",
+      "innocentReveal": "Rosa took an unapproved taco break, but she had nothing to do with the damage. The SUV came back already smashed at 9:52.",
+      "mock": {
+        "alibi": "I was in the booth at Mission Garage all night, from 8:00. Didn't see anything unusual.",
+        "cornered": "Fine. The grey SUV drove out at 8:58 and came back at 9:52 with the back already smashed. And I stepped out to Taqueria La Luna from 10:00 to 10:20 and switched the booth camera off.",
+        "evidence": "Yeah, the camera was... offline. Maintenance.",
+        "deflect": [
+          "I just park cars.",
+          "Nobody tells me anything.",
+          "Are we almost done? I'm on shift."
+        ],
+        "triggers": [
+          "camera",
+          "break",
+          "booth",
+          "maintenance",
+          "suv",
+          "8trx221",
+          "drive out",
+          "left the garage"
+        ]
+      }
+    }
+  ],
+  "evidence": [
+    {
+      "id": "claim",
+      "icon": "📄",
+      "place": "garage",
+      "start": true,
+      "title": "Claim #44-1093",
+      "detail": "Tom Reyes reports his parked grey SUV (8TRX221) was hit and run at Mission Garage between 8:30 and 10:20 PM. Damage estimate $18,400. Reported 10:40 PM.",
+      "facts": []
+    },
+    {
+      "id": "gatelog",
+      "icon": "🚧",
+      "place": "garage",
+      "title": "Mission Garage gate log",
+      "detail": "Plate 8TRX221: OUT at 8:58 PM, IN at 9:52 PM.",
+      "facts": [
+        {
+          "suspect": "tom",
+          "place": "garage",
+          "time": "20:58",
+          "label": "Tom's SUV drove out"
+        },
+        {
+          "suspect": "tom",
+          "place": "garage",
+          "time": "21:52",
+          "label": "Tom's SUV drove back in"
+        }
+      ]
+    },
+    {
+      "id": "dinner",
+      "icon": "🧾",
+      "place": "lucca",
+      "start": true,
+      "title": "Lucca Trattoria receipt",
+      "detail": "T. Reyes, dinner for two, paid 8:52 PM.",
+      "facts": [
+        {
+          "suspect": "tom",
+          "place": "lucca",
+          "time": "20:52",
+          "label": "Paid for dinner"
+        }
+      ]
+    },
+    {
+      "id": "ice",
+      "icon": "🧊",
+      "place": "store",
+      "title": "Dolores Corner Store receipt",
+      "detail": "Church & 20th. One bag of ice, card ending 4471 (T. Reyes), 9:44 PM.",
+      "facts": [
+        {
+          "suspect": "tom",
+          "place": "store",
+          "time": "21:44",
+          "label": "Bought ice on Church St"
+        }
+      ]
+    },
+    {
+      "id": "bollard",
+      "icon": "🌳",
+      "place": "park",
+      "title": "Dolores Park incident report",
+      "detail": "9:40 PM: a grey SUV turning onto Church Street hit a concrete bollard and drove off. Grey paint left on the bollard.",
+      "facts": [
+        {
+          "suspect": null,
+          "place": "park",
+          "time": "21:40",
+          "label": "SUV hit a bollard"
+        }
+      ]
+    },
+    {
+      "id": "photos",
+      "icon": "📸",
+      "place": "garage",
+      "title": "Claim photos",
+      "detail": "Rear bumper crushed in one deep, narrow dent. Concrete dust packed into the dent. No paint from another vehicle.",
+      "facts": []
+    },
+    {
+      "id": "bartab",
+      "icon": "🍷",
+      "place": "lucca",
+      "title": "Lucca bar tab",
+      "detail": "S. Park, tab closed 10:28 PM.",
+      "facts": [
+        {
+          "suspect": "sam",
+          "place": "lucca",
+          "time": "22:28",
+          "label": "Closed bar tab"
+        }
+      ]
+    },
+    {
+      "id": "timesheet",
+      "icon": "⏱️",
+      "place": "garage",
+      "title": "Garage timesheet",
+      "detail": "R. Diaz on shift 8:00 PM to 2:00 AM. Booth camera offline 10:00 to 10:20 PM, logged as 'maintenance'.",
+      "facts": []
+    }
+  ],
+  "solution": {
+    "suspect": "tom",
+    "explanation": "Tom Reyes staged the claim. He said he never left dinner at Lucca between 8:30 and 10:20, but the gate log shows his SUV leaving at 8:58 and coming back at 9:52, and his card bought ice at Church & 20th at 9:44, a 14-minute walk from Lucca. The damage happened at 9:40 by Dolores Park, where the SUV hit a bollard.",
+    "weakCase": "Something smells off, but you can't deny a claim on a hunch. Catch Tom in a timeline the map says is impossible, then flag it."
+  }
+}

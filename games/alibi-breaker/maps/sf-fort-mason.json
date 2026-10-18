@@ -1,0 +1,1056 @@
+{
+ "id": "sf-fort-mason",
+ "name": "San Francisco · Fort Mason & Marina",
+ "attribution": "Map © OpenStreetMap contributors",
+ "travel": {
+  "mode": "walk",
+  "metersPerMinute": 80
+ },
+ "width": 1170,
+ "height": 1286,
+ "tiles": {
+  "zoom": 17,
+  "left": 5365338,
+  "top": 12965418
+ },
+ "corners": [
+  {
+   "id": "j_0_0",
+   "name": "Webster St & Greenwich St",
+   "streets": [
+    "Webster Street",
+    "Greenwich Street"
+   ],
+   "x": 181.1,
+   "y": 1211.5,
+   "lat": 37.799159,
+   "lon": -122.43423
+  },
+  {
+   "id": "j_0_1",
+   "name": "Webster St & Lombard St",
+   "streets": [
+    "Webster Street",
+    "Lombard Street"
+   ],
+   "x": 163.9,
+   "y": 1105.9,
+   "lat": 37.800054,
+   "lon": -122.434414
+  },
+  {
+   "id": "j_0_2",
+   "name": "Webster St & Chestnut St",
+   "streets": [
+    "Webster Street",
+    "Chestnut Street"
+   ],
+   "x": 145.4,
+   "y": 992.3,
+   "lat": 37.801017,
+   "lon": -122.434612
+  },
+  {
+   "id": "j_0_3",
+   "name": "Webster St & Francisco St",
+   "streets": [
+    "Webster Street",
+    "Francisco Street"
+   ],
+   "x": 127.7,
+   "y": 883.3,
+   "lat": 37.801941,
+   "lon": -122.434802
+  },
+  {
+   "id": "j_0_4",
+   "name": "Webster St & Bay St",
+   "streets": [
+    "Webster Street",
+    "Bay Street"
+   ],
+   "x": 110,
+   "y": 774.2,
+   "lat": 37.802866,
+   "lon": -122.434992
+  },
+  {
+   "id": "j_0_5",
+   "name": "Webster St & North Point St",
+   "streets": [
+    "Webster Street",
+    "North Point Street"
+   ],
+   "x": 91.7,
+   "y": 661.6,
+   "lat": 37.803821,
+   "lon": -122.435189
+  },
+  {
+   "id": "j_0_6",
+   "name": "Webster St & Beach St",
+   "streets": [
+    "Webster Street",
+    "Beach Street"
+   ],
+   "x": 74.2,
+   "y": 553.8,
+   "lat": 37.804735,
+   "lon": -122.435376
+  },
+  {
+   "id": "j_1_0",
+   "name": "Buchanan St & Greenwich St",
+   "streets": [
+    "Buchanan Street",
+    "Greenwich Street"
+   ],
+   "x": 333.7,
+   "y": 1186.3,
+   "lat": 37.799372,
+   "lon": -122.432592
+  },
+  {
+   "id": "j_1_1",
+   "name": "Buchanan St & Lombard St",
+   "streets": [
+    "Buchanan Street",
+    "Lombard Street"
+   ],
+   "x": 316.6,
+   "y": 1080.7,
+   "lat": 37.800268,
+   "lon": -122.432776
+  },
+  {
+   "id": "j_1_2",
+   "name": "Buchanan St & Chestnut St",
+   "streets": [
+    "Buchanan Street",
+    "Chestnut Street"
+   ],
+   "x": 298.1,
+   "y": 967.1,
+   "lat": 37.801231,
+   "lon": -122.432974
+  },
+  {
+   "id": "j_1_3",
+   "name": "Buchanan St & Francisco St",
+   "streets": [
+    "Buchanan Street",
+    "Francisco Street"
+   ],
+   "x": 280.4,
+   "y": 858.2,
+   "lat": 37.802154,
+   "lon": -122.433164
+  },
+  {
+   "id": "j_1_4",
+   "name": "Buchanan St & Bay St",
+   "streets": [
+    "Buchanan Street",
+    "Bay Street"
+   ],
+   "x": 262.7,
+   "y": 749.1,
+   "lat": 37.803079,
+   "lon": -122.433354
+  },
+  {
+   "id": "j_1_5",
+   "name": "Buchanan St & North Point St",
+   "streets": [
+    "Buchanan Street",
+    "North Point Street"
+   ],
+   "x": 244.4,
+   "y": 636.4,
+   "lat": 37.804034,
+   "lon": -122.43355
+  },
+  {
+   "id": "j_1_6",
+   "name": "Buchanan St & Beach St",
+   "streets": [
+    "Buchanan Street",
+    "Beach Street"
+   ],
+   "x": 226.9,
+   "y": 528.6,
+   "lat": 37.804948,
+   "lon": -122.433738
+  },
+  {
+   "id": "j_2_0",
+   "name": "Laguna St & Greenwich St",
+   "streets": [
+    "Laguna Street",
+    "Greenwich Street"
+   ],
+   "x": 487.2,
+   "y": 1161.1,
+   "lat": 37.799587,
+   "lon": -122.430946
+  },
+  {
+   "id": "j_2_1",
+   "name": "Laguna St & Lombard St",
+   "streets": [
+    "Laguna Street",
+    "Lombard Street"
+   ],
+   "x": 470,
+   "y": 1055.5,
+   "lat": 37.800482,
+   "lon": -122.43113
+  },
+  {
+   "id": "j_2_2",
+   "name": "Laguna St & Chestnut St",
+   "streets": [
+    "Laguna Street",
+    "Chestnut Street"
+   ],
+   "x": 451.5,
+   "y": 941.9,
+   "lat": 37.801445,
+   "lon": -122.431328
+  },
+  {
+   "id": "j_2_3",
+   "name": "Laguna St & Francisco St",
+   "streets": [
+    "Laguna Street",
+    "Francisco Street"
+   ],
+   "x": 433.8,
+   "y": 832.9,
+   "lat": 37.802368,
+   "lon": -122.431518
+  },
+  {
+   "id": "j_2_4",
+   "name": "Laguna St & Bay St",
+   "streets": [
+    "Laguna Street",
+    "Bay Street"
+   ],
+   "x": 416.1,
+   "y": 723.8,
+   "lat": 37.803293,
+   "lon": -122.431708
+  },
+  {
+   "id": "j_2_5",
+   "name": "Laguna St & North Point St",
+   "streets": [
+    "Laguna Street",
+    "North Point Street"
+   ],
+   "x": 397.8,
+   "y": 611.2,
+   "lat": 37.804248,
+   "lon": -122.431904
+  },
+  {
+   "id": "j_2_6",
+   "name": "Laguna St & Beach St",
+   "streets": [
+    "Laguna Street",
+    "Beach Street"
+   ],
+   "x": 380.3,
+   "y": 503.4,
+   "lat": 37.805162,
+   "lon": -122.432092
+  },
+  {
+   "id": "j_3_0",
+   "name": "Octavia St & Greenwich St",
+   "streets": [
+    "Octavia Street",
+    "Greenwich Street"
+   ],
+   "x": 639.8,
+   "y": 1135.9,
+   "lat": 37.7998,
+   "lon": -122.429308
+  },
+  {
+   "id": "j_3_1",
+   "name": "Octavia St & Lombard St",
+   "streets": [
+    "Octavia Street",
+    "Lombard Street"
+   ],
+   "x": 622.7,
+   "y": 1030.3,
+   "lat": 37.800695,
+   "lon": -122.429492
+  },
+  {
+   "id": "j_3_2",
+   "name": "Octavia St & Chestnut St",
+   "streets": [
+    "Octavia Street",
+    "Chestnut Street"
+   ],
+   "x": 604.2,
+   "y": 916.7,
+   "lat": 37.801658,
+   "lon": -122.42969
+  },
+  {
+   "id": "j_3_3",
+   "name": "Octavia St & Francisco St",
+   "streets": [
+    "Octavia Street",
+    "Francisco Street"
+   ],
+   "x": 586.5,
+   "y": 807.8,
+   "lat": 37.802582,
+   "lon": -122.42988
+  },
+  {
+   "id": "j_3_4",
+   "name": "Octavia St & Bay St",
+   "streets": [
+    "Octavia Street",
+    "Bay Street"
+   ],
+   "x": 568.8,
+   "y": 698.7,
+   "lat": 37.803506,
+   "lon": -122.43007
+  },
+  {
+   "id": "j_3_5",
+   "name": "Octavia St & North Point St",
+   "streets": [
+    "Octavia Street",
+    "North Point Street"
+   ],
+   "x": 550.5,
+   "y": 586,
+   "lat": 37.804461,
+   "lon": -122.430266
+  },
+  {
+   "id": "j_3_6",
+   "name": "Octavia St & Beach St",
+   "streets": [
+    "Octavia Street",
+    "Beach Street"
+   ],
+   "x": 533,
+   "y": 478.2,
+   "lat": 37.805375,
+   "lon": -122.430454
+  },
+  {
+   "id": "j_4_0",
+   "name": "Gough St & Greenwich St",
+   "streets": [
+    "Gough Street",
+    "Greenwich Street"
+   ],
+   "x": 793.4,
+   "y": 1110.6,
+   "lat": 37.800014,
+   "lon": -122.42766
+  },
+  {
+   "id": "j_4_1",
+   "name": "Gough St & Lombard St",
+   "streets": [
+    "Gough Street",
+    "Lombard Street"
+   ],
+   "x": 776.2,
+   "y": 1005,
+   "lat": 37.800909,
+   "lon": -122.427845
+  },
+  {
+   "id": "j_4_2",
+   "name": "Gough St & Chestnut St",
+   "streets": [
+    "Gough Street",
+    "Chestnut Street"
+   ],
+   "x": 757.7,
+   "y": 891.4,
+   "lat": 37.801872,
+   "lon": -122.428043
+  },
+  {
+   "id": "j_4_3",
+   "name": "Gough St & Francisco St",
+   "streets": [
+    "Gough Street",
+    "Francisco Street"
+   ],
+   "x": 740,
+   "y": 782.5,
+   "lat": 37.802796,
+   "lon": -122.428233
+  },
+  {
+   "id": "j_4_4",
+   "name": "Gough St & Bay St",
+   "streets": [
+    "Gough Street",
+    "Bay Street"
+   ],
+   "x": 722.3,
+   "y": 673.4,
+   "lat": 37.803721,
+   "lon": -122.428423
+  },
+  {
+   "id": "j_4_5",
+   "name": "Gough St & North Point St",
+   "streets": [
+    "Gough Street",
+    "North Point Street"
+   ],
+   "x": 704,
+   "y": 560.7,
+   "lat": 37.804676,
+   "lon": -122.428619
+  },
+  {
+   "id": "j_4_6",
+   "name": "Gough St & Beach St",
+   "streets": [
+    "Gough Street",
+    "Beach Street"
+   ],
+   "x": 686.5,
+   "y": 452.9,
+   "lat": 37.80559,
+   "lon": -122.428807
+  },
+  {
+   "id": "j_5_0",
+   "name": "Franklin St & Greenwich St",
+   "streets": [
+    "Franklin Street",
+    "Greenwich Street"
+   ],
+   "x": 945.7,
+   "y": 1085.5,
+   "lat": 37.800227,
+   "lon": -122.426026
+  },
+  {
+   "id": "j_5_1",
+   "name": "Franklin St & Lombard St",
+   "streets": [
+    "Franklin Street",
+    "Lombard Street"
+   ],
+   "x": 928.6,
+   "y": 979.9,
+   "lat": 37.801122,
+   "lon": -122.42621
+  },
+  {
+   "id": "j_5_2",
+   "name": "Franklin St & Chestnut St",
+   "streets": [
+    "Franklin Street",
+    "Chestnut Street"
+   ],
+   "x": 910.1,
+   "y": 866.3,
+   "lat": 37.802085,
+   "lon": -122.426408
+  },
+  {
+   "id": "j_5_3",
+   "name": "Franklin St & Francisco St",
+   "streets": [
+    "Franklin Street",
+    "Francisco Street"
+   ],
+   "x": 892.4,
+   "y": 757.4,
+   "lat": 37.803009,
+   "lon": -122.426598
+  },
+  {
+   "id": "j_5_4",
+   "name": "Franklin St & Bay St",
+   "streets": [
+    "Franklin Street",
+    "Bay Street"
+   ],
+   "x": 874.7,
+   "y": 648.3,
+   "lat": 37.803933,
+   "lon": -122.426788
+  },
+  {
+   "id": "j_5_5",
+   "name": "Franklin St & North Point St",
+   "streets": [
+    "Franklin Street",
+    "North Point Street"
+   ],
+   "x": 856.4,
+   "y": 535.6,
+   "lat": 37.804888,
+   "lon": -122.426984
+  },
+  {
+   "id": "j_5_6",
+   "name": "Franklin St & Beach St",
+   "streets": [
+    "Franklin Street",
+    "Beach Street"
+   ],
+   "x": 838.9,
+   "y": 427.8,
+   "lat": 37.805802,
+   "lon": -122.427172
+  },
+  {
+   "id": "j_6_0",
+   "name": "Van Ness Ave & Greenwich St",
+   "streets": [
+    "Van Ness Avenue",
+    "Greenwich Street"
+   ],
+   "x": 1095.8,
+   "y": 1060.8,
+   "lat": 37.800436,
+   "lon": -122.424416
+  },
+  {
+   "id": "j_6_1",
+   "name": "Van Ness Ave & Lombard St",
+   "streets": [
+    "Van Ness Avenue",
+    "Lombard Street"
+   ],
+   "x": 1078.6,
+   "y": 955.2,
+   "lat": 37.801331,
+   "lon": -122.4246
+  },
+  {
+   "id": "j_6_2",
+   "name": "Van Ness Ave & Chestnut St",
+   "streets": [
+    "Van Ness Avenue",
+    "Chestnut Street"
+   ],
+   "x": 1060.2,
+   "y": 841.6,
+   "lat": 37.802294,
+   "lon": -122.424798
+  },
+  {
+   "id": "j_6_3",
+   "name": "Van Ness Ave & Francisco St",
+   "streets": [
+    "Van Ness Avenue",
+    "Francisco Street"
+   ],
+   "x": 1042.5,
+   "y": 732.7,
+   "lat": 37.803218,
+   "lon": -122.424988
+  },
+  {
+   "id": "j_6_4",
+   "name": "Van Ness Ave & Bay St",
+   "streets": [
+    "Van Ness Avenue",
+    "Bay Street"
+   ],
+   "x": 1024.7,
+   "y": 623.6,
+   "lat": 37.804143,
+   "lon": -122.425178
+  },
+  {
+   "id": "j_6_5",
+   "name": "Van Ness Ave & North Point St",
+   "streets": [
+    "Van Ness Avenue",
+    "North Point Street"
+   ],
+   "x": 1006.4,
+   "y": 510.9,
+   "lat": 37.805098,
+   "lon": -122.425374
+  },
+  {
+   "id": "j_6_6",
+   "name": "Van Ness Ave & Beach St",
+   "streets": [
+    "Van Ness Avenue",
+    "Beach Street"
+   ],
+   "x": 988.9,
+   "y": 403.1,
+   "lat": 37.806012,
+   "lon": -122.425562
+  }
+ ],
+ "roads": [
+  {
+   "from": "j_0_0",
+   "to": "j_0_1",
+   "name": "Webster Street",
+   "meters": 100,
+   "minutes": 1.3
+  },
+  {
+   "from": "j_0_0",
+   "to": "j_1_0",
+   "name": "Greenwich Street",
+   "meters": 146,
+   "minutes": 1.8
+  },
+  {
+   "from": "j_0_1",
+   "to": "j_0_2",
+   "name": "Webster Street",
+   "meters": 108,
+   "minutes": 1.3
+  },
+  {
+   "from": "j_0_1",
+   "to": "j_1_1",
+   "name": "Lombard Street",
+   "meters": 146,
+   "minutes": 1.8
+  },
+  {
+   "from": "j_0_2",
+   "to": "j_1_2",
+   "name": "Chestnut Street",
+   "meters": 146,
+   "minutes": 1.8
+  },
+  {
+   "from": "j_0_4",
+   "to": "j_0_5",
+   "name": "Webster Street",
+   "meters": 107,
+   "minutes": 1.3
+  },
+  {
+   "from": "j_0_4",
+   "to": "j_1_4",
+   "name": "Bay Street",
+   "meters": 146,
+   "minutes": 1.8
+  },
+  {
+   "from": "j_0_5",
+   "to": "j_0_6",
+   "name": "Webster Street",
+   "meters": 102,
+   "minutes": 1.3
+  },
+  {
+   "from": "j_0_5",
+   "to": "j_1_5",
+   "name": "North Point Street",
+   "meters": 146,
+   "minutes": 1.8
+  },
+  {
+   "from": "j_1_0",
+   "to": "j_1_1",
+   "name": "Buchanan Street",
+   "meters": 100,
+   "minutes": 1.3
+  },
+  {
+   "from": "j_1_0",
+   "to": "j_2_0",
+   "name": "Greenwich Street",
+   "meters": 147,
+   "minutes": 1.8
+  },
+  {
+   "from": "j_1_1",
+   "to": "j_1_2",
+   "name": "Buchanan Street",
+   "meters": 108,
+   "minutes": 1.3
+  },
+  {
+   "from": "j_1_1",
+   "to": "j_2_1",
+   "name": "Lombard Street",
+   "meters": 147,
+   "minutes": 1.8
+  },
+  {
+   "from": "j_1_2",
+   "to": "j_2_2",
+   "name": "Chestnut Street",
+   "meters": 147,
+   "minutes": 1.8
+  },
+  {
+   "from": "j_1_4",
+   "to": "j_1_5",
+   "name": "Buchanan Street",
+   "meters": 107,
+   "minutes": 1.3
+  },
+  {
+   "from": "j_1_4",
+   "to": "j_2_4",
+   "name": "Bay Street",
+   "meters": 147,
+   "minutes": 1.8
+  },
+  {
+   "from": "j_1_5",
+   "to": "j_1_6",
+   "name": "Buchanan Street",
+   "meters": 102,
+   "minutes": 1.3
+  },
+  {
+   "from": "j_1_5",
+   "to": "j_2_5",
+   "name": "North Point Street",
+   "meters": 147,
+   "minutes": 1.8
+  },
+  {
+   "from": "j_2_0",
+   "to": "j_2_1",
+   "name": "Laguna Street",
+   "meters": 100,
+   "minutes": 1.3
+  },
+  {
+   "from": "j_2_0",
+   "to": "j_3_0",
+   "name": "Greenwich Street",
+   "meters": 146,
+   "minutes": 1.8
+  },
+  {
+   "from": "j_2_1",
+   "to": "j_2_2",
+   "name": "Laguna Street",
+   "meters": 108,
+   "minutes": 1.3
+  },
+  {
+   "from": "j_2_1",
+   "to": "j_3_1",
+   "name": "Lombard Street",
+   "meters": 146,
+   "minutes": 1.8
+  },
+  {
+   "from": "j_2_2",
+   "to": "j_2_3",
+   "name": "Laguna Street",
+   "meters": 104,
+   "minutes": 1.3
+  },
+  {
+   "from": "j_2_2",
+   "to": "j_3_2",
+   "name": "Chestnut Street",
+   "meters": 146,
+   "minutes": 1.8
+  },
+  {
+   "from": "j_2_3",
+   "to": "j_2_4",
+   "name": "Laguna Street",
+   "meters": 104,
+   "minutes": 1.3
+  },
+  {
+   "from": "j_2_3",
+   "to": "j_3_3",
+   "name": "Francisco Street",
+   "meters": 146,
+   "minutes": 1.8
+  },
+  {
+   "from": "j_2_4",
+   "to": "j_2_5",
+   "name": "Laguna Street",
+   "meters": 107,
+   "minutes": 1.3
+  },
+  {
+   "from": "j_2_4",
+   "to": "j_3_4",
+   "name": "Bay Street",
+   "meters": 146,
+   "minutes": 1.8
+  },
+  {
+   "from": "j_2_5",
+   "to": "j_2_6",
+   "name": "Laguna Street",
+   "meters": 102,
+   "minutes": 1.3
+  },
+  {
+   "from": "j_3_0",
+   "to": "j_3_1",
+   "name": "Octavia Street",
+   "meters": 100,
+   "minutes": 1.3
+  },
+  {
+   "from": "j_3_0",
+   "to": "j_4_0",
+   "name": "Greenwich Street",
+   "meters": 147,
+   "minutes": 1.8
+  },
+  {
+   "from": "j_3_1",
+   "to": "j_3_2",
+   "name": "Octavia Street",
+   "meters": 108,
+   "minutes": 1.3
+  },
+  {
+   "from": "j_3_1",
+   "to": "j_4_1",
+   "name": "Lombard Street",
+   "meters": 147,
+   "minutes": 1.8
+  },
+  {
+   "from": "j_3_2",
+   "to": "j_3_3",
+   "name": "Octavia Street",
+   "meters": 104,
+   "minutes": 1.3
+  },
+  {
+   "from": "j_3_2",
+   "to": "j_4_2",
+   "name": "Chestnut Street",
+   "meters": 147,
+   "minutes": 1.8
+  },
+  {
+   "from": "j_3_3",
+   "to": "j_3_4",
+   "name": "Octavia Street",
+   "meters": 104,
+   "minutes": 1.3
+  },
+  {
+   "from": "j_3_3",
+   "to": "j_4_3",
+   "name": "Francisco Street",
+   "meters": 147,
+   "minutes": 1.8
+  },
+  {
+   "from": "j_3_4",
+   "to": "j_4_4",
+   "name": "Bay Street",
+   "meters": 147,
+   "minutes": 1.8
+  },
+  {
+   "from": "j_4_0",
+   "to": "j_4_1",
+   "name": "Gough Street",
+   "meters": 100,
+   "minutes": 1.3
+  },
+  {
+   "from": "j_4_0",
+   "to": "j_5_0",
+   "name": "Greenwich Street",
+   "meters": 146,
+   "minutes": 1.8
+  },
+  {
+   "from": "j_4_1",
+   "to": "j_4_2",
+   "name": "Gough Street",
+   "meters": 108,
+   "minutes": 1.3
+  },
+  {
+   "from": "j_4_1",
+   "to": "j_5_1",
+   "name": "Lombard Street",
+   "meters": 146,
+   "minutes": 1.8
+  },
+  {
+   "from": "j_4_2",
+   "to": "j_4_3",
+   "name": "Gough Street",
+   "meters": 104,
+   "minutes": 1.3
+  },
+  {
+   "from": "j_4_2",
+   "to": "j_5_2",
+   "name": "Chestnut Street",
+   "meters": 146,
+   "minutes": 1.8
+  },
+  {
+   "from": "j_4_3",
+   "to": "j_4_4",
+   "name": "Gough Street",
+   "meters": 104,
+   "minutes": 1.3
+  },
+  {
+   "from": "j_4_3",
+   "to": "j_5_3",
+   "name": "Francisco Street",
+   "meters": 146,
+   "minutes": 1.8
+  },
+  {
+   "from": "j_4_4",
+   "to": "j_5_4",
+   "name": "Bay Street",
+   "meters": 146,
+   "minutes": 1.8
+  },
+  {
+   "from": "j_5_0",
+   "to": "j_5_1",
+   "name": "Franklin Street",
+   "meters": 100,
+   "minutes": 1.3
+  },
+  {
+   "from": "j_5_0",
+   "to": "j_6_0",
+   "name": "Greenwich Street",
+   "meters": 144,
+   "minutes": 1.8
+  },
+  {
+   "from": "j_5_1",
+   "to": "j_5_2",
+   "name": "Franklin Street",
+   "meters": 108,
+   "minutes": 1.3
+  },
+  {
+   "from": "j_5_1",
+   "to": "j_6_1",
+   "name": "Lombard Street",
+   "meters": 144,
+   "minutes": 1.8
+  },
+  {
+   "from": "j_5_2",
+   "to": "j_5_3",
+   "name": "Franklin Street",
+   "meters": 104,
+   "minutes": 1.3
+  },
+  {
+   "from": "j_5_2",
+   "to": "j_6_2",
+   "name": "Chestnut Street",
+   "meters": 144,
+   "minutes": 1.8
+  },
+  {
+   "from": "j_5_3",
+   "to": "j_5_4",
+   "name": "Franklin Street",
+   "meters": 104,
+   "minutes": 1.3
+  },
+  {
+   "from": "j_5_3",
+   "to": "j_6_3",
+   "name": "Francisco Street",
+   "meters": 144,
+   "minutes": 1.8
+  },
+  {
+   "from": "j_5_4",
+   "to": "j_5_5",
+   "name": "Franklin Street",
+   "meters": 107,
+   "minutes": 1.3
+  },
+  {
+   "from": "j_5_4",
+   "to": "j_6_4",
+   "name": "Bay Street",
+   "meters": 144,
+   "minutes": 1.8
+  },
+  {
+   "from": "j_5_5",
+   "to": "j_5_6",
+   "name": "Franklin Street",
+   "meters": 102,
+   "minutes": 1.3
+  },
+  {
+   "from": "j_6_0",
+   "to": "j_6_1",
+   "name": "Van Ness Avenue",
+   "meters": 100,
+   "minutes": 1.3
+  },
+  {
+   "from": "j_6_1",
+   "to": "j_6_2",
+   "name": "Van Ness Avenue",
+   "meters": 108,
+   "minutes": 1.3
+  },
+  {
+   "from": "j_6_2",
+   "to": "j_6_3",
+   "name": "Van Ness Avenue",
+   "meters": 104,
+   "minutes": 1.3
+  },
+  {
+   "from": "j_6_3",
+   "to": "j_6_4",
+   "name": "Van Ness Avenue",
+   "meters": 104,
+   "minutes": 1.3
+  },
+  {
+   "from": "j_6_4",
+   "to": "j_6_5",
+   "name": "Van Ness Avenue",
+   "meters": 107,
+   "minutes": 1.3
+  },
+  {
+   "from": "j_6_5",
+   "to": "j_6_6",
+   "name": "Van Ness Avenue",
+   "meters": 102,
+   "minutes": 1.3
+  }
+ ]
+}

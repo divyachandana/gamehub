@@ -1,0 +1,1098 @@
+{
+ "id": "sf-north-beach",
+ "name": "San Francisco · North Beach",
+ "attribution": "Map © OpenStreetMap contributors",
+ "travel": {
+  "mode": "walk",
+  "metersPerMinute": 80
+ },
+ "width": 1160,
+ "height": 953,
+ "tiles": {
+  "zoom": 17,
+  "left": 5367095,
+  "top": 12965916
+ },
+ "corners": [
+  {
+   "id": "j_0_0",
+   "name": "Jones St & Vallejo St",
+   "streets": [
+    "Jones Street",
+    "Vallejo Street"
+   ],
+   "x": 178.9,
+   "y": 879.3,
+   "lat": 37.79775,
+   "lon": -122.415398
+  },
+  {
+   "id": "j_0_1",
+   "name": "Jones St & Green St",
+   "streets": [
+    "Jones Street",
+    "Green Street"
+   ],
+   "x": 161.4,
+   "y": 769.2,
+   "lat": 37.798683,
+   "lon": -122.415585
+  },
+  {
+   "id": "j_0_2",
+   "name": "Jones St & Union St",
+   "streets": [
+    "Jones Street",
+    "Union Street"
+   ],
+   "x": 143.9,
+   "y": 658.9,
+   "lat": 37.799618,
+   "lon": -122.415773
+  },
+  {
+   "id": "j_0_3",
+   "name": "Jones St & Filbert St",
+   "streets": [
+    "Jones Street",
+    "Filbert Street"
+   ],
+   "x": 126.5,
+   "y": 549.2,
+   "lat": 37.800548,
+   "lon": -122.415961
+  },
+  {
+   "id": "j_0_4",
+   "name": "Jones St & Greenwich St",
+   "streets": [
+    "Jones Street",
+    "Greenwich Street"
+   ],
+   "x": 109.2,
+   "y": 440.8,
+   "lat": 37.801466,
+   "lon": -122.416145
+  },
+  {
+   "id": "j_0_5",
+   "name": "Jones St & Lombard St",
+   "streets": [
+    "Jones Street",
+    "Lombard Street"
+   ],
+   "x": 91.5,
+   "y": 329.2,
+   "lat": 37.802413,
+   "lon": -122.416336
+  },
+  {
+   "id": "j_0_6",
+   "name": "Jones St & Chestnut St",
+   "streets": [
+    "Jones Street",
+    "Chestnut Street"
+   ],
+   "x": 74.2,
+   "y": 220.4,
+   "lat": 37.803336,
+   "lon": -122.416522
+  },
+  {
+   "id": "j_1_0",
+   "name": "Taylor St & Vallejo St",
+   "streets": [
+    "Taylor Street",
+    "Vallejo Street"
+   ],
+   "x": 332.1,
+   "y": 854.6,
+   "lat": 37.797959,
+   "lon": -122.413754
+  },
+  {
+   "id": "j_1_1",
+   "name": "Taylor St & Green St",
+   "streets": [
+    "Taylor Street",
+    "Green Street"
+   ],
+   "x": 314.6,
+   "y": 744.5,
+   "lat": 37.798892,
+   "lon": -122.413942
+  },
+  {
+   "id": "j_1_2",
+   "name": "Taylor St & Union St",
+   "streets": [
+    "Taylor Street",
+    "Union Street"
+   ],
+   "x": 297.1,
+   "y": 634.2,
+   "lat": 37.799827,
+   "lon": -122.41413
+  },
+  {
+   "id": "j_1_3",
+   "name": "Taylor St & Filbert St",
+   "streets": [
+    "Taylor Street",
+    "Filbert Street"
+   ],
+   "x": 279.7,
+   "y": 524.5,
+   "lat": 37.800757,
+   "lon": -122.414317
+  },
+  {
+   "id": "j_1_4",
+   "name": "Taylor St & Greenwich St",
+   "streets": [
+    "Taylor Street",
+    "Greenwich Street"
+   ],
+   "x": 262.4,
+   "y": 416.1,
+   "lat": 37.801676,
+   "lon": -122.414502
+  },
+  {
+   "id": "j_1_5",
+   "name": "Taylor St & Lombard St",
+   "streets": [
+    "Taylor Street",
+    "Lombard Street"
+   ],
+   "x": 244.7,
+   "y": 304.5,
+   "lat": 37.802622,
+   "lon": -122.414692
+  },
+  {
+   "id": "j_1_6",
+   "name": "Taylor St & Chestnut St",
+   "streets": [
+    "Taylor Street",
+    "Chestnut Street"
+   ],
+   "x": 227.4,
+   "y": 195.7,
+   "lat": 37.803545,
+   "lon": -122.414878
+  },
+  {
+   "id": "j_2_0",
+   "name": "Mason St & Vallejo St",
+   "streets": [
+    "Mason Street",
+    "Vallejo Street"
+   ],
+   "x": 485.4,
+   "y": 829.9,
+   "lat": 37.798169,
+   "lon": -122.412109
+  },
+  {
+   "id": "j_2_1",
+   "name": "Mason St & Green St",
+   "streets": [
+    "Mason Street",
+    "Green Street"
+   ],
+   "x": 467.9,
+   "y": 719.8,
+   "lat": 37.799102,
+   "lon": -122.412297
+  },
+  {
+   "id": "j_2_2",
+   "name": "Mason St & Union St",
+   "streets": [
+    "Mason Street",
+    "Union Street"
+   ],
+   "x": 450.4,
+   "y": 609.5,
+   "lat": 37.800037,
+   "lon": -122.412485
+  },
+  {
+   "id": "j_2_3",
+   "name": "Mason St & Filbert St",
+   "streets": [
+    "Mason Street",
+    "Filbert Street"
+   ],
+   "x": 432.9,
+   "y": 499.8,
+   "lat": 37.800966,
+   "lon": -122.412672
+  },
+  {
+   "id": "j_2_4",
+   "name": "Mason St & Greenwich St",
+   "streets": [
+    "Mason Street",
+    "Greenwich Street"
+   ],
+   "x": 415.7,
+   "y": 391.4,
+   "lat": 37.801885,
+   "lon": -122.412857
+  },
+  {
+   "id": "j_2_5",
+   "name": "Mason St & Lombard St",
+   "streets": [
+    "Mason Street",
+    "Lombard Street"
+   ],
+   "x": 398,
+   "y": 279.8,
+   "lat": 37.802832,
+   "lon": -122.413048
+  },
+  {
+   "id": "j_2_6",
+   "name": "Mason St & Chestnut St",
+   "streets": [
+    "Mason Street",
+    "Chestnut Street"
+   ],
+   "x": 380.6,
+   "y": 171,
+   "lat": 37.803754,
+   "lon": -122.413234
+  },
+  {
+   "id": "j_3_0",
+   "name": "Powell St & Vallejo St",
+   "streets": [
+    "Powell Street",
+    "Vallejo Street"
+   ],
+   "x": 638.2,
+   "y": 805.2,
+   "lat": 37.798377,
+   "lon": -122.41047
+  },
+  {
+   "id": "j_3_1",
+   "name": "Powell St & Green St",
+   "streets": [
+    "Powell Street",
+    "Green Street"
+   ],
+   "x": 620.7,
+   "y": 695.2,
+   "lat": 37.79931,
+   "lon": -122.410658
+  },
+  {
+   "id": "j_3_2",
+   "name": "Powell St & Union St",
+   "streets": [
+    "Powell Street",
+    "Union Street"
+   ],
+   "x": 603.1,
+   "y": 584.9,
+   "lat": 37.800245,
+   "lon": -122.410846
+  },
+  {
+   "id": "j_3_3",
+   "name": "Powell St & Filbert St",
+   "streets": [
+    "Powell Street",
+    "Filbert Street"
+   ],
+   "x": 585.7,
+   "y": 475.2,
+   "lat": 37.801175,
+   "lon": -122.411033
+  },
+  {
+   "id": "j_3_4",
+   "name": "Powell St & Greenwich St",
+   "streets": [
+    "Powell Street",
+    "Greenwich Street"
+   ],
+   "x": 568.5,
+   "y": 366.8,
+   "lat": 37.802094,
+   "lon": -122.411218
+  },
+  {
+   "id": "j_3_5",
+   "name": "Powell St & Lombard St",
+   "streets": [
+    "Powell Street",
+    "Lombard Street"
+   ],
+   "x": 550.7,
+   "y": 255.2,
+   "lat": 37.80304,
+   "lon": -122.411409
+  },
+  {
+   "id": "j_3_6",
+   "name": "Powell St & Chestnut St",
+   "streets": [
+    "Powell Street",
+    "Chestnut Street"
+   ],
+   "x": 533.4,
+   "y": 146.3,
+   "lat": 37.803963,
+   "lon": -122.411595
+  },
+  {
+   "id": "j_4_0",
+   "name": "Stockton St & Vallejo St",
+   "streets": [
+    "Stockton Street",
+    "Vallejo Street"
+   ],
+   "x": 791.3,
+   "y": 780.6,
+   "lat": 37.798586,
+   "lon": -122.408828
+  },
+  {
+   "id": "j_4_1",
+   "name": "Stockton St & Green St",
+   "streets": [
+    "Stockton Street",
+    "Green Street"
+   ],
+   "x": 773.8,
+   "y": 670.5,
+   "lat": 37.79952,
+   "lon": -122.409016
+  },
+  {
+   "id": "j_4_2",
+   "name": "Stockton St & Union St",
+   "streets": [
+    "Stockton Street",
+    "Union Street"
+   ],
+   "x": 756.2,
+   "y": 560.2,
+   "lat": 37.800455,
+   "lon": -122.409204
+  },
+  {
+   "id": "j_4_3",
+   "name": "Stockton St & Filbert St",
+   "streets": [
+    "Stockton Street",
+    "Filbert Street"
+   ],
+   "x": 738.8,
+   "y": 450.5,
+   "lat": 37.801384,
+   "lon": -122.409391
+  },
+  {
+   "id": "j_4_4",
+   "name": "Stockton St & Greenwich St",
+   "streets": [
+    "Stockton Street",
+    "Greenwich Street"
+   ],
+   "x": 721.6,
+   "y": 342.1,
+   "lat": 37.802303,
+   "lon": -122.409576
+  },
+  {
+   "id": "j_4_5",
+   "name": "Stockton St & Lombard St",
+   "streets": [
+    "Stockton Street",
+    "Lombard Street"
+   ],
+   "x": 703.8,
+   "y": 230.5,
+   "lat": 37.80325,
+   "lon": -122.409767
+  },
+  {
+   "id": "j_4_6",
+   "name": "Stockton St & Chestnut St",
+   "streets": [
+    "Stockton Street",
+    "Chestnut Street"
+   ],
+   "x": 686.5,
+   "y": 121.7,
+   "lat": 37.804172,
+   "lon": -122.409952
+  },
+  {
+   "id": "j_5_0",
+   "name": "Grant Ave & Vallejo St",
+   "streets": [
+    "Grant Avenue",
+    "Vallejo Street"
+   ],
+   "x": 940.5,
+   "y": 756.5,
+   "lat": 37.79879,
+   "lon": -122.407227
+  },
+  {
+   "id": "j_5_1",
+   "name": "Grant Ave & Green St",
+   "streets": [
+    "Grant Avenue",
+    "Green Street"
+   ],
+   "x": 923,
+   "y": 646.4,
+   "lat": 37.799723,
+   "lon": -122.407415
+  },
+  {
+   "id": "j_5_2",
+   "name": "Grant Ave & Union St",
+   "streets": [
+    "Grant Avenue",
+    "Union Street"
+   ],
+   "x": 905.4,
+   "y": 536.2,
+   "lat": 37.800658,
+   "lon": -122.407603
+  },
+  {
+   "id": "j_5_3",
+   "name": "Grant Ave & Filbert St",
+   "streets": [
+    "Grant Avenue",
+    "Filbert Street"
+   ],
+   "x": 888,
+   "y": 426.5,
+   "lat": 37.801588,
+   "lon": -122.40779
+  },
+  {
+   "id": "j_5_4",
+   "name": "Grant Ave & Greenwich St",
+   "streets": [
+    "Grant Avenue",
+    "Greenwich Street"
+   ],
+   "x": 870.8,
+   "y": 318.1,
+   "lat": 37.802507,
+   "lon": -122.407975
+  },
+  {
+   "id": "j_5_5",
+   "name": "Grant Ave & Lombard St",
+   "streets": [
+    "Grant Avenue",
+    "Lombard Street"
+   ],
+   "x": 853,
+   "y": 206.4,
+   "lat": 37.803453,
+   "lon": -122.408166
+  },
+  {
+   "id": "j_5_6",
+   "name": "Grant Ave & Chestnut St",
+   "streets": [
+    "Grant Avenue",
+    "Chestnut Street"
+   ],
+   "x": 835.7,
+   "y": 97.6,
+   "lat": 37.804376,
+   "lon": -122.408351
+  },
+  {
+   "id": "j_6_0",
+   "name": "Kearny St & Vallejo St",
+   "streets": [
+    "Kearny Street",
+    "Vallejo Street"
+   ],
+   "x": 1085.9,
+   "y": 733.1,
+   "lat": 37.798989,
+   "lon": -122.405667
+  },
+  {
+   "id": "j_6_1",
+   "name": "Kearny St & Green St",
+   "streets": [
+    "Kearny Street",
+    "Green Street"
+   ],
+   "x": 1068.4,
+   "y": 623,
+   "lat": 37.799922,
+   "lon": -122.405855
+  },
+  {
+   "id": "j_6_2",
+   "name": "Kearny St & Union St",
+   "streets": [
+    "Kearny Street",
+    "Union Street"
+   ],
+   "x": 1050.9,
+   "y": 512.7,
+   "lat": 37.800857,
+   "lon": -122.406043
+  },
+  {
+   "id": "j_6_3",
+   "name": "Kearny St & Filbert St",
+   "streets": [
+    "Kearny Street",
+    "Filbert Street"
+   ],
+   "x": 1033.4,
+   "y": 403.1,
+   "lat": 37.801787,
+   "lon": -122.40623
+  },
+  {
+   "id": "j_6_4",
+   "name": "Kearny St & Greenwich St",
+   "streets": [
+    "Kearny Street",
+    "Greenwich Street"
+   ],
+   "x": 1016.2,
+   "y": 294.7,
+   "lat": 37.802706,
+   "lon": -122.406415
+  },
+  {
+   "id": "j_6_5",
+   "name": "Kearny St & Lombard St",
+   "streets": [
+    "Kearny Street",
+    "Lombard Street"
+   ],
+   "x": 998.4,
+   "y": 183,
+   "lat": 37.803652,
+   "lon": -122.406605
+  },
+  {
+   "id": "j_6_6",
+   "name": "Kearny St & Chestnut St",
+   "streets": [
+    "Kearny Street",
+    "Chestnut Street"
+   ],
+   "x": 981.1,
+   "y": 74.2,
+   "lat": 37.804575,
+   "lon": -122.406791
+  }
+ ],
+ "roads": [
+  {
+   "from": "j_0_0",
+   "to": "j_0_1",
+   "name": "Jones Street",
+   "meters": 105,
+   "minutes": 1.3
+  },
+  {
+   "from": "j_0_1",
+   "to": "j_0_2",
+   "name": "Jones Street",
+   "meters": 105,
+   "minutes": 1.3
+  },
+  {
+   "from": "j_0_2",
+   "to": "j_0_3",
+   "name": "Jones Street",
+   "meters": 104,
+   "minutes": 1.3
+  },
+  {
+   "from": "j_0_2",
+   "to": "j_1_2",
+   "name": "Union Street",
+   "meters": 146,
+   "minutes": 1.8
+  },
+  {
+   "from": "j_0_3",
+   "to": "j_0_4",
+   "name": "Jones Street",
+   "meters": 103,
+   "minutes": 1.3
+  },
+  {
+   "from": "j_0_3",
+   "to": "j_1_3",
+   "name": "Filbert Street",
+   "meters": 146,
+   "minutes": 1.8
+  },
+  {
+   "from": "j_0_4",
+   "to": "j_0_5",
+   "name": "Jones Street",
+   "meters": 106,
+   "minutes": 1.3
+  },
+  {
+   "from": "j_0_4",
+   "to": "j_1_4",
+   "name": "Greenwich Street",
+   "meters": 146,
+   "minutes": 1.8
+  },
+  {
+   "from": "j_0_5",
+   "to": "j_0_6",
+   "name": "Jones Street",
+   "meters": 103,
+   "minutes": 1.3
+  },
+  {
+   "from": "j_0_5",
+   "to": "j_1_5",
+   "name": "Lombard Street",
+   "meters": 146,
+   "minutes": 1.8
+  },
+  {
+   "from": "j_0_6",
+   "to": "j_1_6",
+   "name": "Chestnut Street",
+   "meters": 146,
+   "minutes": 1.8
+  },
+  {
+   "from": "j_1_0",
+   "to": "j_1_1",
+   "name": "Taylor Street",
+   "meters": 105,
+   "minutes": 1.3
+  },
+  {
+   "from": "j_1_1",
+   "to": "j_1_2",
+   "name": "Taylor Street",
+   "meters": 105,
+   "minutes": 1.3
+  },
+  {
+   "from": "j_1_1",
+   "to": "j_2_1",
+   "name": "Green Street",
+   "meters": 147,
+   "minutes": 1.8
+  },
+  {
+   "from": "j_1_2",
+   "to": "j_1_3",
+   "name": "Taylor Street",
+   "meters": 104,
+   "minutes": 1.3
+  },
+  {
+   "from": "j_1_2",
+   "to": "j_2_2",
+   "name": "Union Street",
+   "meters": 147,
+   "minutes": 1.8
+  },
+  {
+   "from": "j_1_3",
+   "to": "j_1_4",
+   "name": "Taylor Street",
+   "meters": 103,
+   "minutes": 1.3
+  },
+  {
+   "from": "j_1_3",
+   "to": "j_2_3",
+   "name": "Filbert Street",
+   "meters": 147,
+   "minutes": 1.8
+  },
+  {
+   "from": "j_1_4",
+   "to": "j_1_5",
+   "name": "Taylor Street",
+   "meters": 106,
+   "minutes": 1.3
+  },
+  {
+   "from": "j_1_4",
+   "to": "j_2_4",
+   "name": "Greenwich Street",
+   "meters": 147,
+   "minutes": 1.8
+  },
+  {
+   "from": "j_1_5",
+   "to": "j_1_6",
+   "name": "Taylor Street",
+   "meters": 103,
+   "minutes": 1.3
+  },
+  {
+   "from": "j_1_5",
+   "to": "j_2_5",
+   "name": "Lombard Street",
+   "meters": 147,
+   "minutes": 1.8
+  },
+  {
+   "from": "j_1_6",
+   "to": "j_2_6",
+   "name": "Chestnut Street",
+   "meters": 147,
+   "minutes": 1.8
+  },
+  {
+   "from": "j_2_0",
+   "to": "j_2_1",
+   "name": "Mason Street",
+   "meters": 105,
+   "minutes": 1.3
+  },
+  {
+   "from": "j_2_0",
+   "to": "j_3_0",
+   "name": "Vallejo Street",
+   "meters": 146,
+   "minutes": 1.8
+  },
+  {
+   "from": "j_2_1",
+   "to": "j_2_2",
+   "name": "Mason Street",
+   "meters": 105,
+   "minutes": 1.3
+  },
+  {
+   "from": "j_2_1",
+   "to": "j_3_1",
+   "name": "Green Street",
+   "meters": 146,
+   "minutes": 1.8
+  },
+  {
+   "from": "j_2_2",
+   "to": "j_2_3",
+   "name": "Mason Street",
+   "meters": 104,
+   "minutes": 1.3
+  },
+  {
+   "from": "j_2_2",
+   "to": "j_3_2",
+   "name": "Union Street",
+   "meters": 146,
+   "minutes": 1.8
+  },
+  {
+   "from": "j_2_3",
+   "to": "j_2_4",
+   "name": "Mason Street",
+   "meters": 103,
+   "minutes": 1.3
+  },
+  {
+   "from": "j_2_3",
+   "to": "j_3_3",
+   "name": "Filbert Street",
+   "meters": 146,
+   "minutes": 1.8
+  },
+  {
+   "from": "j_2_4",
+   "to": "j_3_4",
+   "name": "Greenwich Street",
+   "meters": 146,
+   "minutes": 1.8
+  },
+  {
+   "from": "j_2_5",
+   "to": "j_2_6",
+   "name": "Mason Street",
+   "meters": 103,
+   "minutes": 1.3
+  },
+  {
+   "from": "j_2_5",
+   "to": "j_3_5",
+   "name": "Lombard Street",
+   "meters": 146,
+   "minutes": 1.8
+  },
+  {
+   "from": "j_2_6",
+   "to": "j_3_6",
+   "name": "Chestnut Street",
+   "meters": 146,
+   "minutes": 1.8
+  },
+  {
+   "from": "j_3_0",
+   "to": "j_3_1",
+   "name": "Powell Street",
+   "meters": 105,
+   "minutes": 1.3
+  },
+  {
+   "from": "j_3_0",
+   "to": "j_4_0",
+   "name": "Vallejo Street",
+   "meters": 146,
+   "minutes": 1.8
+  },
+  {
+   "from": "j_3_1",
+   "to": "j_3_2",
+   "name": "Powell Street",
+   "meters": 105,
+   "minutes": 1.3
+  },
+  {
+   "from": "j_3_1",
+   "to": "j_4_1",
+   "name": "Green Street",
+   "meters": 146,
+   "minutes": 1.8
+  },
+  {
+   "from": "j_3_2",
+   "to": "j_4_2",
+   "name": "Union Street",
+   "meters": 146,
+   "minutes": 1.8
+  },
+  {
+   "from": "j_3_3",
+   "to": "j_3_4",
+   "name": "Powell Street",
+   "meters": 103,
+   "minutes": 1.3
+  },
+  {
+   "from": "j_3_3",
+   "to": "j_4_3",
+   "name": "Filbert Street",
+   "meters": 146,
+   "minutes": 1.8
+  },
+  {
+   "from": "j_3_4",
+   "to": "j_3_5",
+   "name": "Powell Street",
+   "meters": 106,
+   "minutes": 1.3
+  },
+  {
+   "from": "j_3_4",
+   "to": "j_4_4",
+   "name": "Greenwich Street",
+   "meters": 146,
+   "minutes": 1.8
+  },
+  {
+   "from": "j_3_5",
+   "to": "j_3_6",
+   "name": "Powell Street",
+   "meters": 103,
+   "minutes": 1.3
+  },
+  {
+   "from": "j_3_5",
+   "to": "j_4_5",
+   "name": "Lombard Street",
+   "meters": 146,
+   "minutes": 1.8
+  },
+  {
+   "from": "j_3_6",
+   "to": "j_4_6",
+   "name": "Chestnut Street",
+   "meters": 146,
+   "minutes": 1.8
+  },
+  {
+   "from": "j_4_0",
+   "to": "j_5_0",
+   "name": "Vallejo Street",
+   "meters": 143,
+   "minutes": 1.8
+  },
+  {
+   "from": "j_4_1",
+   "to": "j_5_1",
+   "name": "Green Street",
+   "meters": 143,
+   "minutes": 1.8
+  },
+  {
+   "from": "j_4_2",
+   "to": "j_4_3",
+   "name": "Stockton Street",
+   "meters": 104,
+   "minutes": 1.3
+  },
+  {
+   "from": "j_4_2",
+   "to": "j_5_2",
+   "name": "Union Street",
+   "meters": 143,
+   "minutes": 1.8
+  },
+  {
+   "from": "j_4_3",
+   "to": "j_4_4",
+   "name": "Stockton Street",
+   "meters": 103,
+   "minutes": 1.3
+  },
+  {
+   "from": "j_4_3",
+   "to": "j_5_3",
+   "name": "Filbert Street",
+   "meters": 143,
+   "minutes": 1.8
+  },
+  {
+   "from": "j_4_4",
+   "to": "j_4_5",
+   "name": "Stockton Street",
+   "meters": 106,
+   "minutes": 1.3
+  },
+  {
+   "from": "j_4_4",
+   "to": "j_5_4",
+   "name": "Greenwich Street",
+   "meters": 143,
+   "minutes": 1.8
+  },
+  {
+   "from": "j_4_5",
+   "to": "j_4_6",
+   "name": "Stockton Street",
+   "meters": 103,
+   "minutes": 1.3
+  },
+  {
+   "from": "j_4_5",
+   "to": "j_5_5",
+   "name": "Lombard Street",
+   "meters": 143,
+   "minutes": 1.8
+  },
+  {
+   "from": "j_4_6",
+   "to": "j_5_6",
+   "name": "Chestnut Street",
+   "meters": 143,
+   "minutes": 1.8
+  },
+  {
+   "from": "j_5_0",
+   "to": "j_5_1",
+   "name": "Grant Avenue",
+   "meters": 105,
+   "minutes": 1.3
+  },
+  {
+   "from": "j_5_0",
+   "to": "j_6_0",
+   "name": "Vallejo Street",
+   "meters": 139,
+   "minutes": 1.7
+  },
+  {
+   "from": "j_5_1",
+   "to": "j_5_2",
+   "name": "Grant Avenue",
+   "meters": 105,
+   "minutes": 1.3
+  },
+  {
+   "from": "j_5_1",
+   "to": "j_6_1",
+   "name": "Green Street",
+   "meters": 139,
+   "minutes": 1.7
+  },
+  {
+   "from": "j_5_2",
+   "to": "j_5_3",
+   "name": "Grant Avenue",
+   "meters": 104,
+   "minutes": 1.3
+  },
+  {
+   "from": "j_5_2",
+   "to": "j_6_2",
+   "name": "Union Street",
+   "meters": 139,
+   "minutes": 1.7
+  },
+  {
+   "from": "j_5_3",
+   "to": "j_5_4",
+   "name": "Grant Avenue",
+   "meters": 103,
+   "minutes": 1.3
+  },
+  {
+   "from": "j_5_3",
+   "to": "j_6_3",
+   "name": "Filbert Street",
+   "meters": 139,
+   "minutes": 1.7
+  },
+  {
+   "from": "j_5_4",
+   "to": "j_5_5",
+   "name": "Grant Avenue",
+   "meters": 106,
+   "minutes": 1.3
+  },
+  {
+   "from": "j_5_5",
+   "to": "j_5_6",
+   "name": "Grant Avenue",
+   "meters": 103,
+   "minutes": 1.3
+  },
+  {
+   "from": "j_6_0",
+   "to": "j_6_1",
+   "name": "Kearny Street",
+   "meters": 105,
+   "minutes": 1.3
+  },
+  {
+   "from": "j_6_1",
+   "to": "j_6_2",
+   "name": "Kearny Street",
+   "meters": 105,
+   "minutes": 1.3
+  }
+ ]
+}

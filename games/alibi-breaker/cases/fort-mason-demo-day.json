@@ -1,0 +1,369 @@
+{
+  "id": "fort-mason-demo-day",
+  "title": "The Fort Mason Demo Day Theft",
+  "category": "Theft",
+  "icon": "🚀",
+  "area": "Fort Mason, San Francisco",
+  "tagline": "Prototype taken from the judges' table at Pier 2. Three subjects, three alibis.",
+  "map": "sf-fort-mason",
+  "labels": {
+    "role": "Detective",
+    "subjects": "Suspects",
+    "accuse": "Accuse",
+    "win": "Case closed",
+    "wrong": "Wrong suspect"
+  },
+  "briefing": "Saturday, 9:00 PM. During the hackathon Demo Night at Pier 2, Fort Mason Center, the Echo prototype (a voice-AI pendant entered by the front-running team) was taken from the judges' table minutes before the $50,000 prize was announced. Three people had reason to be near the table. Subjects moved on foot between Pier 2, the Founders, Inc. campus in Landmark Building C, and the Marina streets, so every statement must fit real walking times. Identify the subject whose account is physically impossible.",
+  "crime": {
+    "place": "pier2",
+    "time": "21:00",
+    "label": "Incident location",
+    "icon": "🎤",
+    "summary": "the theft of the Echo prototype from the judges' table at the hackathon Demo Night in Pier 2, Fort Mason Center, at 9:00 PM tonight"
+  },
+  "watch": {
+    "place": "pier2",
+    "window": [
+      "20:50",
+      "21:10"
+    ],
+    "label": "the prototype vanished there around 9:00"
+  },
+  "places": [
+    {
+      "id": "pier2",
+      "name": "Pier 2 · Demo Night",
+      "icon": "🎤",
+      "at": [
+        37.80841,
+        -122.43137
+      ],
+      "aliases": [
+        "pier 2",
+        "the pier",
+        "herbst",
+        "demo night",
+        "the demo",
+        "the stage",
+        "judges' table",
+        "the hall",
+        "the venue"
+      ]
+    },
+    {
+      "id": "founders",
+      "name": "Founders, Inc. · Bldg C",
+      "icon": "🚀",
+      "at": [
+        37.80676,
+        -122.43149
+      ],
+      "aliases": [
+        "founders",
+        "founders inc",
+        "building c",
+        "bldg c",
+        "the campus",
+        "campus"
+      ]
+    },
+    {
+      "id": "cafe",
+      "name": "Fort Mason coffee cart",
+      "icon": "☕",
+      "at": [
+        37.8053,
+        -122.43189
+      ],
+      "aliases": [
+        "coffee cart",
+        "coffee",
+        "the cart",
+        "cold brew"
+      ]
+    },
+    {
+      "id": "market",
+      "name": "Marina Market",
+      "icon": "🛒",
+      "at": [
+        37.80439,
+        -122.43301
+      ],
+      "aliases": [
+        "marina market",
+        "the market",
+        "market",
+        "grocery",
+        "snacks"
+      ]
+    },
+    {
+      "id": "library",
+      "name": "Marina Library",
+      "icon": "📚",
+      "at": [
+        37.80135,
+        -122.43414
+      ],
+      "aliases": [
+        "library",
+        "marina library",
+        "the talk",
+        "the panel"
+      ]
+    }
+  ],
+  "paths": [
+    [
+      "founders",
+      "pier2"
+    ],
+    [
+      "founders",
+      "cafe"
+    ],
+    [
+      "cafe",
+      "pier2"
+    ],
+    [
+      "cafe",
+      "market"
+    ]
+  ],
+  "suspects": [
+    {
+      "id": "kai",
+      "name": "Kai Moreno",
+      "role": "Lead of rival team Lime Labs",
+      "color": "#84cc16",
+      "avatar": "🧑‍💻",
+      "bio": "Leads team Lime Labs. Their demo crashed on stage at 8:20. Team color: lime green hoodies.",
+      "home": null,
+      "guilty": true,
+      "voice": "Fast-talking, confident, a little smug; uses startup slang ('ship it', 'heads-down'). Gets defensive and sarcastic when cornered.",
+      "truth": "Your team's demo crashed at 8:20 and the Echo team was going to win the $50k prize. You badged out of the Founders, Inc. campus in Building C at 8:41, bought a cold brew at the Fort Mason coffee cart at 8:46, slipped into Pier 2 by the side door at 8:52 in your lime team hoodie, and took the Echo prototype from the judges' table at 9:00 while the organizer was fixing the projector. You left at 9:03 and walked to Marina Market, buying snacks at 9:14 to look normal. The prototype is in the laptop sleeve of your backpack.",
+      "cover": "You were heads-down coding at the Founders, Inc. campus in Building C from 8:00 until 9:10, fixing your crashed demo. Then you walked over to Marina Market for snacks and got there at 9:12.",
+      "pressure": "If shown the badge log or the coffee receipt, do not confess. Adjust: say you popped out for a cold brew at the coffee cart around 8:45 and went straight back to Building C. Never admit going into Pier 2 after your demo. If shown the door camera, say half the hackathon wears lime, it's your team color.",
+      "stressHint": "Hiding that he stole the prototype. Pressure points: exact times he left Building C, the badge log, the coffee cart, Pier 2's side door, his lime hoodie, his backpack, the walk to Marina Market. Talking about his crashed demo makes him bitter, not scared.",
+      "confession": "Kai stares at the walking route on the map, then unzips the laptop sleeve of his backpack. The Echo pendant is inside. \"Our demo crashed in front of everyone. I just... didn't want to lose like that.\"",
+      "mock": {
+        "alibi": "I was heads-down at the Founders campus in Building C from 8:00 until 9:10, fixing our demo. Then I walked to Marina Market for snacks, got there at 9:12.",
+        "cornered": "Okay, I popped out for a cold brew at the coffee cart around 8:45, then went straight back to Building C. That's it.",
+        "evidence": "Half this hackathon wears lime. It's literally our team color.",
+        "deflect": [
+          "I told you, I was coding.",
+          "Is this about our demo crashing? Because that's low.",
+          "Ask anyone at the campus, I was there."
+        ],
+        "triggers": [
+          "minute",
+          "walk",
+          "impossible",
+          "badge",
+          "8:41",
+          "coffee",
+          "receipt",
+          "lie",
+          "lying",
+          "doesn't add up",
+          "can't be",
+          "how did"
+        ]
+      }
+    },
+    {
+      "id": "ava",
+      "name": "Ava Lin",
+      "role": "Hackathon organizer",
+      "color": "#ec4899",
+      "avatar": "👩",
+      "bio": "Organized Demo Night and ran the stage in Pier 2 all evening. In charge of the judges' table.",
+      "home": null,
+      "guilty": false,
+      "voice": "Busy, upbeat, talks in schedules and run-of-show. Gets flustered when she thinks she messed up.",
+      "truth": "You ran the stage at Pier 2 from 7:30 until 10:00. At 8:55 the projector died and you left the judges' table unattended to fix it at the stage; the stage crew logged you there at 8:57. When you got back at 9:02 the Echo prototype was gone. You had nothing to do with it, but you feel terrible that you left the table alone.",
+      "cover": "You were at Pier 2 running the stage the whole night, from 7:30 until 10:00. You say the judges' table was watched the whole time.",
+      "pressure": "If asked whether anyone watched the table, or about the projector, admit you left the table unattended from about 8:55 to 9:02 to fix the projector at the stage. Insist you never left Pier 2.",
+      "stressHint": "Innocent, but guilty about leaving the judges' table unattended. Pressure points: who watched the table, the projector, the run-of-show. Questions about the schedule are easy.",
+      "innocentReveal": "Ava never left Pier 2. The stage crew logged her at the projector at 8:57. Her only mistake was leaving the judges' table alone for seven minutes.",
+      "mock": {
+        "alibi": "I was at Pier 2 running the stage the whole night, from 7:30 until 10:00. Totally slammed.",
+        "cornered": "Okay... the projector died around 8:55 and I left the judges' table to fix it at the stage. I was back by 9:02 and Echo was gone. I never left Pier 2 though.",
+        "evidence": "Yes, that's from the stage. I was there all night.",
+        "deflect": [
+          "The run-of-show was packed, I barely sat down.",
+          "I'm so stressed about this.",
+          "Can we please find Echo?"
+        ],
+        "triggers": [
+          "table",
+          "watched",
+          "projector",
+          "unattended",
+          "alone",
+          "who was",
+          "leave"
+        ]
+      }
+    },
+    {
+      "id": "omar",
+      "name": "Omar Haddad",
+      "role": "Demo Night judge, angel investor",
+      "color": "#f59e0b",
+      "avatar": "🧔",
+      "bio": "Angel investor and one of tonight's judges. Spoke on a panel at the Marina Library earlier this evening.",
+      "home": null,
+      "guilty": false,
+      "voice": "Polished, slow, chooses words carefully, a little pompous. Uncomfortable talking about his investments.",
+      "truth": "You spoke on an AI panel at the Marina Library until 8:50, signed out at 8:52 and walked to Pier 2, arriving late around 9:08, after the prototype was already gone. You had nothing to do with the theft, but you're hiding that you're a secret angel investor in Kai Moreno's startup, Lime Labs, a conflict of interest you never told the organizers about.",
+      "cover": "You were on a panel at the Marina Library until about 8:50, then walked over to Pier 2 and got there a little after 9:00, around 9:08. Avoid mentioning Lime Labs or Kai.",
+      "pressure": "If asked about conflicts of interest, investments, Lime Labs or Kai, admit you're an angel investor in Lime Labs and didn't disclose it. Insist you were at the library and then walking the whole time.",
+      "stressHint": "Innocent, but hiding a conflict of interest: he secretly invested in Kai's startup. Pressure points: investments, Lime Labs, Kai, judging fairness. Questions about the library panel are easy.",
+      "innocentReveal": "Omar signed out of the Marina Library at 8:52. The walk to Pier 2 takes about 16 minutes, so he couldn't have been there at 9:00. His secret was a conflict of interest, not a theft.",
+      "mock": {
+        "alibi": "I was on a panel at the Marina Library until about 8:50. Then I walked to Pier 2 and arrived around 9:08, a bit late, I'm afraid.",
+        "cornered": "Very well. I'm an angel investor in Lime Labs, Kai's company. I should have disclosed it to the organizers. But I was at the library and then walking, nothing more.",
+        "evidence": "Yes, I signed out after the panel. As I said.",
+        "deflect": [
+          "I judge on merit, always.",
+          "I'd rather not speculate.",
+          "Let's keep this professional."
+        ],
+        "triggers": [
+          "invest",
+          "lime labs",
+          "kai",
+          "conflict",
+          "disclose",
+          "fair",
+          "money",
+          "cap table"
+        ]
+      }
+    }
+  ],
+  "evidence": [
+    {
+      "id": "report",
+      "icon": "📋",
+      "place": "pier2",
+      "title": "Judges' table report",
+      "detail": "The Echo prototype was last seen on the judges' table at 8:55 PM. It was gone at 9:02.",
+      "facts": []
+    },
+    {
+      "id": "schedule",
+      "icon": "🗓️",
+      "place": "pier2",
+      "title": "Demo Night schedule",
+      "detail": "Lime Labs demo 8:15 PM (crashed at 8:20). Judging 8:30 to 9:30 PM at Pier 2. Judges include O. Haddad, arriving late from the Marina Library panel.",
+      "facts": []
+    },
+    {
+      "id": "doorcam",
+      "icon": "📹",
+      "place": "pier2",
+      "title": "Pier 2 side door camera",
+      "detail": "8:52 PM: someone in a lime team hoodie, hood up, enters by the side door with a backpack.",
+      "facts": [
+        {
+          "suspect": null,
+          "place": "pier2",
+          "time": "20:52",
+          "label": "Lime hoodie at the side door"
+        }
+      ]
+    },
+    {
+      "id": "stagelog",
+      "icon": "🎛️",
+      "place": "pier2",
+      "title": "Stage crew log",
+      "detail": "8:57 PM: A. Lin at the stage fixing the projector.",
+      "facts": [
+        {
+          "suspect": "ava",
+          "place": "pier2",
+          "time": "20:57",
+          "label": "Fixing the projector"
+        }
+      ]
+    },
+    {
+      "id": "badge",
+      "icon": "🪪",
+      "place": "founders",
+      "title": "Building C badge log",
+      "detail": "K. Moreno badged OUT of the Founders, Inc. campus at 8:41 PM. No badge-in afterwards.",
+      "facts": [
+        {
+          "suspect": "kai",
+          "place": "founders",
+          "time": "20:41",
+          "label": "Badged out of Building C"
+        }
+      ]
+    },
+    {
+      "id": "coldbrew",
+      "icon": "🧾",
+      "place": "cafe",
+      "title": "Coffee cart receipt",
+      "detail": "One cold brew, card ending 2207 (K. Moreno), 8:46 PM.",
+      "facts": [
+        {
+          "suspect": "kai",
+          "place": "cafe",
+          "time": "20:46",
+          "label": "Bought a cold brew"
+        }
+      ]
+    },
+    {
+      "id": "snacks",
+      "icon": "🛒",
+      "place": "market",
+      "title": "Marina Market receipt",
+      "detail": "Energy drinks and chips, K. Moreno, 9:14 PM.",
+      "facts": [
+        {
+          "suspect": "kai",
+          "place": "market",
+          "time": "21:14",
+          "label": "Bought snacks"
+        }
+      ]
+    },
+    {
+      "id": "signout",
+      "icon": "✍️",
+      "place": "library",
+      "title": "Library panel sign-out",
+      "detail": "Speaker O. Haddad signed out of the Marina Library at 8:52 PM.",
+      "facts": [
+        {
+          "suspect": "omar",
+          "place": "library",
+          "time": "20:52",
+          "label": "Signed out after the panel"
+        }
+      ]
+    },
+    {
+      "id": "captable",
+      "icon": "📈",
+      "place": "founders",
+      "title": "Lime Labs cap table (left on a printer)",
+      "detail": "Angel investors: O. Haddad, 2.5%.",
+      "facts": []
+    }
+  ],
+  "solution": {
+    "suspect": "kai",
+    "explanation": "Kai Moreno. He said he was coding in Building C from 8:00 until 9:10, but he badged out at 8:41 and bought a cold brew at the coffee cart at 8:46, and you can't be in two places at once. From the coffee cart it's a 6-minute walk to Pier 2, exactly when a lime hoodie came through the side door at 8:52.",
+    "weakCase": "Kai Moreno has a motive, but motive is not proof. Establish a statement the map shows to be impossible before making an accusation."
+  }
+}
