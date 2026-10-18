@@ -73,6 +73,9 @@ export const MODES = Object.freeze({
 /** Order the G key cycles through. */
 export const MODE_CYCLE = Object.freeze(['demo', 'play', 'unfair']);
 
+/** The game hub launcher (hub/), which starts this game and San Francisco. */
+export const HUB_PORT = 8000;
+
 /** Arrow keys for the human player. */
 export const HUMAN_KEYS = Object.freeze({
   ArrowLeft: 'left',

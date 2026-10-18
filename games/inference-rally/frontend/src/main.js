@@ -2,6 +2,7 @@
  * Entry point: wires the DOM, the event stream, keyboard controls and the game.
  *
  * Keys: Enter = start / rematch · S = stop · N = new maze · G = demo/play/unfair mode · M = mute
+ *       H = back to the game hub
  *       P = retro pixels on/off · 1-3 = focus one racer · 0 / Esc = split screen
  *       Arrows = drive (play mode: ← left, ↑ straight, → right, ↓ U-turn)
  */
@@ -9,7 +10,7 @@
 import '@fontsource/press-start-2p';
 import './styles.css';
 import { Sound } from './audio/sound.js';
-import { MODE_CYCLE, MODES } from './config.js';
+import { HUB_PORT, MODE_CYCLE, MODES } from './config.js';
 import { Game } from './game.js';
 import { EventStream, previewRace, sendHumanMove, startRace } from './net.js';
 
@@ -80,6 +81,9 @@ const actions = {
     const result = await previewRace(MODES[next].profile);
     if (result.error) dom.status.textContent = result.error;
   },
+  h: () => {
+    location.href = `${location.protocol}//${location.hostname}:${HUB_PORT}/`;
+  },
   m: () => {
     sound.unlock();
     document.querySelector('#btn-sound').textContent = sound.toggleMute() ? 'SOUND OFF' : 'SOUND ON';
@@ -107,6 +111,7 @@ window.addEventListener('keydown', (event) => {
   action();
 });
 
+document.querySelector('#btn-hub').addEventListener('click', actions.h);
 document.querySelector('#btn-start').addEventListener('click', actions.Enter);
 document.querySelector('#btn-stop').addEventListener('click', actions.s);
 document.querySelector('#btn-new').addEventListener('click', actions.n);

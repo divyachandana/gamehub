@@ -97,6 +97,10 @@ body {
   border-color: var(--red);
 }
 
+#btn-hub {
+  color: var(--yellow);
+}
+
 #btn-mode.unfair {
   color: #fff;
   background: var(--red);
