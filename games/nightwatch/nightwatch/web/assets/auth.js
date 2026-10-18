@@ -51,3 +51,6 @@
 
   // The nurse-station dashboard shows the PIN itself (top chips), from state.pairing.
 })();
+
+// Game hub (gamehub repo): the ◀ HUB button and H key, on the laptop only.
+document.head.append(Object.assign(document.createElement('script'), { src: '/assets/hub.js' }));
