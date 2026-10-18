@@ -18,8 +18,7 @@ From the repo root, once: `.\setup.ps1` (Python env, both frontends, NPU checkli
 ```
 
 Pick a game (click it, or press **1** / **2**). The hub starts that game's server, waits until it
-is up and opens it. San Francisco's **◀ HUB** button (or **H**) comes back here; from Inference
-Rally use the browser's back button. **Ctrl+C** stops the hub, the running game and the NPU hosts.
+is up and opens it. Each game's **◀ HUB** button (or **H**) comes back here. **Ctrl+C** stops the hub, the running game and the NPU hosts.
 
 ## How it works
 

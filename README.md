@@ -41,7 +41,7 @@ models on the NPU and opens it. Then press **Enter** to race.
 | N | new maze | | G | mode: DEMO → PLAY → UNFAIR |
 | ← ↑ → ↓ | drive (PLAY mode) | | A | next map area (San Francisco) |
 | 1 / 2 / 3 | one racer full screen | | 4 | map full screen |
-| M / P | sound / retro pixels | | H | back to the hub (San Francisco) |
+| M / P | sound / retro pixels | | H | back to the hub (◀ HUB button) |
 
 ## The models — all on the NPU
 
