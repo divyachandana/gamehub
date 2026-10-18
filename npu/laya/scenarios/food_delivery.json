@@ -1,0 +1,65 @@
+{
+  "name": "Food delivery support inbox",
+  "description": "Customer messages to a food delivery app. Laya triages each one: what went wrong, how upset the customer is, whether they want money back, and whether there is a health or safety risk that must go to a human immediately.",
+  "questions": {
+    "issue": {
+      "type": "choice",
+      "instructions": "What is the main problem the customer is reporting?",
+      "criteria": {
+        "late_delivery": "the order arrived late or has not arrived yet",
+        "wrong_item": "the customer received a different dish than they ordered",
+        "missing_item": "part of the order was not in the bag",
+        "payment_problem": "charged twice, wrong amount, card or promo code issue",
+        "compliment": "the customer is happy and giving praise",
+        "other": "anything else"
+      }
+    },
+    "anger": {
+      "type": "score",
+      "instructions": "How upset is the customer?",
+      "criteria": ["calm or happy", "mildly annoyed", "angry", "furious, insulting or threatening"]
+    },
+    "wants_refund": {
+      "type": "noul",
+      "instructions": "Does the customer ask for a refund, credit, or their money back?"
+    },
+    "safety_risk": {
+      "type": "noul",
+      "instructions": "Does the message mention a health or safety risk, such as an allergic reaction, food poisoning, or a foreign object in the food?"
+    }
+  },
+  "cases": [
+    {
+      "state": "My order was supposed to arrive at 7:30 and it's now 8:45. Still nothing, and the driver isn't answering. This is ridiculous, I want my money back.",
+      "expected": {"issue": "late_delivery", "anger": 2, "wants_refund": true, "safety_risk": false}
+    },
+    {
+      "state": "I ordered the vegetarian pad thai but got chicken pad thai instead. I'm vegetarian so I can't eat this. Can you send the right one?",
+      "expected": {"issue": "wrong_item", "anger": 1, "wants_refund": false, "safety_risk": false}
+    },
+    {
+      "state": "The garlic bread and one of the two drinks weren't in the bag. Please credit my account for the missing items.",
+      "expected": {"issue": "missing_item", "anger": 1, "wants_refund": true, "safety_risk": false}
+    },
+    {
+      "state": "I clearly wrote NO PEANUTS in the notes because of my son's allergy. The curry had peanuts and he broke out in hives. We're at the urgent care now.",
+      "expected": {"issue": "other", "anger": 3, "wants_refund": false, "safety_risk": true}
+    },
+    {
+      "state": "I was charged $42.10 twice for the same order #88213. Please fix this.",
+      "expected": {"issue": "payment_problem", "anger": 1, "wants_refund": false, "safety_risk": false}
+    },
+    {
+      "state": "Just wanted to say the driver was super friendly and the food was still hot. Best burger I've had in months, thank you!",
+      "expected": {"issue": "compliment", "anger": 0, "wants_refund": false, "safety_risk": false}
+    },
+    {
+      "state": "Found a piece of plastic in my salad. Absolutely disgusting. Never ordering from you people again.",
+      "expected": {"issue": "other", "anger": 3, "wants_refund": false, "safety_risk": true}
+    },
+    {
+      "state": {"order_id": "A-5521", "channel": "in-app chat", "message": "promo code SAVE20 didn't apply at checkout, I paid full price"},
+      "expected": {"issue": "payment_problem", "anger": 1, "wants_refund": false, "safety_risk": false}
+    }
+  ]
+}

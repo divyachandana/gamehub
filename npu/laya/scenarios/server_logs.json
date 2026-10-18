@@ -1,0 +1,53 @@
+{
+  "name": "Server log alerts (multi-line log text)",
+  "description": "Format: raw multi-line server logs with timestamps and levels. Questions: a 4-level score, a 6-option choice, and two yes/no.",
+  "questions": {
+    "severity": {
+      "type": "score",
+      "instructions": "How severe is the problem shown in these logs?",
+      "criteria": ["informational, nothing wrong", "warning, worth watching", "error, something is failing", "critical, service is down"]
+    },
+    "component": {
+      "type": "choice",
+      "instructions": "Which part of the system is the problem in?",
+      "criteria": {
+        "database": "database connections, queries, replication",
+        "network": "timeouts, DNS, unreachable hosts",
+        "disk": "disk full, I/O errors, storage",
+        "memory": "out of memory, OOM killer, heap",
+        "authentication": "login failures, tokens, certificates",
+        "none": "no problem"
+      }
+    },
+    "is_outage": {
+      "type": "noul",
+      "instructions": "Are users unable to use the service right now?"
+    },
+    "page_on_call": {
+      "type": "noul",
+      "instructions": "Should the on-call engineer be woken up immediately?"
+    }
+  },
+  "cases": [
+    {
+      "state": "2026-10-17 02:14:01 ERROR db-pool: connection refused to postgres-primary:5432\n2026-10-17 02:14:03 ERROR db-pool: connection refused to postgres-primary:5432\n2026-10-17 02:14:05 CRITICAL api: 100% of requests failing with 503\n2026-10-17 02:14:06 CRITICAL healthcheck: api-gateway unhealthy",
+      "expected": {"severity": 3, "component": "database", "is_outage": true, "page_on_call": true}
+    },
+    {
+      "state": "2026-10-17 09:00:00 INFO scheduler: nightly backup completed in 412s\n2026-10-17 09:00:01 INFO scheduler: 0 errors, 3 warnings suppressed\n2026-10-17 09:05:00 INFO api: p99 latency 120ms",
+      "expected": {"severity": 0, "component": "none", "is_outage": false, "page_on_call": false}
+    },
+    {
+      "state": "2026-10-17 13:22:10 WARN node-7: disk /var/data at 91% capacity\n2026-10-17 13:52:10 WARN node-7: disk /var/data at 93% capacity",
+      "expected": {"severity": 1, "component": "disk", "is_outage": false, "page_on_call": false}
+    },
+    {
+      "state": "2026-10-17 18:40:12 ERROR worker-3: java.lang.OutOfMemoryError: Java heap space\n2026-10-17 18:40:13 WARN kernel: Out of memory: Killed process 8812 (java)\n2026-10-17 18:40:20 INFO supervisor: restarted worker-3",
+      "expected": {"severity": 2, "component": "memory", "is_outage": false, "page_on_call": false}
+    },
+    {
+      "state": "2026-10-17 00:00:05 ERROR auth: TLS certificate for login.example.com expired at 2026-10-17T00:00:00Z\n2026-10-17 00:00:06 ERROR auth: 1,204 login attempts failed with certificate error",
+      "expected": {"severity": 3, "component": "authentication", "is_outage": true, "page_on_call": true}
+    }
+  ]
+}

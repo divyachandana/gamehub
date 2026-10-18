@@ -1,0 +1,55 @@
+{
+  "name": "Product reviews (plain text)",
+  "description": "Format: plain-text customer reviews, short and long, including sarcasm. Questions: a 5-level score, an 8-option choice, and two yes/no.",
+  "questions": {
+    "sentiment": {
+      "type": "score",
+      "instructions": "How positive is the review overall?",
+      "criteria": ["very negative", "negative", "mixed or neutral", "positive", "very positive"]
+    },
+    "main_topic": {
+      "type": "choice",
+      "instructions": "What does the review mainly talk about?",
+      "criteria": {
+        "quality": "build quality, durability, materials",
+        "price": "cost, value for money",
+        "shipping": "delivery speed, packaging, damaged in transit",
+        "battery": "battery life, charging",
+        "usability": "ease of use, setup, instructions",
+        "customer_service": "support, returns, warranty help",
+        "design": "looks, size, color, comfort",
+        "other": "anything else"
+      }
+    },
+    "would_recommend": {
+      "type": "noul",
+      "instructions": "Would this reviewer recommend the product to others?"
+    },
+    "mentions_defect": {
+      "type": "noul",
+      "instructions": "Does the reviewer say the product is broken, faulty, or stopped working?"
+    }
+  },
+  "cases": [
+    {
+      "state": "Absolutely love these headphones. Battery lasts me a full week of commuting and they charge in under an hour. Buying a second pair for my wife.",
+      "expected": {"sentiment": 4, "main_topic": "battery", "would_recommend": true, "mentions_defect": false}
+    },
+    {
+      "state": "Stopped working after 3 days. The left earbud just won't connect anymore. Waste of money.",
+      "expected": {"sentiment": 0, "main_topic": "quality", "would_recommend": false, "mentions_defect": true}
+    },
+    {
+      "state": "Great, another box that arrived crushed with the item rattling around inside. Really impressive packaging, guys.",
+      "expected": {"sentiment": 1, "main_topic": "shipping", "would_recommend": false, "mentions_defect": false}
+    },
+    {
+      "state": "It's fine. Does what it says. A bit expensive for what you get, but setup was easy.",
+      "expected": {"sentiment": 2, "main_topic": "price", "would_recommend": true, "mentions_defect": false}
+    },
+    {
+      "state": "The support team replaced my unit within two days when the hinge cracked, no questions asked. Product itself is okay but the service won me over.",
+      "expected": {"sentiment": 3, "main_topic": "customer_service", "would_recommend": true, "mentions_defect": true}
+    }
+  ]
+}

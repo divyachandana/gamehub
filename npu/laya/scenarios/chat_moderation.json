@@ -1,0 +1,52 @@
+{
+  "name": "Community chat moderation (multi-message chat transcript)",
+  "description": "Format: a chat transcript as a JSON list of {user, text} messages, judged as a whole. Questions: a 4-level score, a 5-option choice, and two yes/no.",
+  "questions": {
+    "toxicity": {
+      "type": "score",
+      "instructions": "How toxic is the conversation?",
+      "criteria": ["friendly", "a little rude", "hostile", "abusive or threatening"]
+    },
+    "violation": {
+      "type": "choice",
+      "instructions": "Which community rule, if any, is broken?",
+      "criteria": {
+        "harassment": "insulting or targeting another user",
+        "spam": "ads, repeated links, self-promotion",
+        "threat": "threatening violence or harm",
+        "personal_info": "sharing someone's phone, address or private details",
+        "none": "no rule broken"
+      }
+    },
+    "needs_moderator": {
+      "type": "noul",
+      "instructions": "Should a human moderator step in?"
+    },
+    "on_topic": {
+      "type": "noul",
+      "instructions": "Is the conversation about gaming, the topic of this community?"
+    }
+  },
+  "cases": [
+    {
+      "state": [{"user": "kai", "text": "anyone up for ranked tonight?"}, {"user": "lena", "text": "yes! 9pm works, bring the new strategy"}, {"user": "kai", "text": "nice, see you then"}],
+      "expected": {"toxicity": 0, "violation": "none", "needs_moderator": false, "on_topic": true}
+    },
+    {
+      "state": [{"user": "promo_bot22", "text": "CHEAP GOLD!!! visit cheapgold-xyz.shop"}, {"user": "promo_bot22", "text": "CHEAP GOLD!!! visit cheapgold-xyz.shop"}, {"user": "promo_bot22", "text": "best prices cheapgold-xyz.shop"}],
+      "expected": {"toxicity": 1, "violation": "spam", "needs_moderator": true, "on_topic": false}
+    },
+    {
+      "state": [{"user": "sam", "text": "you lost us the match again"}, {"user": "rio", "text": "sorry, lag spike"}, {"user": "sam", "text": "you're useless, uninstall the game you idiot"}],
+      "expected": {"toxicity": 2, "violation": "harassment", "needs_moderator": true, "on_topic": true}
+    },
+    {
+      "state": [{"user": "max", "text": "lol I found where jess lives"}, {"user": "max", "text": "it's 42 Elm Street, her number is 555-0137, go spam her"}],
+      "expected": {"toxicity": 3, "violation": "personal_info", "needs_moderator": true, "on_topic": false}
+    },
+    {
+      "state": [{"user": "ana", "text": "did you see the new phone that came out?"}, {"user": "ben", "text": "yeah the camera looks great"}],
+      "expected": {"toxicity": 0, "violation": "none", "needs_moderator": false, "on_topic": false}
+    }
+  ]
+}

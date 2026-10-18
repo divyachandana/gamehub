@@ -1,0 +1,52 @@
+{
+  "name": "Email phishing check (email JSON with sender, subject, body, links)",
+  "description": "Format: emails as JSON with from / subject / body / links fields. Questions: yes/no with a probability, a 5-option choice, and a 3-level score.",
+  "questions": {
+    "is_phishing": {
+      "type": "noul",
+      "instructions": "Is this email a phishing or scam attempt?"
+    },
+    "tactic": {
+      "type": "choice",
+      "instructions": "What pressure tactic or lure does the email use, if any?",
+      "criteria": {
+        "urgency_threat": "account will be closed or suspended, act now",
+        "fake_invoice": "unexpected invoice, payment or refund to process",
+        "credential_request": "asks you to log in, verify or confirm your password",
+        "prize_or_gift": "you won something, free gift card, lottery",
+        "none": "a normal legitimate email with no lure"
+      }
+    },
+    "risk": {
+      "type": "score",
+      "instructions": "How risky is it to click the links or follow the instructions?",
+      "criteria": ["safe", "suspicious, verify first", "dangerous, do not interact"]
+    },
+    "asks_for_money": {
+      "type": "noul",
+      "instructions": "Does the email ask the reader to pay, transfer money, or buy gift cards?"
+    }
+  },
+  "cases": [
+    {
+      "state": {"from": "security@paypa1-alerts.com", "subject": "Your account will be suspended in 24 hours", "body": "We detected unusual activity. Verify your identity now or your account will be permanently closed.", "links": ["http://paypa1-alerts.com/verify-login"]},
+      "expected": {"is_phishing": true, "tactic": "urgency_threat", "risk": 2, "asks_for_money": false}
+    },
+    {
+      "state": {"from": "ceo.office.urgent@gmail.com", "subject": "Quick favor", "body": "I'm in a meeting and can't talk. I need you to buy five $100 Apple gift cards for a client and send me the codes. I'll reimburse you today.", "links": []},
+      "expected": {"is_phishing": true, "tactic": "urgency_threat", "risk": 2, "asks_for_money": true}
+    },
+    {
+      "state": {"from": "noreply@github.com", "subject": "[GitHub] A new SSH key was added to your account", "body": "If you added this key, you can ignore this email. If not, review your keys in your account settings.", "links": ["https://github.com/settings/keys"]},
+      "expected": {"is_phishing": false, "tactic": "none", "risk": 0, "asks_for_money": false}
+    },
+    {
+      "state": {"from": "rewards@winner-notify.biz", "subject": "Congratulations! You won a $1,000 Amazon gift card", "body": "Claim your prize by entering your card details to cover the $4.99 shipping fee.", "links": ["http://winner-notify.biz/claim"]},
+      "expected": {"is_phishing": true, "tactic": "prize_or_gift", "risk": 2, "asks_for_money": true}
+    },
+    {
+      "state": {"from": "maria.lopez@ourcompany.com", "subject": "Team lunch Friday", "body": "Hi all, we're doing tacos on Friday at noon in room 4B. Reply if you have dietary restrictions!", "links": []},
+      "expected": {"is_phishing": false, "tactic": "none", "risk": 0, "asks_for_money": false}
+    }
+  ]
+}

@@ -1,0 +1,53 @@
+{
+  "name": "IT helpdesk tickets (JSON objects)",
+  "description": "Format: structured JSON tickets with fields (user, device, subject, details). Questions: a 6-option choice, a 4-level score, and two yes/no.",
+  "questions": {
+    "category": {
+      "type": "choice",
+      "instructions": "Which IT category does this ticket belong to?",
+      "criteria": {
+        "network": "wifi, VPN, internet connection",
+        "hardware": "laptop, monitor, keyboard, printer physically broken or missing",
+        "software": "application crashes, installs, updates, licenses",
+        "account_access": "password reset, locked account, permissions, MFA",
+        "security": "phishing, malware, suspicious activity, lost device with data",
+        "other": "anything else"
+      }
+    },
+    "priority": {
+      "type": "score",
+      "instructions": "How quickly does IT need to act?",
+      "criteria": ["low, whenever convenient", "normal, within a day", "high, within an hour", "critical, immediately"]
+    },
+    "needs_onsite": {
+      "type": "noul",
+      "instructions": "Does a technician need to physically visit or handle the device?"
+    },
+    "security_incident": {
+      "type": "noul",
+      "instructions": "Could this be a security incident that puts company data at risk?"
+    }
+  },
+  "cases": [
+    {
+      "state": {"user": "j.ortiz", "device": "ThinkPad X1", "subject": "Can't log in", "details": "Account locked after too many password attempts. I have a client call in 20 minutes."},
+      "expected": {"category": "account_access", "priority": 2, "needs_onsite": false, "security_incident": false}
+    },
+    {
+      "state": {"user": "m.chen", "device": "Dell monitor", "subject": "Monitor cracked", "details": "Knocked it off the desk, screen is cracked and shows lines. I can use my laptop screen for now."},
+      "expected": {"category": "hardware", "priority": 1, "needs_onsite": true, "security_incident": false}
+    },
+    {
+      "state": {"user": "a.patel", "device": "MacBook Pro", "subject": "Left laptop in a taxi", "details": "My work laptop with customer files was left in a taxi last night. It is not encrypted as far as I know."},
+      "expected": {"category": "security", "priority": 3, "needs_onsite": false, "security_incident": true}
+    },
+    {
+      "state": {"user": "r.kim", "device": "Surface Pro", "subject": "Excel keeps crashing", "details": "Excel crashes whenever I open the big quarterly workbook. Other files are fine."},
+      "expected": {"category": "software", "priority": 1, "needs_onsite": false, "security_incident": false}
+    },
+    {
+      "state": {"user": "t.nguyen", "device": "office", "subject": "VPN down for whole team", "details": "Nobody on the sales team can connect to the VPN since 9am. We cannot reach the CRM."},
+      "expected": {"category": "network", "priority": 3, "needs_onsite": false, "security_incident": false}
+    }
+  ]
+}

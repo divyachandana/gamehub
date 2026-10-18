@@ -1,9 +1,9 @@
-# Model weights and large assets (download separately)
+# --- NPU models: download / export separately (see docs/models.md) ---------------------------
 *.pte
 *.zip
-models/**/tokenizer.json
+npu/models/**/tokenizer.json
 
-# Build outputs / binaries
+# --- Built ExecuTorch runtime (see docs/npu-setup.md) --------------------------------------
 *.exe
 *.dll
 *.pdb
@@ -12,9 +12,17 @@ models/**/tokenizer.json
 *.pyd
 RelWithDebInfo/
 
-# Python
+# --- Old flat bundle layout on the dev laptop (now under npu/) -----------------------------
+/host/
+/models/
+
+# --- Python / Node / runtime outputs --------------------------------------------------------
+.venv/
 __pycache__/
 *.pyc
-
-# Runtime outputs
+*.egg-info/
+node_modules/
+dist/
+logs/
+maps/.cache/
 *.etdp
