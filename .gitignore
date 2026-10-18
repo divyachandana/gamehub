@@ -1,0 +1,20 @@
+# Model weights and large assets (download separately)
+*.pte
+*.zip
+models/**/tokenizer.json
+
+# Build outputs / binaries
+*.exe
+*.dll
+*.pdb
+*.lib
+*.exp
+*.pyd
+RelWithDebInfo/
+
+# Python
+__pycache__/
+*.pyc
+
+# Runtime outputs
+*.etdp
