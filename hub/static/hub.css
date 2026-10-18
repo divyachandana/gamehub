@@ -1,0 +1,203 @@
+/* Game hub — same retro arcade look as the games (pixel font, dark panels, chunky borders). */
+
+:root {
+  --bg: #0b0d12;
+  --panel: #12151c;
+  --line: #2a2f3a;
+  --text: #f4f4f4;
+  --muted: #9aa5ae;
+  --yellow: #ffd23f;
+  --red: #e8352a;
+  --pixel-shadow: 3px 3px 0 #000;
+  font-family: 'Press Start 2P', ui-monospace, monospace;
+  color: var(--text);
+  background: var(--bg);
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body.hub {
+  margin: 0;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 28px;
+  padding: 32px 16px;
+  background:
+    repeating-linear-gradient(to bottom, rgba(255, 255, 255, 0.025) 0 1px, transparent 1px 4px),
+    radial-gradient(ellipse at top, #1a2130 0%, var(--bg) 70%);
+}
+
+.hub-header {
+  text-align: center;
+}
+
+.hub-logo {
+  font-size: clamp(28px, 6vw, 56px);
+  color: var(--yellow);
+  text-shadow:
+    var(--pixel-shadow),
+    6px 6px 0 rgba(0, 0, 0, 0.35);
+  letter-spacing: 2px;
+}
+
+.hub-logo span {
+  color: var(--red);
+}
+
+.hub-sub {
+  margin: 14px 0 0;
+  font-size: clamp(8px, 1.4vw, 11px);
+  color: var(--muted);
+  letter-spacing: 1px;
+}
+
+.hub-games {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 24px;
+  width: min(1100px, 100%);
+}
+
+.hub-card {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  color: inherit;
+  text-decoration: none;
+  background: var(--panel);
+  border: 4px solid var(--line);
+  box-shadow: 6px 6px 0 #000;
+  transition:
+    transform 0.08s steps(2),
+    border-color 0.08s;
+}
+
+.hub-card:hover,
+.hub-card:focus-visible {
+  border-color: var(--accent);
+  transform: translate(-3px, -3px);
+  box-shadow: 9px 9px 0 #000;
+  outline: none;
+}
+
+.hub-card img {
+  display: block;
+  width: 100%;
+  aspect-ratio: 16 / 10;
+  object-fit: cover;
+  object-position: top;
+  image-rendering: pixelated;
+  border-bottom: 4px solid var(--line);
+}
+
+.hub-card:hover img {
+  border-bottom-color: var(--accent);
+}
+
+.hub-card-body {
+  padding: 18px 18px 22px;
+}
+
+.hub-key {
+  position: absolute;
+  top: 12px;
+  left: 12px;
+  width: 34px;
+  height: 34px;
+  display: grid;
+  place-items: center;
+  font-size: 14px;
+  color: #0b0d12;
+  background: var(--accent);
+  border: 3px solid #000;
+}
+
+.hub-card h2 {
+  margin: 0 0 12px;
+  font-size: clamp(14px, 2vw, 20px);
+  color: var(--accent);
+  text-shadow: var(--pixel-shadow);
+}
+
+.hub-tagline {
+  margin: 0 0 10px;
+  font-size: 10px;
+  line-height: 1.6;
+}
+
+.hub-detail {
+  margin: 0;
+  font-size: 8px;
+  line-height: 1.6;
+  color: var(--muted);
+}
+
+.hub-footer {
+  text-align: center;
+  font-size: clamp(7px, 1.2vw, 9px);
+  line-height: 1.9;
+  color: var(--muted);
+}
+
+.hub-footer b {
+  color: var(--text);
+}
+
+.hub-hint {
+  color: var(--yellow);
+  animation: blink 1s steps(2) infinite;
+}
+
+@keyframes blink {
+  50% {
+    opacity: 0;
+  }
+}
+
+/* The pixel font, bundled so the hub works offline (SIL Open Font License, see press-start-2p-LICENSE). */
+@font-face {
+  font-family: 'Press Start 2P';
+  src: url('/press-start-2p-latin-400-normal.woff2') format('woff2');
+  font-display: swap;
+}
+
+.hub-running {
+  position: absolute;
+  top: 12px;
+  right: 12px;
+  padding: 6px 8px;
+  font-size: 8px;
+  color: #0b0d12;
+  background: var(--yellow);
+  border: 3px solid #000;
+}
+
+.hub-loading {
+  position: fixed;
+  inset: 0;
+  display: grid;
+  place-content: center;
+  gap: 18px;
+  text-align: center;
+  background: rgba(8, 10, 14, 0.92);
+}
+
+.hub-loading[hidden] {
+  display: none;
+}
+
+.hub-loading-title {
+  font-size: clamp(16px, 3vw, 28px);
+  color: var(--yellow);
+  text-shadow: var(--pixel-shadow);
+}
+
+.hub-loading p {
+  font-size: 10px;
+  color: var(--muted);
+  animation: blink 1s steps(2) infinite;
+}

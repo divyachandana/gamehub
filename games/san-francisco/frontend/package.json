@@ -1,0 +1,19 @@
+{
+  "name": "san-francisco-frontend",
+  "private": true,
+  "version": "0.1.0",
+  "description": "Inference Rally — 3D split-screen race UI (Three.js)",
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview"
+  },
+  "dependencies": {
+    "@fontsource/press-start-2p": "^5.0.0",
+    "three": "0.170.0"
+  },
+  "devDependencies": {
+    "vite": "^5.4.10"
+  }
+}

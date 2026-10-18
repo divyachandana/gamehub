@@ -1,0 +1,735 @@
+/* Inference Rally — retro arcade HUD. Colors per racer come from --racer. */
+
+:root {
+  --bg: #0b0d12;
+  --panel: #12151c;
+  --panel-2: #1a1e27;
+  --line: #2a2f3a;
+  --text: #f4f4f4;
+  --muted: #9aa5ae;
+  --yellow: #ffd23f;
+  --red: #e8352a;
+  --green: #8ef07a;
+  --pixel-shadow: 2px 2px 0 #000;
+  font-family: 'Press Start 2P', ui-monospace, monospace;
+  color: var(--text);
+  background: var(--bg);
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html,
+body {
+  margin: 0;
+  height: 100%;
+  overflow: hidden;
+  background: var(--bg);
+}
+
+body {
+  display: flex;
+  flex-direction: column;
+}
+
+/* ------------------------------------------------------------------ top bar */
+
+.topbar {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  height: 48px;
+  padding: 0 14px;
+  background: var(--panel);
+  border-bottom: 3px solid var(--line);
+  flex: none;
+}
+
+.logo {
+  font-size: 15px;
+  color: var(--yellow);
+  text-shadow: 3px 3px 0 #7a1a12;
+  letter-spacing: 1px;
+}
+
+.logo span {
+  color: var(--red);
+  text-shadow: 3px 3px 0 #3a0905;
+}
+
+.matchup {
+  font-size: 9px;
+  color: var(--muted);
+}
+
+.spacer {
+  flex: 1;
+}
+
+.timer {
+  font-size: 15px;
+  min-width: 132px;
+  text-align: right;
+  color: var(--text);
+  text-shadow: var(--pixel-shadow);
+}
+
+.topbar button {
+  font: inherit;
+  font-size: 9px;
+  color: var(--text);
+  background: var(--panel-2);
+  border: 3px solid #3a4150;
+  padding: 7px 10px;
+  cursor: pointer;
+}
+
+.topbar button:hover {
+  border-color: var(--yellow);
+}
+
+.topbar button:active {
+  transform: translate(1px, 1px);
+}
+
+#btn-start {
+  border-color: var(--red);
+}
+
+.topbar button[hidden] {
+  display: none;
+}
+
+#btn-hub {
+  color: var(--yellow);
+}
+
+#btn-map {
+  border-color: #3fa7d6;
+}
+
+#btn-mode.unfair {
+  color: #fff;
+  background: var(--red);
+  border-color: var(--red);
+}
+
+#btn-mode.play {
+  color: #0b0d12;
+  background: var(--yellow);
+  border-color: var(--yellow);
+}
+
+.status {
+  font-size: 8px;
+  color: var(--red);
+  min-width: 64px;
+  text-align: right;
+  animation: blink 1s steps(2) infinite;
+}
+
+.status.live {
+  color: var(--green);
+  animation: none;
+}
+
+/* ------------------------------------------------------------------ stage + panes */
+
+.stage {
+  position: relative;
+  flex: 1;
+  min-height: 0;
+}
+
+#scene {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  display: block;
+}
+
+#scene.pixelated {
+  image-rendering: pixelated;
+}
+
+.panes {
+  position: absolute;
+  inset: 0;
+  display: grid;
+  grid-template: 1fr 1fr / 1fr 1fr;
+  gap: 6px;
+  padding: 6px;
+  pointer-events: none;
+}
+
+.panes.focused {
+  grid-template: 1fr / 1fr;
+}
+
+/* Two racers: both cars on top, the map + standings across the bottom row. */
+.panes.duo:not(.focused) .overview {
+  grid-column: 1 / -1;
+}
+
+.pane.unused {
+  display: none;
+}
+
+/* Subtle CRT scanlines in retro mode. */
+#scene.pixelated ~ .panes::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: repeating-linear-gradient(to bottom, rgba(0, 0, 0, 0.12) 0 1px, transparent 1px 3px);
+  pointer-events: none;
+}
+
+.pane {
+  position: relative;
+  overflow: hidden;
+  border: 3px solid var(--racer, var(--line));
+  border-radius: 3px;
+}
+
+.pane[data-state='thinking'] {
+  animation: pane-pulse 0.5s steps(2) infinite;
+}
+
+@keyframes pane-pulse {
+  50% {
+    border-color: var(--yellow);
+  }
+}
+
+/* ------------------------------------------------------------------ racer HUD */
+
+.hud {
+  position: absolute;
+  inset: 0;
+  font-size: 9px;
+}
+
+.tps-bar,
+.progress-bar {
+  position: absolute;
+  top: 50px;
+  width: 20px;
+  height: calc(100% - 132px);
+  max-height: 260px;
+}
+
+.tps-bar {
+  left: 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  padding: 2px;
+  background: #fff;
+  border: 3px solid #111;
+}
+
+.tps-bar i {
+  flex: 1;
+  background: #4a1a18;
+}
+
+.tps-bar i.lit {
+  background: var(--red);
+}
+
+.progress-bar {
+  right: 12px;
+  background: #0f7f86;
+  border: 3px solid #c9b03a;
+}
+
+.progress-marker {
+  position: absolute;
+  left: 2px;
+  right: 2px;
+  bottom: 0;
+  height: 7px;
+  background: #fff;
+  box-shadow: 0 0 0 2px #111;
+  transition: bottom 0.8s steps(8);
+}
+
+.bar-label {
+  position: absolute;
+  top: 36px;
+  font-size: 6px;
+  color: var(--text);
+  text-shadow: var(--pixel-shadow);
+}
+
+.bar-label-left {
+  left: 8px;
+}
+
+.bar-label-right {
+  right: 9px;
+}
+
+.hud-header {
+  position: absolute;
+  top: 10px;
+  left: 42px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 8px;
+  background: rgba(10, 12, 18, 0.72);
+  border: 2px solid rgba(255, 255, 255, 0.08);
+}
+
+.racer-dot {
+  width: 9px;
+  height: 9px;
+  background: var(--racer);
+}
+
+.racer-name {
+  font-size: 8px;
+}
+
+.device-badge {
+  padding: 3px 5px;
+  color: #0b0d12;
+  background: var(--racer);
+  font-size: 8px;
+}
+
+.banner {
+  position: absolute;
+  top: 46px;
+  left: 50%;
+  transform: translateX(-50%);
+  font-size: 14px;
+  white-space: nowrap;
+  color: var(--text);
+  text-shadow: 3px 3px 0 #000;
+  opacity: 0;
+}
+
+.banner[data-kind='good'] {
+  color: var(--green);
+}
+
+.banner[data-kind='warn'] {
+  color: var(--yellow);
+}
+
+.banner[data-kind='bad'] {
+  color: #ff4a3d;
+}
+
+.banner.show {
+  animation: banner 1.8s steps(1) forwards;
+}
+
+@keyframes banner {
+  0%,
+  20%,
+  40% {
+    opacity: 1;
+  }
+  10%,
+  30% {
+    opacity: 0.25;
+  }
+  85% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 0;
+  }
+}
+
+.bubble {
+  position: absolute;
+  top: 80px;
+  left: 50%;
+  transform: translate(-50%, 6px);
+  max-width: 70%;
+  padding: 9px 11px;
+  color: #111;
+  background: #fff;
+  border: 3px solid #111;
+  box-shadow: 4px 4px 0 rgba(0, 0, 0, 0.45);
+  font-size: 9px;
+  line-height: 1.6;
+  opacity: 0;
+  transition:
+    opacity 0.15s,
+    transform 0.15s;
+}
+
+.bubble::after {
+  content: '';
+  position: absolute;
+  bottom: -11px;
+  left: 50%;
+  border: 8px solid transparent;
+  border-top-color: #111;
+  border-bottom: 0;
+  transform: translateX(-50%);
+}
+
+.bubble.show {
+  opacity: 1;
+  transform: translate(-50%, 0);
+}
+
+.bubble b {
+  color: #c2280a;
+  margin-right: 8px;
+}
+
+.status-wrap {
+  display: none;
+}
+
+.hud .status {
+  position: absolute;
+  bottom: 46px;
+  left: 50%;
+  transform: translateX(-50%);
+  min-width: 0;
+  font-size: 10px;
+  color: var(--text);
+  text-shadow: var(--pixel-shadow);
+  animation: none;
+  white-space: nowrap;
+}
+
+.pane[data-state='thinking'] .hud .status {
+  color: var(--yellow);
+  animation: blink 0.6s steps(2) infinite;
+}
+
+.pane[data-state='finished'] .hud .status {
+  color: var(--green);
+}
+
+.hud-bottom {
+  position: absolute;
+  bottom: 10px;
+  left: 42px;
+  right: 42px;
+  display: flex;
+  justify-content: space-between;
+  gap: 10px;
+  padding: 7px 9px;
+  background: rgba(10, 12, 18, 0.72);
+  border: 2px solid rgba(255, 255, 255, 0.08);
+  font-size: 8px;
+  white-space: nowrap;
+}
+
+.tps-text {
+  color: var(--racer);
+}
+
+.place-text {
+  position: absolute;
+  bottom: 42px;
+  right: 44px;
+  font-size: 22px;
+  color: var(--racer);
+  text-shadow: 3px 3px 0 #000;
+}
+
+/* ------------------------------------------------------------------ overview pane */
+
+.pane.overview {
+  border-color: var(--line);
+}
+
+.board {
+  position: absolute;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  width: 44%;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding: 12px;
+  background: var(--panel);
+  border-left: 3px solid var(--line);
+  border-radius: 0;
+  font-size: 8px;
+  overflow: hidden;
+}
+
+.board-title {
+  font-size: 9px;
+  color: var(--yellow);
+}
+
+.board-title-feed {
+  margin-top: 6px;
+}
+
+.board-rows {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.board-row {
+  display: grid;
+  grid-template-columns: 36px 1fr auto;
+  grid-template-areas:
+    'place name tps'
+    'extra extra extra';
+  row-gap: 6px;
+  padding: 7px 8px;
+  background: var(--panel-2);
+  border-left: 6px solid var(--racer);
+  border-radius: 0;
+}
+
+.board-row.done {
+  background: #1d2a1f;
+}
+
+.board-place {
+  grid-area: place;
+}
+
+.board-name {
+  grid-area: name;
+  color: var(--racer);
+}
+
+.board-tps {
+  grid-area: tps;
+  color: var(--racer);
+  font-size: 10px;
+}
+
+.board-tps::after {
+  content: ' T/S';
+  font-size: 6px;
+  color: var(--muted);
+}
+
+.board-extra {
+  grid-area: extra;
+  font-size: 6px;
+  color: var(--muted);
+}
+
+.feed {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+}
+
+.feed-line {
+  font-size: 7px;
+  color: #c8ced4;
+}
+
+.feed-line b {
+  color: var(--racer);
+}
+
+.feed-line.bad span {
+  color: #ff8a7a;
+}
+
+.feed-line.cheat span {
+  color: var(--red);
+}
+
+.feed-line.cheat.declined span {
+  color: #8a929c;
+}
+
+.map-lock {
+  position: absolute;
+  top: 0;
+  left: 0;
+  bottom: 0;
+  width: 56%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  background: repeating-linear-gradient(45deg, #12151c 0 12px, #161a22 12px 24px);
+  text-align: center;
+  font-size: 7px;
+  color: var(--muted);
+}
+
+.map-lock b {
+  font-size: 12px;
+  font-weight: normal;
+  color: var(--yellow);
+}
+
+.map-lock[hidden] {
+  display: none;
+}
+
+.board-row.human .board-tps::after {
+  content: ' AVG';
+}
+
+.map-legend {
+  position: absolute;
+  left: 8px;
+  bottom: 8px;
+  padding: 4px 6px;
+  font-size: 6px;
+  color: #c8ced4;
+  background: rgba(0, 0, 0, 0.55);
+}
+
+.street-map {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 56%;
+  height: 100%;
+}
+
+.street-map[hidden] {
+  display: none;
+}
+
+.map-credit {
+  margin-top: 4px;
+  color: #9aa3ab;
+}
+
+/* ------------------------------------------------------------------ overlays */
+
+.overlay {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 18px;
+  text-align: center;
+  background: rgba(8, 10, 14, 0.55);
+  pointer-events: none;
+}
+
+.overlay.hidden {
+  display: none;
+}
+
+.overlay.countdown {
+  background: transparent;
+}
+
+.title-logo {
+  font-size: 54px;
+  line-height: 1.35;
+  color: var(--yellow);
+  text-shadow:
+    5px 5px 0 #c2280a,
+    10px 10px 0 #000;
+}
+
+.title-logo span {
+  color: #fff;
+}
+
+.title-sub {
+  font-size: 11px;
+}
+
+.title-sub.dim {
+  color: var(--muted);
+  font-size: 9px;
+}
+
+.blink {
+  font-size: 12px;
+  margin-top: 10px;
+  animation: blink 1s steps(2) infinite;
+}
+
+.count {
+  font-size: 140px;
+  color: var(--yellow);
+  text-shadow:
+    7px 7px 0 #c2280a,
+    14px 14px 0 #000;
+  animation: pop 0.9s steps(6) forwards;
+}
+
+@keyframes pop {
+  0% {
+    transform: scale(1.8);
+    opacity: 0;
+  }
+  25% {
+    transform: scale(1);
+    opacity: 1;
+  }
+  100% {
+    transform: scale(0.9);
+    opacity: 0.85;
+  }
+}
+
+.overlay.podium {
+  background: rgba(8, 10, 14, 0.9);
+}
+
+.podium-winner {
+  font-size: 40px;
+  color: var(--racer);
+  text-shadow:
+    4px 4px 0 #000,
+    8px 8px 0 rgba(0, 0, 0, 0.4);
+}
+
+table.results {
+  border-collapse: collapse;
+  font-size: 10px;
+}
+
+.results th {
+  font-size: 8px;
+  color: var(--yellow);
+  padding: 8px 12px;
+  font-weight: normal;
+}
+
+.results td {
+  padding: 11px 12px;
+  border-top: 3px solid var(--line);
+}
+
+.results td:first-child,
+.results .who {
+  color: var(--racer);
+}
+
+.results .who small {
+  display: block;
+  margin-top: 5px;
+  font-size: 6px;
+  color: var(--muted);
+}
+
+@keyframes blink {
+  50% {
+    opacity: 0;
+  }
+}
+
+body.offline .pane {
+  filter: grayscale(0.6);
+}

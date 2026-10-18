@@ -17,7 +17,7 @@ race:
 # ones already serving those pipes) and keeps the models loaded across races. Paths point at the
 # gemma4_e2b_executorch_x_elite bundle; racers pick a model with `qnn_model: <key>`.
 qnn:
-  bundle_dir: C:/Users/qc_de/Desktop/gemma4_e2b_executorch_x_elite-001/gemma4_e2b_executorch_x_elite
+  bundle_dir: C:/Users/qc_de/Desktop/gemma4_e2b_executorch_x_elite-001/gemma4_e2b_executorch_x_elite/npu   # setup.ps1 sets this to your clone
   qnn_sdk: C:/Qualcomm/AIStack/QAIRT/2.46.0.260424
   hexagon_arch: v73      # Snapdragon X Elite (SC8380XP)
   models:
@@ -36,8 +36,8 @@ qnn:
 # Laya (laya_x_elite) on the NPU decides when the UNFAIR mode's rogue cheats. Its host code
 # needs torch + transformers, so it runs in that Python via scripts/laya_bridge.py.
 laya:
-  laya_dir: C:/Users/qc_de/Desktop/laya_x_elite
-  python: C:/dev/et-venv/Scripts/python.exe
+  laya_dir: C:/Users/qc_de/Desktop/gemma4_e2b_executorch_x_elite-001/gemma4_e2b_executorch_x_elite/npu/laya   # setup.ps1 sets this to your clone
+  python: C:/dev/et-venv/Scripts/python.exe   # a Python with torch + transformers (setup.ps1 -LayaPython)
 
 active_profile: demo
 

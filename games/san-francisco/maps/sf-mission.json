@@ -1,0 +1,2630 @@
+{
+ "name": "sf-mission",
+ "title": "San Francisco · Mission",
+ "attribution": "Map data © OpenStreetMap contributors (ODbL)",
+ "origin": [
+  37.76,
+  -122.424
+ ],
+ "rotation_deg": 4.348,
+ "columns": [
+  {
+   "name": "Church Street",
+   "offset_m": -373.0
+  },
+  {
+   "name": "Dolores Street",
+   "offset_m": -165.2
+  },
+  {
+   "name": "Guerrero Street",
+   "offset_m": 34.5
+  },
+  {
+   "name": "Valencia Street",
+   "offset_m": 225.5
+  },
+  {
+   "name": "Lexington Street",
+   "offset_m": 294.3
+  },
+  {
+   "name": "San Carlos Street",
+   "offset_m": 353.1
+  },
+  {
+   "name": "Mission Street",
+   "offset_m": 420.8
+  }
+ ],
+ "rows": [
+  {
+   "name": "21st Street",
+   "offset_m": -360.2
+  },
+  {
+   "name": "Liberty Street",
+   "offset_m": -271.8
+  },
+  {
+   "name": "20th Street",
+   "offset_m": -183.1
+  },
+  {
+   "name": "19th Street",
+   "offset_m": -5.7
+  },
+  {
+   "name": "18th Street",
+   "offset_m": 171.4
+  },
+  {
+   "name": "17th Street",
+   "offset_m": 349.1
+  },
+  {
+   "name": "16th Street",
+   "offset_m": 528.1
+  }
+ ],
+ "streets": [
+  [
+   [
+    0,
+    0
+   ],
+   [
+    0,
+    1
+   ]
+  ],
+  [
+   [
+    0,
+    0
+   ],
+   [
+    1,
+    0
+   ]
+  ],
+  [
+   [
+    0,
+    1
+   ],
+   [
+    0,
+    2
+   ]
+  ],
+  [
+   [
+    0,
+    1
+   ],
+   [
+    1,
+    1
+   ]
+  ],
+  [
+   [
+    0,
+    2
+   ],
+   [
+    0,
+    3
+   ]
+  ],
+  [
+   [
+    0,
+    2
+   ],
+   [
+    1,
+    2
+   ]
+  ],
+  [
+   [
+    0,
+    3
+   ],
+   [
+    0,
+    4
+   ]
+  ],
+  [
+   [
+    0,
+    4
+   ],
+   [
+    0,
+    5
+   ]
+  ],
+  [
+   [
+    0,
+    4
+   ],
+   [
+    1,
+    4
+   ]
+  ],
+  [
+   [
+    0,
+    5
+   ],
+   [
+    0,
+    6
+   ]
+  ],
+  [
+   [
+    0,
+    5
+   ],
+   [
+    1,
+    5
+   ]
+  ],
+  [
+   [
+    0,
+    6
+   ],
+   [
+    1,
+    6
+   ]
+  ],
+  [
+   [
+    1,
+    0
+   ],
+   [
+    1,
+    1
+   ]
+  ],
+  [
+   [
+    1,
+    0
+   ],
+   [
+    2,
+    0
+   ]
+  ],
+  [
+   [
+    1,
+    1
+   ],
+   [
+    1,
+    2
+   ]
+  ],
+  [
+   [
+    1,
+    1
+   ],
+   [
+    2,
+    1
+   ]
+  ],
+  [
+   [
+    1,
+    2
+   ],
+   [
+    1,
+    3
+   ]
+  ],
+  [
+   [
+    1,
+    2
+   ],
+   [
+    2,
+    2
+   ]
+  ],
+  [
+   [
+    1,
+    3
+   ],
+   [
+    1,
+    4
+   ]
+  ],
+  [
+   [
+    1,
+    3
+   ],
+   [
+    2,
+    3
+   ]
+  ],
+  [
+   [
+    1,
+    4
+   ],
+   [
+    1,
+    5
+   ]
+  ],
+  [
+   [
+    1,
+    4
+   ],
+   [
+    2,
+    4
+   ]
+  ],
+  [
+   [
+    1,
+    5
+   ],
+   [
+    1,
+    6
+   ]
+  ],
+  [
+   [
+    1,
+    5
+   ],
+   [
+    2,
+    5
+   ]
+  ],
+  [
+   [
+    1,
+    6
+   ],
+   [
+    2,
+    6
+   ]
+  ],
+  [
+   [
+    2,
+    0
+   ],
+   [
+    2,
+    1
+   ]
+  ],
+  [
+   [
+    2,
+    0
+   ],
+   [
+    3,
+    0
+   ]
+  ],
+  [
+   [
+    2,
+    1
+   ],
+   [
+    2,
+    2
+   ]
+  ],
+  [
+   [
+    2,
+    1
+   ],
+   [
+    3,
+    1
+   ]
+  ],
+  [
+   [
+    2,
+    2
+   ],
+   [
+    2,
+    3
+   ]
+  ],
+  [
+   [
+    2,
+    2
+   ],
+   [
+    3,
+    2
+   ]
+  ],
+  [
+   [
+    2,
+    3
+   ],
+   [
+    2,
+    4
+   ]
+  ],
+  [
+   [
+    2,
+    3
+   ],
+   [
+    3,
+    3
+   ]
+  ],
+  [
+   [
+    2,
+    4
+   ],
+   [
+    2,
+    5
+   ]
+  ],
+  [
+   [
+    2,
+    4
+   ],
+   [
+    3,
+    4
+   ]
+  ],
+  [
+   [
+    2,
+    5
+   ],
+   [
+    2,
+    6
+   ]
+  ],
+  [
+   [
+    2,
+    5
+   ],
+   [
+    3,
+    5
+   ]
+  ],
+  [
+   [
+    2,
+    6
+   ],
+   [
+    3,
+    6
+   ]
+  ],
+  [
+   [
+    3,
+    0
+   ],
+   [
+    3,
+    1
+   ]
+  ],
+  [
+   [
+    3,
+    0
+   ],
+   [
+    4,
+    0
+   ]
+  ],
+  [
+   [
+    3,
+    1
+   ],
+   [
+    3,
+    2
+   ]
+  ],
+  [
+   [
+    3,
+    2
+   ],
+   [
+    3,
+    3
+   ]
+  ],
+  [
+   [
+    3,
+    2
+   ],
+   [
+    4,
+    2
+   ]
+  ],
+  [
+   [
+    3,
+    3
+   ],
+   [
+    3,
+    4
+   ]
+  ],
+  [
+   [
+    3,
+    3
+   ],
+   [
+    4,
+    3
+   ]
+  ],
+  [
+   [
+    3,
+    4
+   ],
+   [
+    3,
+    5
+   ]
+  ],
+  [
+   [
+    3,
+    4
+   ],
+   [
+    4,
+    4
+   ]
+  ],
+  [
+   [
+    3,
+    5
+   ],
+   [
+    3,
+    6
+   ]
+  ],
+  [
+   [
+    3,
+    5
+   ],
+   [
+    4,
+    5
+   ]
+  ],
+  [
+   [
+    3,
+    6
+   ],
+   [
+    4,
+    6
+   ]
+  ],
+  [
+   [
+    4,
+    0
+   ],
+   [
+    4,
+    1
+   ]
+  ],
+  [
+   [
+    4,
+    0
+   ],
+   [
+    5,
+    0
+   ]
+  ],
+  [
+   [
+    4,
+    1
+   ],
+   [
+    4,
+    2
+   ]
+  ],
+  [
+   [
+    4,
+    2
+   ],
+   [
+    4,
+    3
+   ]
+  ],
+  [
+   [
+    4,
+    2
+   ],
+   [
+    5,
+    2
+   ]
+  ],
+  [
+   [
+    4,
+    3
+   ],
+   [
+    4,
+    4
+   ]
+  ],
+  [
+   [
+    4,
+    3
+   ],
+   [
+    5,
+    3
+   ]
+  ],
+  [
+   [
+    4,
+    4
+   ],
+   [
+    5,
+    4
+   ]
+  ],
+  [
+   [
+    4,
+    5
+   ],
+   [
+    5,
+    5
+   ]
+  ],
+  [
+   [
+    4,
+    6
+   ],
+   [
+    5,
+    6
+   ]
+  ],
+  [
+   [
+    5,
+    0
+   ],
+   [
+    5,
+    1
+   ]
+  ],
+  [
+   [
+    5,
+    0
+   ],
+   [
+    6,
+    0
+   ]
+  ],
+  [
+   [
+    5,
+    1
+   ],
+   [
+    5,
+    2
+   ]
+  ],
+  [
+   [
+    5,
+    2
+   ],
+   [
+    5,
+    3
+   ]
+  ],
+  [
+   [
+    5,
+    2
+   ],
+   [
+    6,
+    2
+   ]
+  ],
+  [
+   [
+    5,
+    3
+   ],
+   [
+    5,
+    4
+   ]
+  ],
+  [
+   [
+    5,
+    3
+   ],
+   [
+    6,
+    3
+   ]
+  ],
+  [
+   [
+    5,
+    4
+   ],
+   [
+    6,
+    4
+   ]
+  ],
+  [
+   [
+    5,
+    5
+   ],
+   [
+    6,
+    5
+   ]
+  ],
+  [
+   [
+    5,
+    6
+   ],
+   [
+    6,
+    6
+   ]
+  ],
+  [
+   [
+    6,
+    0
+   ],
+   [
+    6,
+    1
+   ]
+  ],
+  [
+   [
+    6,
+    1
+   ],
+   [
+    6,
+    2
+   ]
+  ],
+  [
+   [
+    6,
+    2
+   ],
+   [
+    6,
+    3
+   ]
+  ],
+  [
+   [
+    6,
+    3
+   ],
+   [
+    6,
+    4
+   ]
+  ],
+  [
+   [
+    6,
+    4
+   ],
+   [
+    6,
+    5
+   ]
+  ],
+  [
+   [
+    6,
+    5
+   ],
+   [
+    6,
+    6
+   ]
+  ]
+ ],
+ "start": [
+  0,
+  0
+ ],
+ "exit": [
+  6,
+  6
+ ],
+ "blocks": [
+  {
+   "x": -1,
+   "y": -1,
+   "height_m": 8.1,
+   "max_height_m": 12.0,
+   "built": 0.26,
+   "park": 0.0,
+   "name": null
+  },
+  {
+   "x": -1,
+   "y": 0,
+   "height_m": 9.4,
+   "max_height_m": 13.0,
+   "built": 0.29,
+   "park": 0.0,
+   "name": null
+  },
+  {
+   "x": -1,
+   "y": 1,
+   "height_m": 8.8,
+   "max_height_m": 16.0,
+   "built": 0.37,
+   "park": 0.0,
+   "name": null
+  },
+  {
+   "x": -1,
+   "y": 2,
+   "height_m": 9.2,
+   "max_height_m": 13.0,
+   "built": 0.38,
+   "park": 0.0,
+   "name": null
+  },
+  {
+   "x": -1,
+   "y": 3,
+   "height_m": 9.3,
+   "max_height_m": 15.0,
+   "built": 0.4,
+   "park": 0.0,
+   "name": null
+  },
+  {
+   "x": -1,
+   "y": 4,
+   "height_m": 10.0,
+   "max_height_m": 15.0,
+   "built": 0.45,
+   "park": 0.0,
+   "name": null
+  },
+  {
+   "x": -1,
+   "y": 5,
+   "height_m": 11.9,
+   "max_height_m": 14.0,
+   "built": 0.14,
+   "park": 0.0,
+   "name": null
+  },
+  {
+   "x": -1,
+   "y": 6,
+   "height_m": 11.0,
+   "max_height_m": 14.0,
+   "built": 0.4,
+   "park": 0.0,
+   "name": "Saint Nicholas Russian Orthodox Cathedral"
+  },
+  {
+   "x": 0,
+   "y": -1,
+   "height_m": 10.4,
+   "max_height_m": 13.0,
+   "built": 0.33,
+   "park": 0.0,
+   "name": null
+  },
+  {
+   "x": 0,
+   "y": 0,
+   "height_m": 10.4,
+   "max_height_m": 14.0,
+   "built": 0.3,
+   "park": 0.0,
+   "name": null
+  },
+  {
+   "x": 0,
+   "y": 1,
+   "height_m": 10.6,
+   "max_height_m": 13.0,
+   "built": 0.34,
+   "park": 0.0,
+   "name": null
+  },
+  {
+   "x": 0,
+   "y": 2,
+   "height_m": 9.0,
+   "max_height_m": 9.0,
+   "built": 0.0,
+   "park": 1.0,
+   "name": "Mission Dolores Park"
+  },
+  {
+   "x": 0,
+   "y": 3,
+   "height_m": 9.0,
+   "max_height_m": 9.0,
+   "built": 0.0,
+   "park": 1.0,
+   "name": "Mission Dolores Park"
+  },
+  {
+   "x": 0,
+   "y": 4,
+   "height_m": 10.9,
+   "max_height_m": 14.0,
+   "built": 0.11,
+   "park": 0.0,
+   "name": null
+  },
+  {
+   "x": 0,
+   "y": 5,
+   "height_m": 9.8,
+   "max_height_m": 14.0,
+   "built": 0.38,
+   "park": 0.0,
+   "name": "Mission Dolores Basilica"
+  },
+  {
+   "x": 0,
+   "y": 6,
+   "height_m": 10.7,
+   "max_height_m": 14.0,
+   "built": 0.45,
+   "park": 0.0,
+   "name": null
+  },
+  {
+   "x": 1,
+   "y": -1,
+   "height_m": 9.5,
+   "max_height_m": 14.0,
+   "built": 0.33,
+   "park": 0.0,
+   "name": null
+  },
+  {
+   "x": 1,
+   "y": 0,
+   "height_m": 10.7,
+   "max_height_m": 13.0,
+   "built": 0.4,
+   "park": 0.0,
+   "name": null
+  },
+  {
+   "x": 1,
+   "y": 1,
+   "height_m": 9.3,
+   "max_height_m": 12.0,
+   "built": 0.38,
+   "park": 0.0,
+   "name": null
+  },
+  {
+   "x": 1,
+   "y": 2,
+   "height_m": 10.8,
+   "max_height_m": 14.0,
+   "built": 0.44,
+   "park": 0.0,
+   "name": "The Light House"
+  },
+  {
+   "x": 1,
+   "y": 3,
+   "height_m": 9.9,
+   "max_height_m": 13.0,
+   "built": 0.49,
+   "park": 0.0,
+   "name": null
+  },
+  {
+   "x": 1,
+   "y": 4,
+   "height_m": 10.4,
+   "max_height_m": 15.0,
+   "built": 0.49,
+   "park": 0.0,
+   "name": null
+  },
+  {
+   "x": 1,
+   "y": 5,
+   "height_m": 10.5,
+   "max_height_m": 15.0,
+   "built": 0.39,
+   "park": 0.0,
+   "name": null
+  },
+  {
+   "x": 1,
+   "y": 6,
+   "height_m": 11.7,
+   "max_height_m": 27.0,
+   "built": 0.39,
+   "park": 0.0,
+   "name": null
+  },
+  {
+   "x": 2,
+   "y": -1,
+   "height_m": 10.3,
+   "max_height_m": 16.0,
+   "built": 0.41,
+   "park": 0.0,
+   "name": null
+  },
+  {
+   "x": 2,
+   "y": 0,
+   "height_m": 10.7,
+   "max_height_m": 13.0,
+   "built": 0.47,
+   "park": 0.0,
+   "name": null
+  },
+  {
+   "x": 2,
+   "y": 1,
+   "height_m": 10.1,
+   "max_height_m": 13.0,
+   "built": 0.38,
+   "park": 0.0,
+   "name": null
+  },
+  {
+   "x": 2,
+   "y": 2,
+   "height_m": 10.5,
+   "max_height_m": 18.0,
+   "built": 0.43,
+   "park": 0.28,
+   "name": null
+  },
+  {
+   "x": 2,
+   "y": 3,
+   "height_m": 10.3,
+   "max_height_m": 17.0,
+   "built": 0.55,
+   "park": 0.0,
+   "name": "The Women's Building"
+  },
+  {
+   "x": 2,
+   "y": 4,
+   "height_m": 9.8,
+   "max_height_m": 13.0,
+   "built": 0.44,
+   "park": 0.0,
+   "name": null
+  },
+  {
+   "x": 2,
+   "y": 5,
+   "height_m": 10.2,
+   "max_height_m": 19.0,
+   "built": 0.53,
+   "park": 0.0,
+   "name": null
+  },
+  {
+   "x": 2,
+   "y": 6,
+   "height_m": 9.0,
+   "max_height_m": 13.0,
+   "built": 0.52,
+   "park": 0.0,
+   "name": null
+  },
+  {
+   "x": 3,
+   "y": -1,
+   "height_m": 9.5,
+   "max_height_m": 17.0,
+   "built": 1.0,
+   "park": 0.0,
+   "name": null
+  },
+  {
+   "x": 3,
+   "y": 0,
+   "height_m": 12.0,
+   "max_height_m": 22.0,
+   "built": 0.38,
+   "park": 0.0,
+   "name": null
+  },
+  {
+   "x": 3,
+   "y": 1,
+   "height_m": 8.8,
+   "max_height_m": 15.0,
+   "built": 0.46,
+   "park": 0.0,
+   "name": null
+  },
+  {
+   "x": 3,
+   "y": 2,
+   "height_m": 10.3,
+   "max_height_m": 16.0,
+   "built": 0.54,
+   "park": 0.0,
+   "name": null
+  },
+  {
+   "x": 3,
+   "y": 3,
+   "height_m": 9.1,
+   "max_height_m": 14.0,
+   "built": 0.47,
+   "park": 0.0,
+   "name": null
+  },
+  {
+   "x": 3,
+   "y": 4,
+   "height_m": 11.5,
+   "max_height_m": 16.0,
+   "built": 0.43,
+   "park": 0.0,
+   "name": null
+  },
+  {
+   "x": 3,
+   "y": 5,
+   "height_m": 10.4,
+   "max_height_m": 15.0,
+   "built": 0.64,
+   "park": 0.0,
+   "name": null
+  },
+  {
+   "x": 3,
+   "y": 6,
+   "height_m": 11.2,
+   "max_height_m": 19.0,
+   "built": 0.47,
+   "park": 0.0,
+   "name": "Saint John the Evangelist Episcopal Church"
+  },
+  {
+   "x": 4,
+   "y": -1,
+   "height_m": 10.2,
+   "max_height_m": 15.0,
+   "built": 0.39,
+   "park": 0.0,
+   "name": null
+  },
+  {
+   "x": 4,
+   "y": 0,
+   "height_m": 10.2,
+   "max_height_m": 13.0,
+   "built": 0.5,
+   "park": 0.0,
+   "name": null
+  },
+  {
+   "x": 4,
+   "y": 1,
+   "height_m": 8.5,
+   "max_height_m": 10.0,
+   "built": 0.42,
+   "park": 0.0,
+   "name": null
+  },
+  {
+   "x": 4,
+   "y": 2,
+   "height_m": 9.3,
+   "max_height_m": 11.0,
+   "built": 0.56,
+   "park": 0.0,
+   "name": null
+  },
+  {
+   "x": 4,
+   "y": 3,
+   "height_m": 9.8,
+   "max_height_m": 13.0,
+   "built": 0.58,
+   "park": 0.0,
+   "name": null
+  },
+  {
+   "x": 4,
+   "y": 4,
+   "height_m": 9.5,
+   "max_height_m": 15.0,
+   "built": 0.59,
+   "park": 0.0,
+   "name": null
+  },
+  {
+   "x": 4,
+   "y": 5,
+   "height_m": 12.5,
+   "max_height_m": 15.0,
+   "built": 0.35,
+   "park": 0.0,
+   "name": null
+  },
+  {
+   "x": 4,
+   "y": 6,
+   "height_m": 10.9,
+   "max_height_m": 13.0,
+   "built": 0.27,
+   "park": 0.0,
+   "name": null
+  },
+  {
+   "x": 5,
+   "y": -1,
+   "height_m": 9.9,
+   "max_height_m": 16.0,
+   "built": 0.5,
+   "park": 0.0,
+   "name": null
+  },
+  {
+   "x": 5,
+   "y": 0,
+   "height_m": 9.3,
+   "max_height_m": 12.0,
+   "built": 0.65,
+   "park": 0.0,
+   "name": null
+  },
+  {
+   "x": 5,
+   "y": 1,
+   "height_m": 9.2,
+   "max_height_m": 13.0,
+   "built": 0.56,
+   "park": 0.0,
+   "name": null
+  },
+  {
+   "x": 5,
+   "y": 2,
+   "height_m": 8.8,
+   "max_height_m": 13.0,
+   "built": 0.59,
+   "park": 0.0,
+   "name": null
+  },
+  {
+   "x": 5,
+   "y": 3,
+   "height_m": 10.3,
+   "max_height_m": 16.0,
+   "built": 0.5,
+   "park": 0.0,
+   "name": null
+  },
+  {
+   "x": 5,
+   "y": 4,
+   "height_m": 8.2,
+   "max_height_m": 13.0,
+   "built": 0.48,
+   "park": 0.0,
+   "name": null
+  },
+  {
+   "x": 5,
+   "y": 5,
+   "height_m": 9.1,
+   "max_height_m": 13.0,
+   "built": 0.53,
+   "park": 0.08,
+   "name": "Union Hotel"
+  },
+  {
+   "x": 5,
+   "y": 6,
+   "height_m": 10.1,
+   "max_height_m": 17.0,
+   "built": 0.52,
+   "park": 0.0,
+   "name": null
+  },
+  {
+   "x": 6,
+   "y": -1,
+   "height_m": 8.9,
+   "max_height_m": 10.0,
+   "built": 0.4,
+   "park": 0.0,
+   "name": null
+  },
+  {
+   "x": 6,
+   "y": 0,
+   "height_m": 9.1,
+   "max_height_m": 9.6,
+   "built": 0.42,
+   "park": 0.0,
+   "name": null
+  },
+  {
+   "x": 6,
+   "y": 1,
+   "height_m": 6.1,
+   "max_height_m": 11.0,
+   "built": 0.41,
+   "park": 0.0,
+   "name": null
+  },
+  {
+   "x": 6,
+   "y": 2,
+   "height_m": 10.4,
+   "max_height_m": 15.0,
+   "built": 0.44,
+   "park": 0.0,
+   "name": null
+  },
+  {
+   "x": 6,
+   "y": 3,
+   "height_m": 8.6,
+   "max_height_m": 15.0,
+   "built": 0.58,
+   "park": 0.0,
+   "name": null
+  },
+  {
+   "x": 6,
+   "y": 4,
+   "height_m": 12.9,
+   "max_height_m": 16.0,
+   "built": 0.76,
+   "park": 0.0,
+   "name": "Noisebridge"
+  },
+  {
+   "x": 6,
+   "y": 5,
+   "height_m": 12.0,
+   "max_height_m": 19.0,
+   "built": 0.66,
+   "park": 0.0,
+   "name": null
+  },
+  {
+   "x": 6,
+   "y": 6,
+   "height_m": 9.9,
+   "max_height_m": 16.0,
+   "built": 0.29,
+   "park": 0.0,
+   "name": null
+  }
+ ],
+ "skyline": [
+  {
+   "name": "Salesforce Tower",
+   "lat": 37.78978,
+   "lon": -122.396959,
+   "height_m": 326.0,
+   "width_m": 66.4,
+   "depth_m": 63.6
+  },
+  {
+   "name": "Transamerica Pyramid",
+   "lat": 37.795187,
+   "lon": -122.402651,
+   "height_m": 260.0,
+   "width_m": 58.7,
+   "depth_m": 58.5
+  },
+  {
+   "name": "181 Fremont Tower",
+   "lat": 37.789808,
+   "lon": -122.39535,
+   "height_m": 244.4,
+   "width_m": 47.2,
+   "depth_m": 53.1
+  },
+  {
+   "name": "555 California Street",
+   "lat": 37.792098,
+   "lon": -122.403774,
+   "height_m": 226.0,
+   "width_m": 86.1,
+   "depth_m": 49.1
+  },
+  {
+   "name": "California Center",
+   "lat": 37.792608,
+   "lon": -122.400423,
+   "height_m": 212.0,
+   "width_m": 87.6,
+   "depth_m": 47.7
+  },
+  {
+   "name": "Millennium Tower",
+   "lat": 37.790477,
+   "lon": -122.396239,
+   "height_m": 197.0,
+   "width_m": 52.2,
+   "depth_m": 55.6
+  },
+  {
+   "name": null,
+   "lat": 37.787829,
+   "lon": -122.394445,
+   "height_m": 188.0,
+   "width_m": 70.1,
+   "depth_m": 51.3
+  },
+  {
+   "name": "50 Fremont Center",
+   "lat": 37.790517,
+   "lon": -122.397244,
+   "height_m": 183.0,
+   "width_m": 57.9,
+   "depth_m": 58.8
+  },
+  {
+   "name": "Park Tower at Transbay",
+   "lat": 37.790427,
+   "lon": -122.394302,
+   "height_m": 183.0,
+   "width_m": 78.6,
+   "depth_m": 68.2
+  },
+  {
+   "name": "101 California",
+   "lat": 37.792874,
+   "lon": -122.397866,
+   "height_m": 183.0,
+   "width_m": 88.9,
+   "depth_m": 82.6
+  },
+  {
+   "name": "Chevron Tower",
+   "lat": 37.789605,
+   "lon": -122.400457,
+   "height_m": 175.0,
+   "width_m": 51.0,
+   "depth_m": 53.4
+  },
+  {
+   "name": "Embarcadero Center 4",
+   "lat": 37.795326,
+   "lon": -122.396188,
+   "height_m": 174.0,
+   "width_m": 64.2,
+   "depth_m": 41.7
+  },
+  {
+   "name": "Embarcadero Center 1",
+   "lat": 37.794486,
+   "lon": -122.399607,
+   "height_m": 173.0,
+   "width_m": 76.6,
+   "depth_m": 35.0
+  },
+  {
+   "name": "44 Montgomery Street",
+   "lat": 37.789681,
+   "lon": -122.401838,
+   "height_m": 172.0,
+   "width_m": 56.4,
+   "depth_m": 86.0
+  },
+  {
+   "name": "One Sansome Street",
+   "lat": 37.790471,
+   "lon": -122.401236,
+   "height_m": 171.0,
+   "width_m": 75.2,
+   "depth_m": 46.1
+  },
+  {
+   "name": "One Front Street",
+   "lat": 37.791691,
+   "lon": -122.398764,
+   "height_m": 171.0,
+   "width_m": 46.0,
+   "depth_m": 56.6
+  },
+  {
+   "name": "First Market Tower",
+   "lat": 37.790398,
+   "lon": -122.399276,
+   "height_m": 169.0,
+   "width_m": 75.6,
+   "depth_m": 74.1
+  },
+  {
+   "name": "McKesson Plaza",
+   "lat": 37.788792,
+   "lon": -122.402683,
+   "height_m": 161.0,
+   "width_m": 37.0,
+   "depth_m": 35.0
+  },
+  {
+   "name": "Four Seasons Private Residences at 706 Mission Street",
+   "lat": 37.786104,
+   "lon": -122.402807,
+   "height_m": 160.0,
+   "width_m": 51.5,
+   "depth_m": 47.1
+  },
+  {
+   "name": "50 California Street",
+   "lat": 37.794056,
+   "lon": -122.397297,
+   "height_m": 159.0,
+   "width_m": 45.9,
+   "depth_m": 63.2
+  },
+  {
+   "name": "425 Market",
+   "lat": 37.791218,
+   "lon": -122.398233,
+   "height_m": 156.0,
+   "width_m": 69.2,
+   "depth_m": 71.1
+  },
+  {
+   "name": "Pacific Gas & Electric Building",
+   "lat": 37.791789,
+   "lon": -122.395797,
+   "height_m": 154.0,
+   "width_m": 69.1,
+   "depth_m": 66.6
+  },
+  {
+   "name": "One Montgomery Tower",
+   "lat": 37.789201,
+   "lon": -122.403399,
+   "height_m": 152.0,
+   "width_m": 56.6,
+   "depth_m": 42.6
+  },
+  {
+   "name": "333 Bush",
+   "lat": 37.790603,
+   "lon": -122.403076,
+   "height_m": 151.0,
+   "width_m": 50.7,
+   "depth_m": 52.7
+  },
+  {
+   "name": null,
+   "lat": 37.792051,
+   "lon": -122.395866,
+   "height_m": 151.0,
+   "width_m": 28.6,
+   "depth_m": 27.9
+  },
+  {
+   "name": "45 Fremont Center",
+   "lat": 37.791247,
+   "lon": -122.397253,
+   "height_m": 149.0,
+   "width_m": 59.1,
+   "depth_m": 59.6
+  },
+  {
+   "name": "333 Market",
+   "lat": 37.791938,
+   "lon": -122.397406,
+   "height_m": 149.0,
+   "width_m": 61.3,
+   "depth_m": 59.9
+  },
+  {
+   "name": "555 Mission Street",
+   "lat": 37.788519,
+   "lon": -122.398443,
+   "height_m": 148.0,
+   "width_m": 64.5,
+   "depth_m": 61.8
+  },
+  {
+   "name": "100 Pine Center",
+   "lat": 37.792679,
+   "lon": -122.398996,
+   "height_m": 145.0,
+   "width_m": 41.9,
+   "depth_m": 42.8
+  },
+  {
+   "name": "650 California Street",
+   "lat": 37.792907,
+   "lon": -122.405183,
+   "height_m": 142.0,
+   "width_m": 41.6,
+   "depth_m": 41.8
+  },
+  {
+   "name": "One California Street Building",
+   "lat": 37.793215,
+   "lon": -122.397177,
+   "height_m": 140.0,
+   "width_m": 45.8,
+   "depth_m": 46.4
+  },
+  {
+   "name": "Providian Financial Building",
+   "lat": 37.791029,
+   "lon": -122.394921,
+   "height_m": 138.0,
+   "width_m": 104.3,
+   "depth_m": 83.2
+  },
+  {
+   "name": "399 Fremont",
+   "lat": 37.787317,
+   "lon": -122.392295,
+   "height_m": 134.0,
+   "width_m": 84.5,
+   "depth_m": 88.1
+  },
+  {
+   "name": null,
+   "lat": 37.793977,
+   "lon": -122.40336,
+   "height_m": 134.0,
+   "width_m": 41.9,
+   "depth_m": 39.4
+  },
+  {
+   "name": "340 Fremont Street",
+   "lat": 37.787046,
+   "lon": -122.392894,
+   "height_m": 134.0,
+   "width_m": 69.9,
+   "depth_m": 64.5
+  },
+  {
+   "name": "500 Folsom",
+   "lat": 37.787186,
+   "lon": -122.395236,
+   "height_m": 134.0,
+   "width_m": 65.9,
+   "depth_m": 80.7
+  },
+  {
+   "name": null,
+   "lat": 37.791773,
+   "lon": -122.394431,
+   "height_m": 133.0,
+   "width_m": 48.5,
+   "depth_m": 49.8
+  },
+  {
+   "name": "Russ Building",
+   "lat": 37.791376,
+   "lon": -122.402846,
+   "height_m": 132.6,
+   "width_m": 52.9,
+   "depth_m": 85.5
+  },
+  {
+   "name": "The Infinity II",
+   "lat": 37.789421,
+   "lon": -122.390646,
+   "height_m": 132.0,
+   "width_m": 41.9,
+   "depth_m": 41.6
+  },
+  {
+   "name": "Jasper",
+   "lat": 37.785841,
+   "lon": -122.393747,
+   "height_m": 131.0,
+   "width_m": 51.7,
+   "depth_m": 52.9
+  },
+  {
+   "name": "Embarcadero Center 2",
+   "lat": 37.794994,
+   "lon": -122.398596,
+   "height_m": 130.0,
+   "width_m": 81.0,
+   "depth_m": 39.3
+  },
+  {
+   "name": "Embarcadero Center 3",
+   "lat": 37.795146,
+   "lon": -122.397338,
+   "height_m": 130.0,
+   "width_m": 79.7,
+   "depth_m": 39.7
+  },
+  {
+   "name": "350 Mission Street",
+   "lat": 37.79085,
+   "lon": -122.396749,
+   "height_m": 129.0,
+   "width_m": 54.0,
+   "depth_m": 53.8
+  },
+  {
+   "name": null,
+   "lat": 37.790102,
+   "lon": -122.391477,
+   "height_m": 129.0,
+   "width_m": 60.3,
+   "depth_m": 62.2
+  },
+  {
+   "name": "MIRA",
+   "lat": 37.790031,
+   "lon": -122.391698,
+   "height_m": 129.0,
+   "width_m": 94.3,
+   "depth_m": 90.0
+  },
+  {
+   "name": "JPMorgan Chase Building",
+   "lat": 37.78879,
+   "lon": -122.399555,
+   "height_m": 128.0,
+   "width_m": 64.7,
+   "depth_m": 65.1
+  },
+  {
+   "name": "Paramount",
+   "lat": 37.786765,
+   "lon": -122.401978,
+   "height_m": 127.0,
+   "width_m": 69.5,
+   "depth_m": 62.5
+  },
+  {
+   "name": "Fox Plaza",
+   "lat": 37.777136,
+   "lon": -122.417665,
+   "height_m": 126.0,
+   "width_m": 29.4,
+   "depth_m": 77.9
+  },
+  {
+   "name": "Parc 55 San Francisco - a Hilton Hotel",
+   "lat": 37.785026,
+   "lon": -122.408931,
+   "height_m": 125.0,
+   "width_m": 61.3,
+   "depth_m": 88.4
+  },
+  {
+   "name": null,
+   "lat": 37.789233,
+   "lon": -122.400796,
+   "height_m": 125.0,
+   "width_m": 58.5,
+   "depth_m": 58.1
+  },
+  {
+   "name": "Embarcadero Center West",
+   "lat": 37.793849,
+   "lon": -122.400583,
+   "height_m": 123.0,
+   "width_m": 44.1,
+   "depth_m": 39.7
+  },
+  {
+   "name": "101 Montgomery",
+   "lat": 37.790364,
+   "lon": -122.40249,
+   "height_m": 123.0,
+   "width_m": 22.2,
+   "depth_m": 65.4
+  },
+  {
+   "name": null,
+   "lat": 37.792243,
+   "lon": -122.404785,
+   "height_m": 122.0,
+   "width_m": 61.0,
+   "depth_m": 49.3
+  },
+  {
+   "name": null,
+   "lat": 37.776742,
+   "lon": -122.419117,
+   "height_m": 122.0,
+   "width_m": 32.9,
+   "depth_m": 48.1
+  },
+  {
+   "name": "One Maritime Plaza",
+   "lat": 37.795553,
+   "lon": -122.399263,
+   "height_m": 121.0,
+   "width_m": 37.9,
+   "depth_m": 66.8
+  },
+  {
+   "name": "1550 Mission",
+   "lat": 37.773941,
+   "lon": -122.418287,
+   "height_m": 121.0,
+   "width_m": 82.7,
+   "depth_m": 92.0
+  },
+  {
+   "name": "388 Market Building",
+   "lat": 37.79227,
+   "lon": -122.398066,
+   "height_m": 118.0,
+   "width_m": 62.4,
+   "depth_m": 51.9
+  },
+  {
+   "name": "The Infinity I",
+   "lat": 37.789382,
+   "lon": -122.391388,
+   "height_m": 117.0,
+   "width_m": 41.9,
+   "depth_m": 41.6
+  },
+  {
+   "name": "Shell Building",
+   "lat": 37.791617,
+   "lon": -122.400011,
+   "height_m": 115.2,
+   "width_m": 40.1,
+   "depth_m": 44.2
+  },
+  {
+   "name": null,
+   "lat": 37.788885,
+   "lon": -122.398104,
+   "height_m": 115.0,
+   "width_m": 50.3,
+   "depth_m": 51.6
+  },
+  {
+   "name": "199 Fremont",
+   "lat": 37.789948,
+   "lon": -122.394785,
+   "height_m": 115.0,
+   "width_m": 65.1,
+   "depth_m": 62.4
+  },
+  {
+   "name": null,
+   "lat": 37.793542,
+   "lon": -122.402606,
+   "height_m": 114.0,
+   "width_m": 32.1,
+   "depth_m": 42.4
+  },
+  {
+   "name": "UC Law San Francisco McAllister Tower",
+   "lat": 37.781192,
+   "lon": -122.414078,
+   "height_m": 114.0,
+   "width_m": 45.2,
+   "depth_m": 44.9
+  },
+  {
+   "name": "Hilton San Francisco Financial District",
+   "lat": 37.795142,
+   "lon": -122.404297,
+   "height_m": 111.0,
+   "width_m": 78.2,
+   "depth_m": 42.2
+  },
+  {
+   "name": "Choulos, Choulos & Wyle",
+   "lat": 37.792829,
+   "lon": -122.401405,
+   "height_m": 109.0,
+   "width_m": 27.0,
+   "depth_m": 25.8
+  },
+  {
+   "name": null,
+   "lat": 37.788145,
+   "lon": -122.399082,
+   "height_m": 108.0,
+   "width_m": 42.3,
+   "depth_m": 45.3
+  },
+  {
+   "name": "100 Montgomery",
+   "lat": 37.790381,
+   "lon": -122.401791,
+   "height_m": 108.0,
+   "width_m": 54.2,
+   "depth_m": 37.1
+  },
+  {
+   "name": "LinkedIn",
+   "lat": 37.786323,
+   "lon": -122.398289,
+   "height_m": 106.0,
+   "width_m": 68.1,
+   "depth_m": 64.4
+  },
+  {
+   "name": "NEMA North Tower",
+   "lat": 37.776031,
+   "lon": -122.417457,
+   "height_m": 106.0,
+   "width_m": 69.3,
+   "depth_m": 47.8
+  },
+  {
+   "name": "50 Beale Street",
+   "lat": 37.791307,
+   "lon": -122.396505,
+   "height_m": 105.0,
+   "width_m": 76.3,
+   "depth_m": 79.2
+  },
+  {
+   "name": null,
+   "lat": 37.786067,
+   "lon": -122.424501,
+   "height_m": 105.0,
+   "width_m": 42.8,
+   "depth_m": 17.0
+  },
+  {
+   "name": "Four Fifty Sutter Building",
+   "lat": 37.789649,
+   "lon": -122.407868,
+   "height_m": 105.0,
+   "width_m": 45.3,
+   "depth_m": 50.8
+  },
+  {
+   "name": "555 Market Street",
+   "lat": 37.789978,
+   "lon": -122.400009,
+   "height_m": 104.0,
+   "width_m": 49.7,
+   "depth_m": 47.7
+  },
+  {
+   "name": null,
+   "lat": 37.79077,
+   "lon": -122.40194,
+   "height_m": 104.0,
+   "width_m": 44.1,
+   "depth_m": 40.1
+  },
+  {
+   "name": null,
+   "lat": 37.791574,
+   "lon": -122.394206,
+   "height_m": 104.0,
+   "width_m": 50.2,
+   "depth_m": 50.4
+  },
+  {
+   "name": "Intercontinental San Francisco",
+   "lat": 37.782096,
+   "lon": -122.404608,
+   "height_m": 103.6,
+   "width_m": 81.7,
+   "depth_m": 84.1
+  },
+  {
+   "name": "Stevenson Place",
+   "lat": 37.789303,
+   "lon": -122.399777,
+   "height_m": 103.0,
+   "width_m": 59.9,
+   "depth_m": 52.1
+  },
+  {
+   "name": null,
+   "lat": 37.795244,
+   "lon": -122.403714,
+   "height_m": 103.0,
+   "width_m": 41.8,
+   "depth_m": 39.2
+  },
+  {
+   "name": "Commercial Union Assurance Building",
+   "lat": 37.792111,
+   "lon": -122.403053,
+   "height_m": 101.0,
+   "width_m": 46.4,
+   "depth_m": 42.5
+  },
+  {
+   "name": null,
+   "lat": 37.793687,
+   "lon": -122.398511,
+   "height_m": 101.0,
+   "width_m": 43.6,
+   "depth_m": 44.4
+  },
+  {
+   "name": null,
+   "lat": 37.788827,
+   "lon": -122.40037,
+   "height_m": 100.0,
+   "width_m": 60.8,
+   "depth_m": 61.7
+  },
+  {
+   "name": "Royal Towers",
+   "lat": 37.798594,
+   "lon": -122.413131,
+   "height_m": 100.0,
+   "width_m": 50.3,
+   "depth_m": 71.3
+  },
+  {
+   "name": "225 Bush Street",
+   "lat": 37.79078,
+   "lon": -122.401418,
+   "height_m": 100.0,
+   "width_m": 87.1,
+   "depth_m": 49.6
+  },
+  {
+   "name": null,
+   "lat": 37.793416,
+   "lon": -122.400795,
+   "height_m": 99.0,
+   "width_m": 48.3,
+   "depth_m": 39.5
+  },
+  {
+   "name": null,
+   "lat": 37.788238,
+   "lon": -122.398976,
+   "height_m": 99.0,
+   "width_m": 38.0,
+   "depth_m": 42.5
+  },
+  {
+   "name": null,
+   "lat": 37.788037,
+   "lon": -122.399201,
+   "height_m": 99.0,
+   "width_m": 48.8,
+   "depth_m": 43.3
+  },
+  {
+   "name": null,
+   "lat": 37.787962,
+   "lon": -122.399467,
+   "height_m": 99.0,
+   "width_m": 26.1,
+   "depth_m": 27.5
+  },
+  {
+   "name": "Crown-Zellerbach Building",
+   "lat": 37.79091,
+   "lon": -122.400091,
+   "height_m": 99.0,
+   "width_m": 65.3,
+   "depth_m": 42.4
+  },
+  {
+   "name": null,
+   "lat": 37.785375,
+   "lon": -122.398171,
+   "height_m": 99.0,
+   "width_m": 63.7,
+   "depth_m": 64.7
+  },
+  {
+   "name": null,
+   "lat": 37.793013,
+   "lon": -122.404202,
+   "height_m": 98.0,
+   "width_m": 41.2,
+   "depth_m": 42.2
+  },
+  {
+   "name": null,
+   "lat": 37.789418,
+   "lon": -122.39942,
+   "height_m": 98.0,
+   "width_m": 23.2,
+   "depth_m": 23.1
+  },
+  {
+   "name": null,
+   "lat": 37.78945,
+   "lon": -122.394268,
+   "height_m": 97.0,
+   "width_m": 56.4,
+   "depth_m": 47.3
+  },
+  {
+   "name": "W San Francisco",
+   "lat": 37.785399,
+   "lon": -122.400493,
+   "height_m": 96.0,
+   "width_m": 61.7,
+   "depth_m": 58.1
+  },
+  {
+   "name": "San Francisco Marriott Union Square",
+   "lat": 37.789476,
+   "lon": -122.408366,
+   "height_m": 95.0,
+   "width_m": 43.7,
+   "depth_m": 24.5
+  },
+  {
+   "name": "Dolby Laboratories",
+   "lat": 37.777597,
+   "lon": -122.41552,
+   "height_m": 95.0,
+   "width_m": 68.8,
+   "depth_m": 83.6
+  },
+  {
+   "name": "Phillip Burton Federal Building & United States Courthouse",
+   "lat": 37.781903,
+   "lon": -122.418188,
+   "height_m": 95.0,
+   "width_m": 126.2,
+   "depth_m": 57.0
+  },
+  {
+   "name": null,
+   "lat": 37.791905,
+   "lon": -122.400296,
+   "height_m": 95.0,
+   "width_m": 25.3,
+   "depth_m": 42.6
+  },
+  {
+   "name": "Grand Hyatt San Francisco",
+   "lat": 37.789142,
+   "lon": -122.407267,
+   "height_m": 94.0,
+   "width_m": 31.6,
+   "depth_m": 43.0
+  },
+  {
+   "name": null,
+   "lat": 37.792143,
+   "lon": -122.394081,
+   "height_m": 94.0,
+   "width_m": 43.3,
+   "depth_m": 43.4
+  },
+  {
+   "name": "Hunter-Dulin Building",
+   "lat": 37.789669,
+   "lon": -122.402487,
+   "height_m": 94.0,
+   "width_m": 52.2,
+   "depth_m": 37.2
+  },
+  {
+   "name": "The Towers at Rincon",
+   "lat": 37.791982,
+   "lon": -122.392445,
+   "height_m": 93.0,
+   "width_m": 105.4,
+   "depth_m": 102.4
+  },
+  {
+   "name": null,
+   "lat": 37.786127,
+   "lon": -122.398426,
+   "height_m": 93.0,
+   "width_m": 47.1,
+   "depth_m": 46.4
+  },
+  {
+   "name": "Martin Luther Tower",
+   "lat": 37.783849,
+   "lon": -122.422955,
+   "height_m": 93.0,
+   "width_m": 23.2,
+   "depth_m": 36.1
+  },
+  {
+   "name": "Optimizely, Inc.",
+   "lat": 37.786056,
+   "lon": -122.39866,
+   "height_m": 93.0,
+   "width_m": 49.0,
+   "depth_m": 51.8
+  },
+  {
+   "name": null,
+   "lat": 37.785976,
+   "lon": -122.398869,
+   "height_m": 93.0,
+   "width_m": 33.5,
+   "depth_m": 35.1
+  },
+  {
+   "name": "One Hawthorne Street",
+   "lat": 37.785784,
+   "lon": -122.398839,
+   "height_m": 93.0,
+   "width_m": 55.3,
+   "depth_m": 51.3
+  },
+  {
+   "name": null,
+   "lat": 37.794371,
+   "lon": -122.403506,
+   "height_m": 93.0,
+   "width_m": 44.8,
+   "depth_m": 38.1
+  },
+  {
+   "name": "InterContinental Mark Hopkins",
+   "lat": 37.791566,
+   "lon": -122.410387,
+   "height_m": 93.0,
+   "width_m": 62.0,
+   "depth_m": 66.4
+  },
+  {
+   "name": "Mills Tower",
+   "lat": 37.791458,
+   "lon": -122.401326,
+   "height_m": 92.0,
+   "width_m": 17.1,
+   "depth_m": 44.0
+  },
+  {
+   "name": null,
+   "lat": 37.794868,
+   "lon": -122.403598,
+   "height_m": 91.0,
+   "width_m": 42.0,
+   "depth_m": 35.0
+  },
+  {
+   "name": null,
+   "lat": 37.790717,
+   "lon": -122.391143,
+   "height_m": 91.0,
+   "width_m": 111.7,
+   "depth_m": 109.7
+  },
+  {
+   "name": "Central Tower",
+   "lat": 37.787141,
+   "lon": -122.403585,
+   "height_m": 91.0,
+   "width_m": 32.9,
+   "depth_m": 32.5
+  },
+  {
+   "name": "Hotel Nikko San Francisco",
+   "lat": 37.785839,
+   "lon": -122.409211,
+   "height_m": 90.0,
+   "width_m": 47.2,
+   "depth_m": 85.8
+  },
+  {
+   "name": null,
+   "lat": 37.791327,
+   "lon": -122.404989,
+   "height_m": 90.0,
+   "width_m": 59.4,
+   "depth_m": 33.2
+  },
+  {
+   "name": "Cathedral Hill Tower",
+   "lat": 37.784954,
+   "lon": -122.42429,
+   "height_m": 90.0,
+   "width_m": 33.0,
+   "depth_m": 32.5
+  },
+  {
+   "name": null,
+   "lat": 37.79398,
+   "lon": -122.399792,
+   "height_m": 90.0,
+   "width_m": 44.3,
+   "depth_m": 41.5
+  },
+  {
+   "name": null,
+   "lat": 37.793279,
+   "lon": -122.401862,
+   "height_m": 89.0,
+   "width_m": 33.7,
+   "depth_m": 39.9
+  },
+  {
+   "name": "Twelve Hundred California",
+   "lat": 37.791716,
+   "lon": -122.414645,
+   "height_m": 88.0,
+   "width_m": 46.2,
+   "depth_m": 42.8
+  },
+  {
+   "name": null,
+   "lat": 37.785719,
+   "lon": -122.405452,
+   "height_m": 87.0,
+   "width_m": 57.3,
+   "depth_m": 58.8
+  },
+  {
+   "name": "1188 Mission at Trinity Place",
+   "lat": 37.778262,
+   "lon": -122.412797,
+   "height_m": 87.0,
+   "width_m": 59.4,
+   "depth_m": 64.6
+  },
+  {
+   "name": "Hobart Building",
+   "lat": 37.789547,
+   "lon": -122.401644,
+   "height_m": 86.0,
+   "width_m": 23.3,
+   "depth_m": 50.5
+  },
+  {
+   "name": "The Charles Schwab Building",
+   "lat": 37.790639,
+   "lon": -122.392804,
+   "height_m": 85.0,
+   "width_m": 64.4,
+   "depth_m": 64.8
+  },
+  {
+   "name": null,
+   "lat": 37.786936,
+   "lon": -122.390978,
+   "height_m": 85.0,
+   "width_m": 75.9,
+   "depth_m": 89.9
+  },
+  {
+   "name": null,
+   "lat": 37.792158,
+   "lon": -122.39899,
+   "height_m": 84.0,
+   "width_m": 45.2,
+   "depth_m": 31.1
+  },
+  {
+   "name": null,
+   "lat": 37.792065,
+   "lon": -122.399371,
+   "height_m": 84.0,
+   "width_m": 44.0,
+   "depth_m": 31.0
+  },
+  {
+   "name": null,
+   "lat": 37.78561,
+   "lon": -122.426758,
+   "height_m": 84.0,
+   "width_m": 39.7,
+   "depth_m": 21.6
+  },
+  {
+   "name": "Hyatt Regency San Francisco",
+   "lat": 37.794477,
+   "lon": -122.395814,
+   "height_m": 83.0,
+   "width_m": 120.5,
+   "depth_m": 88.6
+  },
+  {
+   "name": null,
+   "lat": 37.789705,
+   "lon": -122.398629,
+   "height_m": 83.0,
+   "width_m": 34.9,
+   "depth_m": 32.6
+  },
+  {
+   "name": "Pacific Place Tower",
+   "lat": 37.785017,
+   "lon": -122.405598,
+   "height_m": 83.0,
+   "width_m": 67.4,
+   "depth_m": 61.9
+  },
+  {
+   "name": "Pacific Gas and Electric Company General Office Building Annex",
+   "lat": 37.792107,
+   "lon": -122.396527,
+   "height_m": 83.0,
+   "width_m": 58.7,
+   "depth_m": 58.2
+  },
+  {
+   "name": null,
+   "lat": 37.791286,
+   "lon": -122.393816,
+   "height_m": 83.0,
+   "width_m": 51.2,
+   "depth_m": 50.6
+  },
+  {
+   "name": "Matson Building",
+   "lat": 37.792616,
+   "lon": -122.396575,
+   "height_m": 83.0,
+   "width_m": 60.4,
+   "depth_m": 61.2
+  },
+  {
+   "name": "Pacific Gas and Electric Company General Office Building",
+   "lat": 37.792366,
+   "lon": -122.396775,
+   "height_m": 83.0,
+   "width_m": 60.7,
+   "depth_m": 60.5
+  },
+  {
+   "name": "475 Sansome Street",
+   "lat": 37.794643,
+   "lon": -122.401995,
+   "height_m": 82.0,
+   "width_m": 63.8,
+   "depth_m": 37.8
+  },
+  {
+   "name": "Blu Condos",
+   "lat": 37.784768,
+   "lon": -122.396844,
+   "height_m": 82.0,
+   "width_m": 74.6,
+   "depth_m": 75.4
+  },
+  {
+   "name": "The Jay, Autograph Collection",
+   "lat": 37.79467,
+   "lon": -122.40104,
+   "height_m": 81.0,
+   "width_m": 86.3,
+   "depth_m": 34.6
+  },
+  {
+   "name": "201 Spear",
+   "lat": 37.791241,
+   "lon": -122.391975,
+   "height_m": 81.0,
+   "width_m": 57.7,
+   "depth_m": 60.7
+  },
+  {
+   "name": null,
+   "lat": 37.79286,
+   "lon": -122.400721,
+   "height_m": 81.0,
+   "width_m": 42.6,
+   "depth_m": 32.5
+  },
+  {
+   "name": "33 New Montgomery",
+   "lat": 37.788692,
+   "lon": -122.401474,
+   "height_m": 80.0,
+   "width_m": 44.9,
+   "depth_m": 63.6
+  },
+  {
+   "name": null,
+   "lat": 37.791778,
+   "lon": -122.393633,
+   "height_m": 80.0,
+   "width_m": 52.6,
+   "depth_m": 52.3
+  },
+  {
+   "name": "The Summit",
+   "lat": 37.798497,
+   "lon": -122.41523,
+   "height_m": 80.0,
+   "width_m": 34.6,
+   "depth_m": 44.5
+  },
+  {
+   "name": null,
+   "lat": 37.796818,
+   "lon": -122.399171,
+   "height_m": 78.0,
+   "width_m": 33.7,
+   "depth_m": 32.1
+  },
+  {
+   "name": "the Gateway vistaSouth",
+   "lat": 37.796368,
+   "lon": -122.398495,
+   "height_m": 78.0,
+   "width_m": 31.3,
+   "depth_m": 31.5
+  },
+  {
+   "name": "Grosvenor Suites",
+   "lat": 37.790768,
+   "lon": -122.410154,
+   "height_m": 78.0,
+   "width_m": 35.3,
+   "depth_m": 22.6
+  },
+  {
+   "name": null,
+   "lat": 37.790418,
+   "lon": -122.392109,
+   "height_m": 76.0,
+   "width_m": 76.1,
+   "depth_m": 81.0
+  },
+  {
+   "name": null,
+   "lat": 37.786158,
+   "lon": -122.389128,
+   "height_m": 75.0,
+   "width_m": 64.7,
+   "depth_m": 63.7
+  },
+  {
+   "name": null,
+   "lat": 37.791869,
+   "lon": -122.400624,
+   "height_m": 75.0,
+   "width_m": 33.7,
+   "depth_m": 31.3
+  },
+  {
+   "name": "388 Beale",
+   "lat": 37.787554,
+   "lon": -122.391848,
+   "height_m": 75.0,
+   "width_m": 82.4,
+   "depth_m": 74.9
+  },
+  {
+   "name": "Two Transamerica Center",
+   "lat": 37.795076,
+   "lon": -122.401878,
+   "height_m": 74.0,
+   "width_m": 26.9,
+   "depth_m": 37.8
+  },
+  {
+   "name": "Carillon Tower",
+   "lat": 37.784052,
+   "lon": -122.424008,
+   "height_m": 74.0,
+   "width_m": 26.7,
+   "depth_m": 26.5
+  }
+ ],
+ "bbox": [
+  37.7535,
+  -122.432,
+  37.7665,
+  -122.416
+ ],
+ "tile_zooms": [
+  16,
+  17
+ ]
+}

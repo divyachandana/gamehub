@@ -1,0 +1,11 @@
+# Areas scripts/fetch_map.py knows by name. bbox = [south, west, north, east] in degrees,
+# around a street grid; the script keeps the 7 x 7 junctions nearest its middle.
+sf-north-beach:
+  title: San Francisco · North Beach
+  bbox: [37.7965, -122.4190, 37.8052, -122.4040]
+sf-alamo-square:
+  title: San Francisco · Alamo Square
+  bbox: [37.7720, -122.4420, 37.7810, -122.4270]
+sf-mission:
+  title: San Francisco · Mission
+  bbox: [37.7535, -122.4320, 37.7665, -122.4160]

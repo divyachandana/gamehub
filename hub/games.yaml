@@ -1,0 +1,32 @@
+# The game hub: two separate games, started on demand. Picking a game stops the other one first,
+# because each game loads the NPU models (Gemma-4-E2B, Qwen3-1.7B, Laya). Both games use the same
+# NPU model hosts (named pipes rally_gemma / rally_qwen), so after a switch the models are still
+# loaded and the next game starts in seconds.
+#
+# cwd is relative to this file; "python" in a command means the Python running the hub.
+
+port: 8000
+
+games:
+  rally:
+    title: Inference Rally
+    tagline: AI models race taxis through a hedge maze
+    detail: Random maze every race · DEMO · PLAY · UNFAIR
+    image: rally.jpg
+    accent: "#1d9e75"
+    port: 8001
+    cwd: ../games/inference-rally
+    command: [python, -m, inference_rally.server, --port, "8001"]
+
+  sf:
+    title: San Francisco
+    tagline: The same race on real San Francisco streets
+    detail: North Beach · Alamo Square · Mission
+    image: sf.jpg
+    accent: "#3fa7d6"
+    port: 8002
+    cwd: ../games/san-francisco
+    command: [python, -m, san_francisco.server, --port, "8002"]
+
+# NPU model hosts the games share; the hub shuts them down when it exits.
+npu_pipes: [rally_gemma, rally_qwen]

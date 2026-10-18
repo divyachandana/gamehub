@@ -1,0 +1,29 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Game Hub · On-device AI arcade</title>
+    <link rel="stylesheet" href="/hub.css" />
+  </head>
+  <body class="hub">
+    <header class="hub-header">
+      <div class="hub-logo">GAME <span>HUB</span></div>
+      <p class="hub-sub">ON-DEVICE AI GAMES · LIVE ON THE SNAPDRAGON NPU</p>
+    </header>
+
+    <main class="hub-games" id="games"></main>
+
+    <footer class="hub-footer">
+      <p>Every racer is a real model on the NPU: <b>Gemma-4-E2B</b> · <b>Qwen3-1.7B</b> · <b>Laya</b> decides the rogue's cheats</p>
+      <p class="hub-hint" id="hint">PRESS 1 OR 2 · OR CLICK A GAME</p>
+    </footer>
+
+    <div class="hub-loading" id="loading" hidden>
+      <div class="hub-loading-title" id="loading-title"></div>
+      <p>LOADING THE MODELS ON THE NPU…</p>
+    </div>
+
+    <script src="/hub.js"></script>
+  </body>
+</html>
