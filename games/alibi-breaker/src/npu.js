@@ -95,7 +95,9 @@ class Host {
         this.socket = await openPipe(pipe);
         break;
       } catch (err) {
-        if (!launched && err.code === "ENOENT") {
+        // A running host re-creates its pipe after each client leaves, so the name can be
+        // missing for a moment: wait 2 s before deciding nobody serves it and starting one.
+        if (!launched && err.code === "ENOENT" && Date.now() - started > 2000) {
           launched = this.#launch();
           console.log(`  [npu] starting ${this.model.label} on the NPU (pipe ${this.model.pipe})...`);
         }
